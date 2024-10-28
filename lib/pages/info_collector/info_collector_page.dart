@@ -49,7 +49,6 @@ class __InfoCollectorState extends State<_InfoCollector> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   String decision = Sex.male.toName();
-  int _currentValue = 18;
 
   @override
   void dispose() {
@@ -118,7 +117,7 @@ class __InfoCollectorState extends State<_InfoCollector> {
                   child: Text('Choose your age:')),
               const SizedBox(height: 20),
               NumberPicker(
-                value: _currentValue,
+                value: state.age,
                 minValue: 18,
                 maxValue: 100,
                 onChanged: context.read<InfoCollectorCubit>().changeAgeValue,
