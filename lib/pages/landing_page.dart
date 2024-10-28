@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogging/pages/login/login_page.dart';
-import 'package:jogging/pages/register/register_page.dart';
+import 'package:jogging/pages/register_page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});

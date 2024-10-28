@@ -1,34 +1,74 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jogging/auth/failures.dart';
 import 'package:jogging/pages/info_collector/info_collector_state.dart';
 import 'package:jogging/auth/user.dart';
 import 'package:jogging/auth/repository.dart';
 
 class InfoCollectorCubit extends Cubit<InfoCollectorState> {
-  InfoCollectorCubit({required this.userRepository})
-      : super(InfoCollectorInitialState());
+  InfoCollectorCubit({
+    required this.email,
+    required this.password,
+    required this.userRepository,
+  }) : super(InfoCollectorInitialState(
+          email: email,
+          password: password,
+          sex: Sex.other,
+          age: 18,
+          firstName: '',
+          lastName: '',
+          failure: CreateUserFailure.noFailureAtAll,
+        ));
   final UserRepository userRepository;
+  final String email;
+  final String password;
 
-  bool _nameIsValid(String name) {
-    if (name == "") return false;
-    if (name.length < 3) return false;
-    final nameRegExp = RegExp(r"^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$");
-    return nameRegExp.hasMatch(name);
+  void changeFirstName(String firstName) {
+    emit((state as InfoCollectorInitialState).copyWith(
+        firstName: firstName,
+        failure: _isNameValid(firstName)
+            ? CreateUserFailure.noFailureAtAll
+            : CreateUserFailure.invalidFirstName));
   }
 
-  Future<bool> completeUserInfo(
-      String firstName, String lastName, Sex sex, int age) async {
-    if (!_nameIsValid(firstName)) {
-      emit(InfoCollectorWrongFirstNameState());
-      return false;
+  void changeLastName(String lastName) {
+    emit((state as InfoCollectorInitialState).copyWith(
+        lastName: lastName,
+        failure: _isNameValid(lastName)
+            ? CreateUserFailure.noFailureAtAll
+            : CreateUserFailure.invalidLastName));
+  }
+
+  void changeAgeValue(int age) {
+    emit((state as InfoCollectorInitialState).copyWith(age: age));
+  }
+
+  void changeSexValue(String? sex) {
+    if (sex == null) {
+      emit((state as InfoCollectorInitialState).copyWith(sex: Sex.other));
+      return;
     }
-    if (!_nameIsValid(lastName)) {
-      emit(InfoCollectorWrongLastNameState());
-      return false;
-    }
-    final output = await userRepository.createUser(
-        firstName: firstName, lastName: lastName, age: age, sex: sex);
-    if (output == null) return true;
-    emit(InfoCollectorNoInternetState());
-    return false;
+    emit((state as InfoCollectorInitialState).copyWith(sex: Sex.fromName(sex)));
+  }
+
+  void createUser() async {
+    final oldState = state as InfoCollectorInitialState;
+    final result = await userRepository.createUser(
+        email: email,
+        password: password,
+        firstName: oldState.firstName,
+        lastName: oldState.lastName,
+        age: oldState.age,
+        sex: oldState.sex);
+    result.fold((l) {
+      emit((state as InfoCollectorInitialState).copyWith(failure: l));
+    }, (r) {
+      emit(InfoCollectorSuccessState());
+    });
+  }
+
+  bool _isNameValid(String name) {
+    if (name == "") return false;
+    RegExp nameRegExp = RegExp(r"^[a-zA-Z]+([ '-][a-zA-Z]+)*$");
+    return nameRegExp.hasMatch(name);
   }
 }

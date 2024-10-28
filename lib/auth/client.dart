@@ -10,22 +10,6 @@ class AuthenticationClient {
   }) : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance;
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final _db = FirebaseFirestore.instance;
-  
-  Future<Either<CreateUserFailure, String>> createAccount({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final userCredentials = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      if (userCredentials.user == null) {
-        return const Left(CreateUserFailure.unknownFailure);
-      }
-      return Right(userCredentials.user!.uid);
-    } on firebase_auth.FirebaseAuthException catch (e) {
-      return Left(_mapCreateUserFailures(e.code));
-    }
-  }
 
   Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
     try {
@@ -33,6 +17,38 @@ class AuthenticationClient {
       return null;
     } on FirebaseException {
       return CreateUserFailure.unknownFailure;
+    }
+  }
+
+  Future<Either<CreateUserFailure, User>> createUser({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required int age,
+    required Sex sex,
+  }) async {
+    try {
+      final userCredentials = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      if (userCredentials.user == null) {
+        return const Left(CreateUserFailure.unknownFailure);
+      }
+      User user = User(
+        email: email,
+        uid: userCredentials.user!.uid,
+        firstName: firstName,
+        lastName: lastName,
+        sex: sex,
+        age: age,
+      );
+      await _db
+          .collection("users")
+          .doc(userCredentials.user!.uid)
+          .set(user.toJson());
+      return Right(user);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(_mapCreateUserFailures(e.code));
     }
   }
 

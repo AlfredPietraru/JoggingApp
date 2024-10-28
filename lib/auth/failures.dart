@@ -1,9 +1,13 @@
 enum CreateUserFailure {
+  noFailureAtAll,
   unknownFailure,
   emailInUseFailure,
   invalidEmailFailure,
   operationNotPermittedFailure,
   weakPasswordFailure,
+  invalidFirstName,
+  invalidLastName,
+  noInternetConnection,
 }
 
 enum ChangePasswordFailure {
