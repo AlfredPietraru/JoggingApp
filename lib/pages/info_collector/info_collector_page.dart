@@ -28,7 +28,7 @@ class InfoCollector extends StatelessWidget {
         return BlocListener<InfoCollectorCubit, InfoCollectorState>(
           listener: (context, state) {
             if (state is InfoCollectorSuccessState) {
-              Navigator.push(context, MapPage.page());
+              Navigator.pushReplacement(context, MapPage.page());
             }
           },
           child: const _InfoCollector(),

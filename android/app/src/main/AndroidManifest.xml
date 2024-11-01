@@ -3,6 +3,10 @@
         android:label="jogging"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyD52VVFqSm2iAgOF9mFBvue4y30VywfWP0"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

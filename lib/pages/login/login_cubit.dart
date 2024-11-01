@@ -36,11 +36,12 @@ class LoginCubit extends Cubit<LoginState> {
 
     final failure = await userRepository.login(
         email: oldState.email, password: oldState.password);
-    if (failure == null) {
+    failure.fold((l) {
+      emit(oldState.copyWith(failure: l));
+    }, (r) {
       emit(LoginSuccessful());
       return;
-    }
-    emit(oldState.copyWith(failure: failure));
+    });
   }
 
   bool _isEmailValid() {

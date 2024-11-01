@@ -48,6 +48,8 @@ dependencies:
   dartz: ^0.10.1
   google_fonts: ^6.2.0
   numberpicker: ^2.1.2
+  google_maps_flutter: ^2.6.1
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:

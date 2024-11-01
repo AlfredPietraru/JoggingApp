@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/constants.dart';
+import 'package:jogging/core/cubit/app_cubit.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -16,18 +18,16 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 30),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Back", style: TextStyle(fontSize: 30)),
-          ),
           const SizedBox(height: 20),
           Text(
             'A creat userul cu succes',
             style: AppTextStyle.body,
           ),
+          Text(context.read<AppCubit>().state.user!.email),
+          Text(context.read<AppCubit>().state.user!.firstName),
+          Text(context.read<AppCubit>().state.user!.lastName),
+          Text(context.read<AppCubit>().state.user!.uid),
+          Text(context.read<AppCubit>().state.user!.sex.toName()),
         ],
       ),
     );
