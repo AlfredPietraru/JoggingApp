@@ -4,7 +4,7 @@ import 'package:jogging/auth/failures.dart';
 import 'package:jogging/constants.dart';
 import 'package:jogging/pages/login/login_cubit.dart';
 import 'package:jogging/pages/login/login_state.dart';
-import 'package:jogging/pages/map_page.dart';
+import 'package:jogging/pages/map/map_page.dart';
 import 'package:jogging/auth/repository.dart';
 
 class LoginPage extends StatelessWidget {

@@ -4,7 +4,7 @@ import 'package:jogging/auth/failures.dart';
 import 'package:jogging/constants.dart';
 import 'package:jogging/pages/info_collector/info_collector_cubit.dart';
 import 'package:jogging/pages/info_collector/info_collector_state.dart';
-import 'package:jogging/pages/map_page.dart';
+import 'package:jogging/pages/map/map_page.dart';
 import 'package:jogging/auth/user.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:numberpicker/numberpicker.dart';

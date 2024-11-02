@@ -5,7 +5,7 @@ import 'package:jogging/auth/client.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/pages/landing_page.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/pages/map_page.dart';
+import 'package:jogging/pages/map/map_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
