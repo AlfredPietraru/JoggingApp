@@ -8,8 +8,6 @@ class UserRepository {
   UserRepository({required this.authenticationClient, required this.prefs});
 
   final SharedPreferences prefs;
-  bool userInserted = false;
-  late User user;
   final AuthenticationClient authenticationClient;
 
   Future<Either<CreateUserFailure, User>> createUser({
@@ -68,6 +66,15 @@ class UserRepository {
         firstName: firstName,
         lastName: lastName,
         sex: Sex.fromName(sex));
+  }
+
+  void deleteUserFromMemory() async {
+    await prefs.remove('age');
+    await prefs.remove('email');
+    await prefs.remove('firstName');
+    await prefs.remove('lastName');
+    await prefs.remove('uid');
+    await prefs.remove('sex');
   }
 
   void _writeUserToMemory(User user) async {

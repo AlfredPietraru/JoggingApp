@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
+import 'package:jogging/pages/settings/settings_page.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -133,7 +135,11 @@ class NavigationDrawer extends StatelessWidget {
               CustomListTile(
                   onTap: () {}, icon: Assets.icons.home, name: "Home"),
               CustomListTile(
-                  onTap: () {}, icon: Assets.icons.settings, name: "Settings"),
+                  onTap: () {
+                    Navigator.push(context, SettingsPage.page());
+                  },
+                  icon: Assets.icons.settings,
+                  name: "Settings"),
               CustomListTile(
                   onTap: () {}, icon: Assets.icons.runner, name: "History"),
             ],

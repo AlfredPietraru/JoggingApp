@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jogging/constants.dart';
+import 'package:jogging/core/constants.dart';
 import 'package:jogging/pages/info_collector/info_collector_page.dart';
 
 class RegisterPage extends StatefulWidget {

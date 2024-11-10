@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
-import 'package:jogging/constants.dart';
+import 'package:jogging/core/constants.dart';
 import 'package:jogging/pages/login/login_cubit.dart';
 import 'package:jogging/pages/login/login_state.dart';
 import 'package:jogging/pages/map/map_page.dart';

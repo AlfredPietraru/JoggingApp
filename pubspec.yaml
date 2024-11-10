@@ -83,6 +83,8 @@ flutter:
     - assets/icons/runner.svg
     - assets/icons/settings.svg
     - assets/icons/home.svg
+    - assets/icons/pencil.svg
+    - assets/icons/danger.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
