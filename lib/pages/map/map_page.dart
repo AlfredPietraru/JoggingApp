@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
-import 'package:location/location.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -103,14 +104,72 @@ class NavigationDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Home"),
-              onTap: () {},
-            )
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                    iconSize: 40),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  Assets.images.ceahlau.path,
+                  height: 150,
+                ),
+              ),
+              const SizedBox(height: 20),
+              CustomListTile(onTap: () {}, iconData: Icons.home, name: "Home"),
+              CustomListTile(
+                  onTap: () {}, iconData: Icons.settings, name: "Settings"),
+              CustomListTile(
+                  onTap: () {}, iconData: Icons.home, name: "History"),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomListTile extends StatelessWidget {
+  const CustomListTile(
+      {super.key,
+      required this.onTap,
+      required this.name,
+      required this.iconData});
+
+  final Function() onTap;
+  final String name;
+  final IconData iconData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          splashColor: Colors.green.shade300,
+          onTap: onTap,
+          child: ListTile(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.green, width: 2),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            leading: Icon(iconData),
+            title: Text(name),
+          ),
         ),
       ),
     );
