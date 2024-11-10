@@ -53,6 +53,7 @@ dependencies:
   location: ^6.0.2
   flutter_polyline_points: ^2.1.0
   geolocator: ^12.0.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +80,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/ceahlau.jpg
+    - assets/icons/runner.svg
+    - assets/icons/settings.svg
+    - assets/icons/home.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

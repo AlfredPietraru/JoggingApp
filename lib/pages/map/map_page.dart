@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
@@ -129,11 +130,12 @@ class NavigationDrawer extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              CustomListTile(onTap: () {}, iconData: Icons.home, name: "Home"),
               CustomListTile(
-                  onTap: () {}, iconData: Icons.settings, name: "Settings"),
+                  onTap: () {}, icon: Assets.icons.home, name: "Home"),
               CustomListTile(
-                  onTap: () {}, iconData: Icons.home, name: "History"),
+                  onTap: () {}, icon: Assets.icons.settings, name: "Settings"),
+              CustomListTile(
+                  onTap: () {}, icon: Assets.icons.runner, name: "History"),
             ],
           ),
         ),
@@ -144,14 +146,11 @@ class NavigationDrawer extends StatelessWidget {
 
 class CustomListTile extends StatelessWidget {
   const CustomListTile(
-      {super.key,
-      required this.onTap,
-      required this.name,
-      required this.iconData});
+      {super.key, required this.onTap, required this.name, required this.icon});
 
   final Function() onTap;
   final String name;
-  final IconData iconData;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +166,11 @@ class CustomListTile extends StatelessWidget {
               side: const BorderSide(color: Colors.green, width: 2),
               borderRadius: BorderRadius.circular(30),
             ),
-            leading: Icon(iconData),
+            leading: SvgPicture.asset(
+              icon,
+              height: 40,
+              width: 40,
+            ),
             title: Text(name),
           ),
         ),
