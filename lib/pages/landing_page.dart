@@ -70,19 +70,52 @@ class _LandingPageState extends State<LandingPage>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 50),
-            AnimatedTextKit(
-              animatedTexts: [
-                WavyAnimatedText('Its jogging time!'),
-              ],
-              isRepeatingAnimation: true,
-              onTap: () {
-                print("Tap Event");
-              },
-              totalRepeatCount: 30,
-              pause: const Duration(milliseconds: 2000),
-              displayFullTextOnTap: true,
-              stopPauseOnTap: true,
+            const SizedBox(height: 80),
+            Text(
+              'Jogging Time',
+              style: AppTextStyle.headline1.copyWith(
+                fontSize: 50,
+                fontWeight: FontWeight.w800,
+                color: Colors.blueAccent.shade700,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xlg),
+            SizedBox(
+              height: 100,
+              child: AnimatedTextKit(
+                animatedTexts: [
+                  ScaleAnimatedText(
+                    'Connect',
+                    textStyle: AppTextStyle.headline1.copyWith(
+                      fontSize: 45,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.blueAccent.shade700,
+                    ),
+                  ),
+                  ScaleAnimatedText(
+                    'Make Friend',
+                    textStyle: AppTextStyle.headline1.copyWith(
+                      fontSize: 45,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.blueAccent.shade700,
+                    ),
+                  ),
+                  ScaleAnimatedText(
+                    'Stay Healthy',
+                    textStyle: AppTextStyle.headline1.copyWith(
+                      fontSize: 45,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.blueAccent.shade700,
+                    ),
+                  ),
+                ],
+                isRepeatingAnimation: true,
+                totalRepeatCount: 30,
+                repeatForever: true,
+                pause: const Duration(milliseconds: 2000),
+                displayFullTextOnTap: true,
+                stopPauseOnTap: true,
+              ),
             ),
             const Spacer(),
             Gif(
@@ -91,7 +124,7 @@ class _LandingPageState extends State<LandingPage>
               fps: 10,
               placeholder: (context) =>
                   const Text('Hello but without the kitty!'),
-              autostart: Autostart.no,
+              autostart: Autostart.loop,
               image: AssetImage(Assets.gifs.hello.path),
             ),
             const Spacer(),
