@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gif/gif.dart';
+import 'package:jogging/core/constants.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/login/login_page.dart';
 import 'package:jogging/pages/register_page.dart';
@@ -23,6 +24,30 @@ class _LandingPageState extends State<LandingPage>
   void initState() {
     _gifController = GifController(vsync: this);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Enable Location", style: AppTextStyle.alert),
+          content: Text("We need your location for computing multiple things.",
+              style: AppTextStyle.alert),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Enable location", style: AppTextStyle.button),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Refuse", style: AppTextStyle.button),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   @override
