@@ -9,22 +9,47 @@ sealed class MapState extends Equatable {
 
 final class MapInitial extends MapState {}
 
-final class MapLocationRequested extends MapState {
+final class MapLocationFailed extends MapState {
+  final bool serviceEnabled;
+  final LocationPermission permission;
+
+  const MapLocationFailed(
+      {required this.serviceEnabled, required this.permission});
+
+  MapLocationFailed copyWith(
+    bool? serviceEnabled,
+    LocationPermission? permission,
+  ) {
+    return MapLocationFailed(
+      serviceEnabled: serviceEnabled ?? this.serviceEnabled,
+      permission: permission ?? this.permission,
+    );
+  }
+
+  String mapLocationFailedToString() {
+    return "$serviceEnabled ${permission.toString()}";
+  }
+
+  @override
+  List<Object> get props => [serviceEnabled, permission];
+}
+
+final class MapLocationSuccesfull extends MapState {
   final bool serviceEnabled;
   final LocationPermission permission;
   final LatLng center;
 
-  const MapLocationRequested(
-      {required this.serviceEnabled,
-      required this.permission,
-      required this.center});
+  const MapLocationSuccesfull(
+      {required this.center,
+      required this.serviceEnabled,
+      required this.permission});
 
-  MapLocationRequested copyWith(
+  MapLocationSuccesfull copyWith(
     bool? serviceEnabled,
     LocationPermission? permission,
     LatLng? center,
   ) {
-    return MapLocationRequested(
+    return MapLocationSuccesfull(
       serviceEnabled: serviceEnabled ?? this.serviceEnabled,
       permission: permission ?? this.permission,
       center: center ?? this.center,

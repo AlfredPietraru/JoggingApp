@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jogging/core/back_button.dart';
@@ -99,8 +97,7 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class _DangerousButton extends StatelessWidget {
-  const _DangerousButton(
-      {super.key, required this.text, required this.onPressed});
+  const _DangerousButton({required this.text, required this.onPressed});
   final String text;
   final Function() onPressed;
 
@@ -129,7 +126,7 @@ class _DangerousButton extends StatelessWidget {
 
 class _HorizontalUserInfoDisplayer extends StatelessWidget {
   final String info;
-  const _HorizontalUserInfoDisplayer({super.key, required this.info});
+  const _HorizontalUserInfoDisplayer({required this.info});
 
   @override
   Widget build(BuildContext context) {
@@ -210,13 +207,13 @@ class LogOutAlertDialog extends StatelessWidget {
       backgroundColor: Colors.blue.shade500,
       actions: [
         TextButton(
-          child: Text("No"),
+          child: const Text("No"),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         TextButton(
-          child: Text("Yes"),
+          child: const Text("Yes"),
           onPressed: () {
             context.read<AppCubit>().deleteUserFromMemory();
             Navigator.of(context).popUntil((Route<dynamic> route) => false);
