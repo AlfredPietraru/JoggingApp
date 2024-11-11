@@ -7,6 +7,7 @@ import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';
+import 'package:jogging/pages/landing_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -82,7 +83,12 @@ class _SettingsPageState extends State<SettingsPage> {
             Text('Want to switch account?', style: AppTextStyle.body),
             const SizedBox(height: AppSpacing.md),
             _DangerousButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        const LogOutAlertDialog());
+              },
               text: "Log out",
             ),
           ],
@@ -166,10 +172,11 @@ class _VerticalUserInfoDisplayer extends StatelessWidget {
                 child: EditButton(onPressed: () {}))
             : const SizedBox(height: 0),
         SizedBox(
-          height: 80,
+          height: 90,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: AppSpacing.md),
               Text(
                 label,
                 style: AppTextStyle.body.copyWith(fontSize: 20),
@@ -183,6 +190,40 @@ class _VerticalUserInfoDisplayer extends StatelessWidget {
           ),
         ),
       ]),
+    );
+  }
+}
+
+class LogOutAlertDialog extends StatelessWidget {
+  const LogOutAlertDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+        'Logging out?',
+        style: AppTextStyle.headline1.copyWith(color: Colors.red),
+      ),
+      content:
+          Text('Are you sure you want to proceed', style: AppTextStyle.alert),
+      elevation: 20,
+      backgroundColor: Colors.blue.shade500,
+      actions: [
+        TextButton(
+          child: Text("No"),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        TextButton(
+          child: Text("Yes"),
+          onPressed: () {
+            context.read<AppCubit>().deleteUserFromMemory();
+            Navigator.of(context).popUntil((Route<dynamic> route) => false);
+            Navigator.push(context, LandingPage.page());
+          },
+        ),
+      ],
     );
   }
 }

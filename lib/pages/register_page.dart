@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gif/gif.dart';
 import 'package:jogging/core/constants.dart';
+import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/info_collector/info_collector_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -14,6 +16,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
   bool _invalidEmail = false;
   bool _invalidPassword = false;
 
@@ -34,6 +37,35 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _isPasswordValid(String password) {
     return password.length > 6;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Enable Location", style: AppTextStyle.alert),
+          content: Text("We need your location for computing multiple things.",
+              style: AppTextStyle.alert),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Enable location", style: AppTextStyle.button),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Refuse", style: AppTextStyle.button),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   @override
