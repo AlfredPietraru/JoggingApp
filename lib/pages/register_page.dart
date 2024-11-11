@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/pages/info_collector/info_collector_page.dart';
 
@@ -22,6 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (email == "") {
       return false;
     }
+    
     const pattern = r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
         r'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-'
         r'\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*'
@@ -57,14 +59,9 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           children: [
             const SizedBox(height: 100),
-            Align(
+            const Align(
               alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Back", style: TextStyle(fontSize: 30)),
-              ),
+              child: MyBackButton(),
             ),
             const Align(
               alignment: Alignment.centerLeft,
