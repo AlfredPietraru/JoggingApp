@@ -7,6 +7,7 @@ import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
 import 'package:jogging/pages/settings/settings_page.dart';
+import 'package:location/location.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -50,36 +51,56 @@ class __MapPageState extends State<_MapPage> {
             drawer: const NavigationDrawer(),
             appBar: AppBar(
               title: const Text('Jogging Time'),
+              actions: [
+                ElevatedButton(
+                    onPressed: switch (oldState) {
+                      MapPositionTracking() =>
+                        context.read<MapCubit>().stopTrackingLocation,
+                      MapLocationSuccesfull() =>
+                        context.read<MapCubit>().startTrackingLocation,
+                      _ => null,
+                    },
+                    child: switch (oldState) {
+                      MapPositionTracking() => const Text('Stop Tracking'),
+                      MapLocationFailed() => const Text('No Location Found'),
+                      _ => const Text('Start Tracking'),
+                    })
+              ],
             ),
-            body: (oldState is MapLocationSuccesfull)
-                ? SizedBox(
+            body: (state is MapInitial)
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(
                     height: double.infinity,
-                    child: GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                        target: oldState.center,
-                        zoom: 15.0,
-                      ),
-                      markers: {
-                        Marker(
-                          markerId: const MarkerId('user_location'),
-                          position: oldState.center,
-                          infoWindow: const InfoWindow(title: 'Your Location'),
-                        ),
-                      },
-                    ),
-                  )
-                : (state is MapInitial)
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                        children: [
-                          Text(
-                            (state as MapLocationFailed)
-                                .mapLocationFailedToString(),
-                            style: AppTextStyle.alert.copyWith(fontSize: 40),
+                    child: Stack(
+                      children: [
+                        GoogleMap(
+                          onMapCreated: _onMapCreated,
+                          initialCameraPosition: CameraPosition(
+                            target: switch (oldState) {
+                              MapPositionTracking() =>
+                                oldState.returnCoordinates(),
+                              MapLocationSuccesfull() => oldState.center,
+                              _ => const LatLng(4, 4),
+                            },
+                            zoom: 15.0,
                           ),
-                        ],
-                      ),
+                          markers: {
+                            Marker(
+                              markerId: const MarkerId('user_location'),
+                              position: switch (oldState) {
+                                MapPositionTracking() =>
+                                  oldState.returnCoordinates(),
+                                MapLocationSuccesfull() => oldState.center,
+                                _ => const LatLng(4, 4),
+                              },
+                              infoWindow:
+                                  const InfoWindow(title: 'Your Location'),
+                            ),
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
           );
         },
       );

@@ -44,11 +44,11 @@ final class MapLocationSuccesfull extends MapState {
       required this.serviceEnabled,
       required this.permission});
 
-  MapLocationSuccesfull copyWith(
+  MapLocationSuccesfull copyWith({
     bool? serviceEnabled,
     LocationPermission? permission,
     LatLng? center,
-  ) {
+  }) {
     return MapLocationSuccesfull(
       serviceEnabled: serviceEnabled ?? this.serviceEnabled,
       permission: permission ?? this.permission,
@@ -58,4 +58,18 @@ final class MapLocationSuccesfull extends MapState {
 
   @override
   List<Object> get props => [serviceEnabled, permission, center];
+}
+
+final class MapPositionTracking extends MapState {
+  final Position position;
+  final LocationPermission permission;
+
+  const MapPositionTracking({required this.permission, required this.position});
+
+  LatLng returnCoordinates() {
+    return LatLng(position.latitude, position.longitude);
+  }
+
+  @override
+  List<Object> get props => [permission, position];
 }
