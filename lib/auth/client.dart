@@ -72,6 +72,20 @@ class AuthenticationClient {
     }
   }
 
+  Future<void> writePositionsToDatabase(
+      {required String positions, required User user}) async {
+    try {
+      await _db
+          .collection("users")
+          .doc(user.uid)
+          .collection("first_run")
+          .doc('stepOne')
+          .set({"data": "$positions"});
+    } on FirebaseException {
+      print("A picat si nu e bine ca nu a mers scrioerea");
+    }
+  }
+
   LoginFailure _mapLoginFailures(String errorCode) {
     return switch (errorCode) {
       "wrong-password" => LoginFailure.wrongCredentials,

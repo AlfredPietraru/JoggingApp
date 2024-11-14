@@ -39,10 +39,11 @@ final class MapLocationSuccesfull extends MapState {
   final LocationPermission permission;
   final LatLng center;
 
-  const MapLocationSuccesfull(
-      {required this.center,
-      required this.serviceEnabled,
-      required this.permission});
+  const MapLocationSuccesfull({
+    required this.center,
+    required this.serviceEnabled,
+    required this.permission,
+  });
 
   MapLocationSuccesfull copyWith({
     bool? serviceEnabled,

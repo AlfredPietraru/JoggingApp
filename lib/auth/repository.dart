@@ -46,6 +46,10 @@ class UserRepository {
     });
   }
 
+  Future<void> writePositionsToDatabase(String positionInfo, User user) async {
+    authenticationClient.writePositionsToDatabase(positions: positionInfo, user: user);
+  }
+
   User? getUserFromMemory() {
     final int? age = prefs.getInt('age');
     if (age == null) return null;

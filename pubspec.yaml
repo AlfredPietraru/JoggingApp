@@ -56,6 +56,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   gif: ^2.3.0
   animated_text_kit: ^4.2.2
+  flutter_map_math: ^0.1.7
 
 dev_dependencies:
   flutter_test:

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
 import 'package:jogging/pages/settings/settings_page.dart';
-import 'package:location/location.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -17,8 +15,10 @@ class MapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: ((context) =>
-          MapCubit(userRepository: context.read<AppCubit>().userRepository)),
+      create: ((context) => MapCubit(
+            userRepository: context.read<AppCubit>().userRepository,
+            user: context.read<AppCubit>().user!,
+          )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(
           listener: (context, state) {},
@@ -31,13 +31,13 @@ class MapPage extends StatelessWidget {
 
 class _MapPage extends StatefulWidget {
   const _MapPage();
-
   @override
   State<_MapPage> createState() => __MapPageState();
 }
 
 class __MapPageState extends State<_MapPage> {
   late GoogleMapController mapController;
+  final LatLng mockCoordinates = const LatLng(4, 4);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -53,18 +53,19 @@ class __MapPageState extends State<_MapPage> {
               title: const Text('Jogging Time'),
               actions: [
                 ElevatedButton(
-                    onPressed: switch (oldState) {
-                      MapPositionTracking() =>
-                        context.read<MapCubit>().stopTrackingLocation,
-                      MapLocationSuccesfull() =>
-                        context.read<MapCubit>().startTrackingLocation,
-                      _ => null,
-                    },
-                    child: switch (oldState) {
-                      MapPositionTracking() => const Text('Stop Tracking'),
-                      MapLocationFailed() => const Text('No Location Found'),
-                      _ => const Text('Start Tracking'),
-                    })
+                  onPressed: switch (oldState) {
+                    MapPositionTracking() =>
+                      context.read<MapCubit>().stopTrackingLocation,
+                    MapLocationSuccesfull() =>
+                      context.read<MapCubit>().startTrackingLocation,
+                    _ => null,
+                  },
+                  child: switch (oldState) {
+                    MapPositionTracking() => const Text('Stop Tracking'),
+                    MapLocationFailed() => const Text('No Location Found'),
+                    _ => const Text('Start Tracking'),
+                  },
+                ),
               ],
             ),
             body: (state is MapInitial)
@@ -80,21 +81,28 @@ class __MapPageState extends State<_MapPage> {
                               MapPositionTracking() =>
                                 oldState.returnCoordinates(),
                               MapLocationSuccesfull() => oldState.center,
-                              _ => const LatLng(4, 4),
+                              _ => mockCoordinates,
                             },
-                            zoom: 15.0,
+                            zoom: 17.0,
                           ),
                           markers: {
                             Marker(
-                              markerId: const MarkerId('user_location'),
+                              markerId: const MarkerId('InitialUserLocation'),
+                              position:
+                                  context.read<MapCubit>().initialMapLocation,
+                              infoWindow:
+                                  const InfoWindow(title: 'Initial Location'),
+                            ),
+                            Marker(
+                              markerId: const MarkerId('InitialUserLocation'),
                               position: switch (oldState) {
                                 MapPositionTracking() =>
                                   oldState.returnCoordinates(),
                                 MapLocationSuccesfull() => oldState.center,
-                                _ => const LatLng(4, 4),
+                                _ => mockCoordinates,
                               },
                               infoWindow:
-                                  const InfoWindow(title: 'Your Location'),
+                                  const InfoWindow(title: 'Current Location'),
                             ),
                           },
                         ),
