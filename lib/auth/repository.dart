@@ -30,7 +30,7 @@ class UserRepository {
         return Left(l);
       },
       (r) {
-        _writeUserToMemory(r);
+        writeUserToMemory(r);
         return Right(r);
       },
     );
@@ -47,7 +47,12 @@ class UserRepository {
   }
 
   Future<void> writePositionsToDatabase(String positionInfo, User user) async {
-    authenticationClient.writePositionsToDatabase(positions: positionInfo, user: user);
+    authenticationClient.writePositionsToDatabase(
+        positions: positionInfo, user: user);
+  }
+
+  void updateUserInformation(User user) {
+    authenticationClient.updateUserInformation(user);
   }
 
   User? getUserFromMemory() {
@@ -63,13 +68,17 @@ class UserRepository {
     if (uid == null) return null;
     final String? sex = prefs.getString('sex');
     if (sex == null) return null;
+    final int? numberOfRuns = prefs.getInt('numberOfRuns');
+    if (numberOfRuns == null) return null;
     return User(
-        age: age,
-        uid: uid,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        sex: Sex.fromName(sex));
+      age: age,
+      uid: uid,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      sex: Sex.fromName(sex),
+      numberOfRuns: numberOfRuns,
+    );
   }
 
   void deleteUserFromMemory() async {
@@ -79,14 +88,16 @@ class UserRepository {
     await prefs.remove('lastName');
     await prefs.remove('uid');
     await prefs.remove('sex');
+    await prefs.remove('numberOfRuns');
   }
 
-  void _writeUserToMemory(User user) async {
+  void writeUserToMemory(User user) async {
     await prefs.setString('email', user.email);
     await prefs.setString('firstName', user.firstName);
     await prefs.setString('lastName', user.lastName);
     await prefs.setInt('age', user.age);
     await prefs.setString('uid', user.uid);
     await prefs.setString('sex', user.sex.toString());
+    await prefs.setInt('numberOfRuns', user.numberOfRuns);
   }
 }

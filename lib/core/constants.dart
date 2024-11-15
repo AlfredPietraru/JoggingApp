@@ -99,6 +99,11 @@ abstract class AppFontWeight {
 class AppColors {
   static const buttonInteriorGreen = Color(0xFFE6F0DC);
   static const transparent = Colors.transparent;
+  static const Color eerieBlack = Color(0xFF1A1F16);
+  static const Color pakistanGreen = Color(0xFF1E3F20);
+  static const Color hunterGreen = Color(0xFF345830);
+  static const Color fernGreen = Color(0xFF4A7856);
+  static const Color aquamarine = Color(0xFF94ECBE);
 }
 
 abstract class AppPadding {
@@ -108,7 +113,7 @@ abstract class AppPadding {
   /// the standard padding for a page, specifically an onboarding page
   /// (at least for now)
   static const page =
-      EdgeInsets.symmetric(horizontal: unit * 0.8, vertical: unit * 2);
+      EdgeInsets.symmetric(horizontal: unit * 1.2, vertical: unit * 2);
   static const horizontalPage = EdgeInsets.symmetric(horizontal: 1.5 * unit);
 
   static const profile =

@@ -41,6 +41,7 @@ class AuthenticationClient {
         lastName: lastName,
         sex: sex,
         age: age,
+        numberOfRuns: 0,
       );
       await _db
           .collection("users")
@@ -49,6 +50,21 @@ class AuthenticationClient {
       return Right(user);
     } on firebase_auth.FirebaseAuthException catch (e) {
       return Left(_mapCreateUserFailures(e.code));
+    }
+  }
+
+  Future<void> updateUserInformation(User user) async {
+    Map<String, String> updateInfo = {
+      "firstName": user.firstName,
+      "lastName": user.lastName,
+      'sex': user.sex.toName(),
+      'age': user.age.toString(),
+    };
+    try {
+      print(updateInfo);
+      await _db.collection("users").doc(user.uid).update(updateInfo);
+    } on FirebaseException {
+      print("nu este internet");
     }
   }
 
@@ -78,7 +94,7 @@ class AuthenticationClient {
       await _db
           .collection("users")
           .doc(user.uid)
-          .collection("first_run")
+          .collection("run_${user.numberOfRuns.toString()}")
           .doc('stepOne')
           .set({"data": "$positions"});
     } on FirebaseException {

@@ -36,13 +36,11 @@ final class MapLocationFailed extends MapState {
 
 final class MapLocationSuccesfull extends MapState {
   final bool serviceEnabled;
-  final LocationPermission permission;
   final LatLng center;
 
   const MapLocationSuccesfull({
     required this.center,
     required this.serviceEnabled,
-    required this.permission,
   });
 
   MapLocationSuccesfull copyWith({
@@ -52,25 +50,63 @@ final class MapLocationSuccesfull extends MapState {
   }) {
     return MapLocationSuccesfull(
       serviceEnabled: serviceEnabled ?? this.serviceEnabled,
-      permission: permission ?? this.permission,
       center: center ?? this.center,
     );
   }
 
   @override
-  List<Object> get props => [serviceEnabled, permission, center];
+  List<Object> get props => [serviceEnabled, center];
 }
 
 final class MapPositionTracking extends MapState {
   final Position position;
-  final LocationPermission permission;
+  final int numberHalfHourPassed;
+  final int numberPositionsReceived;
 
-  const MapPositionTracking({required this.permission, required this.position});
+  const MapPositionTracking({
+    required this.numberHalfHourPassed,
+    required this.position,
+    required this.numberPositionsReceived,
+  });
+
+  factory MapPositionTracking.fromCoordinates(
+      {required double latitude, required double longitude}) {
+    return MapPositionTracking(
+      position: Position(
+        latitude: latitude,
+        longitude: longitude,
+        timestamp: DateTime.now(),
+        accuracy: 0.0,
+        altitude: 0.0,
+        altitudeAccuracy: 0.0,
+        heading: 0.0,
+        headingAccuracy: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+      ),
+      numberHalfHourPassed: 0,
+      numberPositionsReceived: 0,
+    );
+  }
+
+  MapPositionTracking copyWith({
+    Position? position,
+    int? numberHalfHourPassed,
+    int? numberPositionsReceived,
+  }) {
+    return MapPositionTracking(
+        numberPositionsReceived:
+            numberPositionsReceived ?? this.numberPositionsReceived,
+        position: position ?? this.position,
+        numberHalfHourPassed:
+            numberHalfHourPassed ?? this.numberHalfHourPassed);
+  }
 
   LatLng returnCoordinates() {
     return LatLng(position.latitude, position.longitude);
   }
 
   @override
-  List<Object> get props => [permission, position];
+  List<Object> get props =>
+      [position, numberHalfHourPassed, numberPositionsReceived];
 }

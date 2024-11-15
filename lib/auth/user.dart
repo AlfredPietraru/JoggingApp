@@ -11,10 +11,12 @@ final class User extends Equatable {
     required this.lastName,
     required this.age,
     required this.sex,
+    required this.numberOfRuns,
   });
 
   factory User.getInitialUser(String email, String uid) {
     return User(
+        numberOfRuns: 0,
         uid: uid,
         email: email,
         firstName: "",
@@ -34,6 +36,7 @@ final class User extends Equatable {
       sex: Sex.fromName(
         json['sex'] as String,
       ),
+      numberOfRuns: json['numberOfRuns'] as int,
     );
   }
 
@@ -44,6 +47,7 @@ final class User extends Equatable {
   final String lastName;
   final int age;
   final Sex sex;
+  final int numberOfRuns;
 
   User copyWith({
     String? email,
@@ -52,6 +56,7 @@ final class User extends Equatable {
     int? age,
     Sex? sex,
     String? uid,
+    int? numberOfRuns,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -60,6 +65,7 @@ final class User extends Equatable {
       lastName: lastName ?? this.lastName,
       age: age ?? this.age,
       sex: sex ?? this.sex,
+      numberOfRuns: numberOfRuns ?? this.numberOfRuns,
     );
   }
 
@@ -73,6 +79,7 @@ final class User extends Equatable {
       'sex': sex.toName(),
       'age': age,
       'runs': [],
+      'numberOfRuns': numberOfRuns,
     };
   }
 
@@ -83,6 +90,7 @@ final class User extends Equatable {
         lastName,
         sex,
         age,
+        numberOfRuns,
       ];
 }
 

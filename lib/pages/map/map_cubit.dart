@@ -15,6 +15,8 @@ class MapCubit extends Cubit<MapState> {
   }
 
   int updatePeriod = 1;
+  late bool serviceEnabled;
+  late LocationPermission permission;
   final User user;
   final UserRepository userRepository;
   List<Position> positionsList = [];
@@ -22,8 +24,6 @@ class MapCubit extends Cubit<MapState> {
   late LatLng initialMapLocation;
 
   void initialise() async {
-    bool serviceEnabled;
-    LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       emit(MapLocationFailed(
@@ -54,7 +54,6 @@ class MapCubit extends Cubit<MapState> {
     emit(
       MapLocationSuccesfull(
         center: LatLng(currentPosition.latitude, currentPosition.longitude),
-        permission: permission,
         serviceEnabled: serviceEnabled,
       ),
     );
@@ -70,17 +69,32 @@ class MapCubit extends Cubit<MapState> {
     Position position = await Geolocator.getCurrentPosition();
     positionsList.add(position);
     emit(
-      MapPositionTracking(position: position, permission: oldState.permission),
+      MapPositionTracking(
+          position: position,
+          numberHalfHourPassed: 0,
+          numberPositionsReceived: 0),
     );
+
     timer = Timer.periodic(
       Duration(seconds: updatePeriod),
       (Timer t) async {
         Position position = await Geolocator.getCurrentPosition();
         positionsList.add(position);
-        emit(
-          MapPositionTracking(
-              position: position, permission: oldState.permission),
-        );
+        if (state is MapPositionTracking) {
+          final oldState = state as MapPositionTracking;
+          emit(oldState.copyWith(
+            position: position,
+            numberPositionsReceived: oldState.numberPositionsReceived + 1,
+          ));
+        }
+        if (state is MapLocationSuccesfull) {
+          emit(
+            MapPositionTracking(
+                position: position,
+                numberHalfHourPassed: 0,
+                numberPositionsReceived: 0),
+          );
+        }
       },
     );
   }
@@ -94,7 +108,6 @@ class MapCubit extends Cubit<MapState> {
       emit(
         MapLocationSuccesfull(
           center: oldState.returnCoordinates(),
-          permission: oldState.permission,
           serviceEnabled: true,
         ),
       );
@@ -102,10 +115,10 @@ class MapCubit extends Cubit<MapState> {
     emit(
       MapLocationSuccesfull(
         center: oldState.returnCoordinates(),
-        permission: oldState.permission,
         serviceEnabled: true,
       ),
     );
+    
     Future.delayed(Duration.zero, () async {
       await userRepository.writePositionsToDatabase(
           _convertPositionsListToString(), user);
@@ -114,22 +127,10 @@ class MapCubit extends Cubit<MapState> {
   }
 
   void _displayFakeMeasurement(MapLocationSuccesfull oldState) {
-    emit(
-      MapPositionTracking(
-          position: Position(
-            latitude: oldState.center.latitude,
-            longitude: oldState.center.longitude,
-            timestamp: DateTime.now(),
-            accuracy: 0.0,
-            altitude: 0.0,
-            altitudeAccuracy: 0.0,
-            heading: 0.0,
-            headingAccuracy: 0.0,
-            speed: 0.0,
-            speedAccuracy: 0.0,
-          ),
-          permission: oldState.permission),
-    );
+    emit(MapPositionTracking.fromCoordinates(
+      latitude: oldState.center.latitude,
+      longitude: oldState.center.longitude,
+    ));
   }
 
   String _convertPositionsListToString() {

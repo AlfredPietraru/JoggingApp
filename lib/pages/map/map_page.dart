@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';
+import 'package:jogging/pages/history/history_page.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
 import 'package:jogging/pages/settings/settings_page.dart';
 
@@ -155,7 +156,11 @@ class NavigationDrawer extends StatelessWidget {
                   icon: Assets.icons.settings,
                   name: "Settings"),
               CustomListTile(
-                  onTap: () {}, icon: Assets.icons.runner, name: "History"),
+                  onTap: () {
+                    Navigator.push(context, HistoryPage.page());
+                  },
+                  icon: Assets.icons.runner,
+                  name: "History"),
             ],
           ),
         ),
