@@ -8,7 +8,7 @@ class MyBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.buttonInteriorGreen,
+        backgroundColor: AppColors.buttonInterior,
         shape: CircleBorder(
           side: BorderSide(
             color: Colors.green.shade800,

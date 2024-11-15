@@ -97,7 +97,7 @@ abstract class AppFontWeight {
 }
 
 class AppColors {
-  static const buttonInteriorGreen = Color(0xFFE6F0DC);
+  static const buttonInterior = Color.fromRGBO(102, 187, 106, 1);
   static const transparent = Colors.transparent;
   static const Color eerieBlack = Color(0xFF1A1F16);
   static const Color pakistanGreen = Color(0xFF1E3F20);

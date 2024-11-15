@@ -31,7 +31,6 @@ class AppCubit extends Cubit<AppState> {
         .copyWith(lastName: lastName, firstName: firstName, age: age, sex: sex);
     emit(state.copyWith(user: newUser));
     userRepository.writeUserToMemory(newUser);
-    print("a scris in memoria interna");
     userRepository.updateUserInformation(newUser);
   }
 

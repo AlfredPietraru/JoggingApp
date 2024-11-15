@@ -369,7 +369,7 @@ class EditButton extends StatelessWidget {
       ),
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.buttonInteriorGreen,
+        backgroundColor: AppColors.buttonInterior,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),

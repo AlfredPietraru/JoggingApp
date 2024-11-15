@@ -39,7 +39,12 @@ class _LandingPageState extends State<LandingPage>
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.green, Colors.red, Colors.blue])),
+                colors: [
+              AppColors.buttonInterior,
+              AppColors.aquamarine,
+              AppColors.hunterGreen,
+              AppColors.pakistanGreen,
+            ])),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,18 +111,22 @@ class _LandingPageState extends State<LandingPage>
               width: 250,
               height: 60,
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      side: BorderSide(color: Colors.red.shade800, width: 3),
-                    ),
-                    backgroundColor: Colors.green.shade400,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side:
+                        const BorderSide(color: AppColors.eerieBlack, width: 3),
                   ),
-                  onPressed: () {
-                    Navigator.push(context, RegisterPage.page());
-                  },
-                  child:
-                      const Text('Register', style: TextStyle(fontSize: 30))),
+                  backgroundColor: Colors.green.shade400,
+                ),
+                onPressed: () {
+                  Navigator.push(context, RegisterPage.page());
+                },
+                child: const Text(
+                  'Register',
+                  style: TextStyle(fontSize: 30, color: AppColors.eerieBlack),
+                ),
+              ),
             ),
             const SizedBox(height: 40),
             SizedBox(
@@ -127,16 +136,17 @@ class _LandingPageState extends State<LandingPage>
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(color: Colors.red.shade800, width: 3),
+                    side:
+                        const BorderSide(color: AppColors.eerieBlack, width: 3),
                   ),
-                  backgroundColor: Colors.green.shade400,
+                  backgroundColor: AppColors.buttonInterior,
                 ),
                 onPressed: () {
                   Navigator.push(context, LoginPage.page());
                 },
                 child: const Text(
                   'Login',
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(fontSize: 30, color: AppColors.eerieBlack),
                 ),
               ),
             ),

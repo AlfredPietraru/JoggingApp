@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/core/back_button.dart';
@@ -25,7 +24,7 @@ class HistoryPage extends StatelessWidget {
 }
 
 class _HistoryPage extends StatefulWidget {
-  const _HistoryPage({super.key});
+  const _HistoryPage();
 
   @override
   State<_HistoryPage> createState() => __HistoryPageState();

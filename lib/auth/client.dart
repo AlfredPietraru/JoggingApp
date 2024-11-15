@@ -61,7 +61,6 @@ class AuthenticationClient {
       'age': user.age.toString(),
     };
     try {
-      print(updateInfo);
       await _db.collection("users").doc(user.uid).update(updateInfo);
     } on FirebaseException {
       print("nu este internet");
@@ -96,7 +95,7 @@ class AuthenticationClient {
           .doc(user.uid)
           .collection("run_${user.numberOfRuns.toString()}")
           .doc('stepOne')
-          .set({"data": "$positions"});
+          .set({"data": positions});
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");
     }
