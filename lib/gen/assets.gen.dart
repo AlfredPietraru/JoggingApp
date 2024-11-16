@@ -9,6 +9,30 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsBackgroundsGen {
+  const $AssetsBackgroundsGen();
+
+  /// File path: assets/backgrounds/avenue-815297_640.jpg
+  AssetGenImage get avenue815297640 =>
+      const AssetGenImage('assets/backgrounds/avenue-815297_640.jpg');
+
+  /// File path: assets/backgrounds/collect_info_background.jpg
+  AssetGenImage get collectInfoBackground =>
+      const AssetGenImage('assets/backgrounds/collect_info_background.jpg');
+
+  /// File path: assets/backgrounds/other_option.jpeg
+  AssetGenImage get otherOption =>
+      const AssetGenImage('assets/backgrounds/other_option.jpeg');
+
+  /// File path: assets/backgrounds/register_background.jpg
+  AssetGenImage get registerBackground =>
+      const AssetGenImage('assets/backgrounds/register_background.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values =>
+      [avenue815297640, collectInfoBackground, otherOption, registerBackground];
+}
+
 class $AssetsGifsGen {
   const $AssetsGifsGen();
 
@@ -54,6 +78,7 @@ class $AssetsImagesGen {
 class Assets {
   Assets._();
 
+  static const $AssetsBackgroundsGen backgrounds = $AssetsBackgroundsGen();
   static const $AssetsGifsGen gifs = $AssetsGifsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();

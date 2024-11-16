@@ -12,14 +12,17 @@ class InfoCollectorInitialState extends InfoCollectorState {
   final int age;
   final String firstName;
   final String lastName;
-  InfoCollectorInitialState(
-      {required this.email,
-      required this.password,
-      required this.sex,
-      required this.age,
-      required this.firstName,
-      required this.lastName,
-      required this.failure});
+  final bool stopFromClicking;
+  InfoCollectorInitialState({
+    required this.email,
+    required this.password,
+    required this.sex,
+    required this.age,
+    required this.firstName,
+    required this.lastName,
+    required this.failure,
+    required this.stopFromClicking,
+  });
 
   InfoCollectorInitialState copyWith({
     String? email,
@@ -29,6 +32,7 @@ class InfoCollectorInitialState extends InfoCollectorState {
     String? firstName,
     String? lastName,
     CreateUserFailure? failure,
+    bool? stopFromClicking,
   }) {
     return InfoCollectorInitialState(
       email: email ?? this.email,
@@ -38,11 +42,13 @@ class InfoCollectorInitialState extends InfoCollectorState {
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       failure: failure ?? this.failure,
+      stopFromClicking: stopFromClicking ?? this.stopFromClicking,
     );
   }
 
   @override
-  List<Object?> get props => [email, firstName, lastName, age, sex, failure];
+  List<Object?> get props =>
+      [email, firstName, lastName, age, sex, failure, stopFromClicking];
 }
 
 class InfoCollectorSuccessState extends InfoCollectorState {

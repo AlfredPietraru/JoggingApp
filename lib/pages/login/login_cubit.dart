@@ -24,12 +24,12 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> loginUser() async {
     final oldState = state as LoginStateInitial;
-    if (!_isEmailValid()) {
+    if (!isEmailValid()) {
       emit(oldState.copyWith(failure: LoginFailure.invalidEmail));
       return;
     }
 
-    if (!_isPasswordValid()) {
+    if (!isPasswordValid()) {
       emit(oldState.copyWith(failure: LoginFailure.invalidPassword));
       return;
     }
@@ -44,7 +44,7 @@ class LoginCubit extends Cubit<LoginState> {
     });
   }
 
-  bool _isEmailValid() {
+  bool isEmailValid() {
     final oldState = state as LoginStateInitial;
     if (oldState.email == "") {
       return false;
@@ -60,7 +60,7 @@ class LoginCubit extends Cubit<LoginState> {
     return regex.hasMatch(oldState.email);
   }
 
-  bool _isPasswordValid() {
+  bool isPasswordValid() {
     final oldState = state as LoginStateInitial;
     return oldState.password.length > 6;
   }

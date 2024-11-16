@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
+import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
+import 'package:jogging/core/custom_button.dart';
+import 'package:jogging/core/custom_textform.dart';
+import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/info_collector/info_collector_cubit.dart';
 import 'package:jogging/pages/info_collector/info_collector_state.dart';
 import 'package:jogging/pages/map/map_page.dart';
@@ -64,109 +69,148 @@ class __InfoCollectorState extends State<_InfoCollector> {
       return (previous is InfoCollectorInitialState) &&
           (current is InfoCollectorInitialState);
     }, builder: (context, state) {
+      final oldState = state;
       return Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.6), BlendMode.colorBurn),
+              image: AssetImage(Assets.backgrounds.avenue815297640.path),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Padding(
+            padding: AppPadding.page,
+            child: ListView(
+              children: [
+                const Align(
+                    alignment: Alignment.topLeft, child: MyBackButton()),
+                const SizedBox(height: 30),
+                Text(
+                  'Tell us your first name:',
+                  style: AppTextStyle.body.copyWith(fontSize: 30),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                CustomTextForm(
+                  controller: firstNameController,
+                  labelText: 'First name',
+                  onChanged: context.read<InfoCollectorCubit>().changeFirstName,
+                ),
+                Text(
+                  switch ((state as InfoCollectorInitialState).failure) {
+                    CreateUserFailure.invalidFirstName => "Invalid firstname",
+                    _ => "",
                   },
-                  child: const Text("Back", style: TextStyle(fontSize: 30)),
+                  style: AppTextStyle.alert.copyWith(color: Colors.red),
                 ),
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                controller: firstNameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Enter your first name',
+                Text(
+                  'And your last name:',
+                  style: AppTextStyle.body.copyWith(fontSize: 30),
                 ),
-                onChanged: context.read<InfoCollectorCubit>().changeFirstName,
-              ),
-              Text(
-                switch ((state as InfoCollectorInitialState).failure) {
-                  CreateUserFailure.invalidFirstName => "Invalid firstname",
-                  _ => "",
-                },
-                style: AppTextStyle.alert.copyWith(color: Colors.red),
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                controller: lastNameController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                CustomTextForm(
+                  controller: lastNameController,
                   labelText: 'Enter your last name',
+                  onChanged: context.read<InfoCollectorCubit>().changeLastName,
                 ),
-                onChanged: context.read<InfoCollectorCubit>().changeLastName,
-              ),
-              Text(
-                switch (state.failure) {
-                  CreateUserFailure.invalidLastName => "Invalid lastname",
-                  _ => "",
-                },
-                style: AppTextStyle.alert.copyWith(color: Colors.red),
-              ),
-              const SizedBox(height: 30),
-              const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Choose your age:')),
-              const SizedBox(height: 20),
-              NumberPicker(
-                value: state.age,
-                minValue: 18,
-                maxValue: 100,
-                onChanged: context.read<InfoCollectorCubit>().changeAgeValue,
-              ),
-              const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Choose your gender:')),
-              const SizedBox(height: 20),
-              DropdownButton<String>(
-                value: (context.read<InfoCollectorCubit>().state
-                        as InfoCollectorInitialState)
-                    .sex
-                    .toName(),
-                onChanged: context.read<InfoCollectorCubit>().changeSexValue,
-                items: [
-                  DropdownMenuItem(
-                    value: Sex.female.toName(),
-                    child: Text(Sex.female.toName()),
-                  ),
-                  DropdownMenuItem(
-                    value: Sex.male.toName(),
-                    child: Text(Sex.male.toName()),
-                  ),
-                  DropdownMenuItem(
-                    value: Sex.other.toName(),
-                    child: Text(Sex.other.toName()),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: context.read<InfoCollectorCubit>().createUser,
-                child: Text(
-                  "Send profile info",
-                  style: AppTextStyle.button,
+                Text(
+                  switch (state.failure) {
+                    CreateUserFailure.invalidLastName => "Invalid lastname",
+                    _ => "",
+                  },
+                  style: AppTextStyle.alert.copyWith(color: Colors.red),
                 ),
-              ),
-              Text(
-                switch (state.failure) {
-                  CreateUserFailure.emailInUseFailure =>
-                    "An account with this email already exists",
-                  CreateUserFailure.noInternetConnection =>
-                    "No internet connection.",
-                  CreateUserFailure.unknownFailure => "Unknown failure occured",
-                  _ => "",
-                },
-                style: AppTextStyle.alert.copyWith(color: Colors.red),
-              ),
-            ],
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  'Choose your age:',
+                  style: AppTextStyle.body.copyWith(fontSize: 30),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  child: NumberPicker(
+                    itemWidth: MediaQuery.of(context).size.width / 6,
+                    itemCount: 5,
+                    axis: Axis.horizontal,
+                    selectedTextStyle: AppTextStyle.body
+                        .copyWith(fontSize: 30, color: Colors.red),
+                    textStyle: AppTextStyle.body.copyWith(fontSize: 30),
+                    value: state.age,
+                    minValue: 18,
+                    maxValue: 100,
+                    onChanged:
+                        context.read<InfoCollectorCubit>().changeAgeValue,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Choose your gender:',
+                    style: AppTextStyle.body.copyWith(fontSize: 30),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.xxxlg),
+                  child: DropdownButton<String>(
+                    borderRadius: BorderRadius.circular(20),
+                    style: AppTextStyle.body.copyWith(fontSize: 30),
+                    alignment: Alignment.center,
+                    value: (context.read<InfoCollectorCubit>().state
+                            as InfoCollectorInitialState)
+                        .sex
+                        .toName(),
+                    onChanged:
+                        context.read<InfoCollectorCubit>().changeSexValue,
+                    items: [
+                      DropdownMenuItem(
+                        alignment: Alignment.center,
+                        value: Sex.female.toName(),
+                        child: Text(Sex.female.toName()),
+                      ),
+                      DropdownMenuItem(
+                        alignment: Alignment.center,
+                        value: Sex.male.toName(),
+                        child: Text(Sex.male.toName()),
+                      ),
+                      DropdownMenuItem(
+                        alignment: Alignment.center,
+                        value: Sex.other.toName(),
+                        child: Text(Sex.other.toName()),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 40),
+                
+                Align(
+                  alignment: Alignment.center,
+                  child: CustomButton(
+                    stopFromClicking: switch (oldState) {
+                      InfoCollectorInitialState() => oldState.stopFromClicking,
+                      _ => false,
+                    },
+                    onPressed: context.read<InfoCollectorCubit>().createUser,
+                    label: "Send profile info",
+                  ),
+                ),
+                Text(
+                  switch (state.failure) {
+                    CreateUserFailure.emailInUseFailure =>
+                      "An account with this email already exists",
+                    CreateUserFailure.noInternetConnection =>
+                      "No internet connection.",
+                    CreateUserFailure.unknownFailure =>
+                      "Unknown failure occured",
+                    _ => "",
+                  },
+                  style: AppTextStyle.alert.copyWith(color: Colors.red),
+                ),
+              ],
+            ),
           ),
         ),
       );

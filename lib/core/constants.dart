@@ -30,15 +30,15 @@ abstract class AppTextStyle {
   );
 
   static final TextStyle alert = _nunito.copyWith(
-    fontSize: 14,
-    fontWeight: AppFontWeight.regular,
-    color: Colors.black,
+    fontSize: 20,
+    color: Colors.red,
+    fontWeight: FontWeight.w900,
   );
 
   static final TextStyle body = _nunito.copyWith(
-    fontSize: 16,
-    fontWeight: AppFontWeight.regular,
-    color: Colors.black,
+    fontSize: 25,
+    fontWeight: FontWeight.w900,
+    color: AppColors.eerieBlack,
   );
 
   static final TextStyle button = _nunito.copyWith(
@@ -104,6 +104,11 @@ class AppColors {
   static const Color hunterGreen = Color(0xFF345830);
   static const Color fernGreen = Color(0xFF4A7856);
   static const Color aquamarine = Color(0xFF94ECBE);
+  static const Color enabledFieldOrange = Color(0xFFD29E52);
+  static const Color enabledInsideFieldBlue = Color(0xFF72C1B0);
+  static const Color containerBackground = Color(0xFFC1E899);
+  static const Color textColorBrown = Color(0xFF9A6735);
+  static const Color costalBlue = Color(0xFF077A81);
 }
 
 abstract class AppPadding {

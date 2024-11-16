@@ -17,6 +17,7 @@ class InfoCollectorCubit extends Cubit<InfoCollectorState> {
           firstName: '',
           lastName: '',
           failure: CreateUserFailure.noFailureAtAll,
+          stopFromClicking: false,
         ));
   final UserRepository userRepository;
   final String email;
@@ -52,6 +53,7 @@ class InfoCollectorCubit extends Cubit<InfoCollectorState> {
 
   void createUser() async {
     final oldState = state as InfoCollectorInitialState;
+    emit((state as InfoCollectorInitialState).copyWith(stopFromClicking: true));
     final result = await userRepository.createUser(
         email: email,
         password: password,

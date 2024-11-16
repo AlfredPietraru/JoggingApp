@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jogging/core/constants.dart';
 
@@ -6,25 +7,36 @@ class MyBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.buttonInterior,
-        shape: CircleBorder(
-          side: BorderSide(
-            color: Colors.green.shade800,
-            width: 3,
+    return SizedBox(
+      height: 70,
+      width: 160,
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: const BorderSide(color: AppColors.eerieBlack, width: 3),
           ),
+          backgroundColor: AppColors.buttonInterior,
         ),
-      ),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Icon(
-          color: Colors.green.shade400,
-          Icons.arrow_back_ios_sharp,
-          size: 45,
+        child: Row(
+          children: [
+            const Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.eerieBlack,
+              size: 30,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'Back',
+              style: AppTextStyle.button.copyWith(
+                fontSize: 30,
+                color: AppColors.eerieBlack,
+              ),
+            ),
+          ],
         ),
       ),
     );

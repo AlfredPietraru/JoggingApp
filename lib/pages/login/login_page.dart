@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
+import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
+import 'package:jogging/core/custom_button.dart';
+import 'package:jogging/core/custom_textform.dart';
 import 'package:jogging/pages/login/login_cubit.dart';
 import 'package:jogging/pages/login/login_state.dart';
 import 'package:jogging/pages/map/map_page.dart';
@@ -60,22 +63,16 @@ class __LoginPageState extends State<_LoginPage> {
         final state = (currentState as LoginStateInitial);
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: AppPadding.page,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Back", style: TextStyle(fontSize: 30)),
-                ),
-                TextFormField(
+                const MyBackButton(),
+                const SizedBox(height: AppSpacing.xlg),
+                CustomTextForm(
                   controller: emailController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your email',
-                  ),
                   onChanged: context.read<LoginCubit>().adaptEmail,
+                  labelText: 'Enter your email',
                 ),
                 Text(
                     switch (state.failure) {
@@ -86,14 +83,11 @@ class __LoginPageState extends State<_LoginPage> {
                       _ => "",
                     },
                     style: AppTextStyle.alert),
-                const SizedBox(height: 20),
-                TextFormField(
+                const SizedBox(height: AppSpacing.xlg),
+                CustomTextForm(
                   controller: passwordController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter your passsword.',
-                  ),
                   onChanged: context.read<LoginCubit>().adaptPassword,
+                  labelText: 'Enter your passsword',
                 ),
                 Text(
                     switch (state.failure) {
@@ -105,12 +99,10 @@ class __LoginPageState extends State<_LoginPage> {
                     },
                     style: AppTextStyle.alert),
                 const SizedBox(height: 30),
-                ElevatedButton(
+                CustomButton(
+                  stopFromClicking: false,
                   onPressed: context.read<LoginCubit>().loginUser,
-                  child: Text(
-                    'Login into account',
-                    style: AppTextStyle.button,
-                  ),
+                  label: "Login into account",
                 ),
                 Text(
                   switch (state.failure) {

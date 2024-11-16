@@ -89,6 +89,10 @@ flutter:
     - assets/icons/pencil.svg
     - assets/icons/danger.svg
     - assets/gifs/hello.gif
+    - assets/backgrounds/register_background.jpg
+    - assets/backgrounds/collect_info_background.jpg
+    - assets/backgrounds/other_option.jpeg
+    - assets/backgrounds/avenue-815297_640.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
