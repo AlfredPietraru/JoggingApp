@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
+import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/custom_button.dart';
 import 'package:jogging/core/custom_textform.dart';
 import 'package:jogging/pages/login/login_cubit.dart';
@@ -25,6 +26,7 @@ class LoginPage extends StatelessWidget {
         return BlocListener<LoginCubit, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccessful) {
+              context.read<AppCubit>().setUser(state.user);
               Navigator.push(context, MapPage.page());
             }
           },
@@ -69,6 +71,11 @@ class __LoginPageState extends State<_LoginPage> {
               children: [
                 const MyBackButton(),
                 const SizedBox(height: AppSpacing.xlg),
+                Text(
+                  'We are glad to see you back!',
+                  style: AppTextStyle.body.copyWith(fontSize: 25),
+                ),
+                const SizedBox(height: AppSpacing.lg),
                 CustomTextForm(
                   controller: emailController,
                   onChanged: context.read<LoginCubit>().adaptEmail,
@@ -83,7 +90,6 @@ class __LoginPageState extends State<_LoginPage> {
                       _ => "",
                     },
                     style: AppTextStyle.alert),
-                const SizedBox(height: AppSpacing.xlg),
                 CustomTextForm(
                   controller: passwordController,
                   onChanged: context.read<LoginCubit>().adaptPassword,
@@ -99,9 +105,15 @@ class __LoginPageState extends State<_LoginPage> {
                     },
                     style: AppTextStyle.alert),
                 const SizedBox(height: 30),
+                state.requestLoading
+                    ? const CircularProgressIndicator()
+                    : const SizedBox(height: 0),
+                const SizedBox(height: AppSpacing.md),
                 CustomButton(
                   stopFromClicking: false,
-                  onPressed: context.read<LoginCubit>().loginUser,
+                  onPressed: state.requestLoading
+                      ? () {}
+                      : context.read<LoginCubit>().loginUser,
                   label: "Login into account",
                 ),
                 Text(

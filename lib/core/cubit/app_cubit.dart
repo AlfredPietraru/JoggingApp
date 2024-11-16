@@ -13,11 +13,10 @@ class AppCubit extends Cubit<AppState> {
     initialize();
   }
 
-  User? user;
   final UserRepository userRepository;
 
   void initialize() async {
-    user = userRepository.getUserFromMemory();
+    User? user = userRepository.getUserFromMemory();
     if (user == null) {
       emit(const AppState(user: null, status: AppStatus.unauthenticated));
       return;
@@ -25,9 +24,15 @@ class AppCubit extends Cubit<AppState> {
     emit(AppState(user: user, status: AppStatus.authenticated));
   }
 
+  void setUser(User user) {
+    emit(
+      state.copyWith(user: user, status: AppStatus.authenticated),
+    );
+  }
+
   void changeUserInformation(
       {String? firstName, String? lastName, int? age, Sex? sex}) {
-    User newUser = user!
+    User newUser = state.user!
         .copyWith(lastName: lastName, firstName: firstName, age: age, sex: sex);
     emit(state.copyWith(user: newUser));
     userRepository.writeUserToMemory(newUser);
@@ -35,7 +40,7 @@ class AppCubit extends Cubit<AppState> {
   }
 
   String getFullUserName() {
-    return "${user!.firstName} ${user!.lastName}";
+    return "${state.user!.firstName} ${state.user!.lastName}";
   }
 
   void deleteUserFromMemory() async {

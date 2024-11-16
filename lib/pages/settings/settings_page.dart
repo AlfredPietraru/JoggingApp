@@ -7,6 +7,7 @@ import 'package:jogging/auth/user.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/core/custom_textform.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/landing_page.dart';
 import 'package:jogging/pages/settings/settings_cubit.dart';
@@ -21,7 +22,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SettingsCubit(
-        user: context.read<AppCubit>().user!,
+        user: context.read<AppCubit>().state.user!,
       ),
       child: Builder(builder: (context) {
         return const _SettingsPage();
@@ -85,13 +86,13 @@ class _SettingsPageState extends State<_SettingsPage> {
                   Text("Email:",
                       style: AppTextStyle.body.copyWith(fontSize: 20)),
                   Text(
-                    context.read<AppCubit>().user!.email,
+                    context.read<AppCubit>().state.user!.email,
                     style: AppTextStyle.body.copyWith(fontSize: 20),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   const Divider(),
                   EditableZone(
-                    label: "First Name",
+                    label: "First Name:",
                     value: oldState.firstName,
                     onPressedEditButton:
                         context.read<SettingsCubit>().toggleEditFirstName,
@@ -101,7 +102,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                   ),
                   const Divider(),
                   EditableZone(
-                    label: "Last Name",
+                    label: "Last Name:",
                     value: oldState.lastName,
                     onPressedEditButton:
                         context.read<SettingsCubit>().toggleEditLastName,
@@ -173,6 +174,13 @@ class _SettingsPageState extends State<_SettingsPage> {
                           ),
                           oldState.editAge
                               ? NumberPicker(
+                                  axis: Axis.horizontal,
+                                  selectedTextStyle: AppTextStyle.body.copyWith(
+                                      fontSize: 20, color: Colors.red),
+                                  itemWidth:
+                                      MediaQuery.of(context).size.width / 6,
+                                  textStyle:
+                                      AppTextStyle.body.copyWith(fontSize: 20),
                                   value: oldState.age,
                                   minValue: 18,
                                   maxValue: 100,
@@ -209,14 +217,17 @@ class _SettingsPageState extends State<_SettingsPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   Text('Sometimes, you should change me:',
-                      style: AppTextStyle.body),
+                      style: AppTextStyle.body.copyWith(fontSize: 20)),
                   const SizedBox(height: AppSpacing.md),
                   _DangerousButton(
                     onPressed: () {},
                     text: "Change password",
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  Text('Want to switch account?', style: AppTextStyle.body),
+                  Text(
+                    'Want to switch account?',
+                    style: AppTextStyle.body.copyWith(fontSize: 20),
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   _DangerousButton(
                     onPressed: () {
@@ -273,12 +284,9 @@ class EditableZone extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             showEditingWindow
-                ? TextFormField(
+                ? CustomTextForm(
                     controller: textController,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: value,
-                    ),
+                    labelText: value,
                     onChanged: onChanged,
                   )
                 : Text(
@@ -305,6 +313,7 @@ class _DangerousButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(
               vertical: AppSpacing.md, horizontal: AppSpacing.lg),
+          backgroundColor: Colors.yellow.shade500,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20)),
             side: BorderSide(color: Colors.red, width: 3),
@@ -328,26 +337,61 @@ class LogOutAlertDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(
         'Logging out?',
-        style: AppTextStyle.headline1.copyWith(color: Colors.red),
+        style: AppTextStyle.headline1.copyWith(color: AppColors.textColorBrown),
       ),
-      content:
-          Text('Are you sure you want to proceed', style: AppTextStyle.alert),
+      content: Text(
+        'Are you sure you want to proceed?',
+        style: AppTextStyle.alert.copyWith(color: AppColors.textColorBrown),
+        textAlign: TextAlign.center,
+      ),
       elevation: 20,
-      backgroundColor: Colors.blue.shade500,
+      backgroundColor: AppColors.buttonInterior,
+      actionsPadding: const EdgeInsets.all(AppSpacing.xlg),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
-        TextButton(
-          child: const Text("No"),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        SizedBox(
+          width: 120,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.enabledFieldOrange,
+              shadowColor: AppColors.costalBlue,
+              elevation: 10,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              side: const BorderSide(color: AppColors.eerieBlack, width: 2),
+            ),
+            child: Text(
+              "No",
+              style: AppTextStyle.alert.copyWith(
+                color: AppColors.textColorBrown,
+              ),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-        TextButton(
-          child: const Text("Yes"),
-          onPressed: () {
-            context.read<AppCubit>().deleteUserFromMemory();
-            Navigator.of(context).popUntil((Route<dynamic> route) => false);
-            Navigator.push(context, LandingPage.page());
-          },
+        SizedBox(
+          width: 120,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.enabledFieldOrange,
+              shadowColor: AppColors.costalBlue,
+              elevation: 10,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              side: const BorderSide(color: AppColors.eerieBlack, width: 2),
+            ),
+            child: Text(
+              "Yes",
+              style: AppTextStyle.alert.copyWith(
+                color: AppColors.textColorBrown,
+              ),
+            ),
+            onPressed: () {
+              context.read<AppCubit>().deleteUserFromMemory();
+              Navigator.of(context).popUntil((Route<dynamic> route) => false);
+              Navigator.push(context, LandingPage.page());
+            },
+          ),
         ),
       ],
     );
@@ -357,6 +401,7 @@ class LogOutAlertDialog extends StatelessWidget {
 class EditButton extends StatelessWidget {
   const EditButton({super.key, required this.onPressed});
   final Function() onPressed;
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
@@ -365,12 +410,13 @@ class EditButton extends StatelessWidget {
       ),
       label: Text(
         'Edit',
-        style: AppTextStyle.button.copyWith(color: Colors.green.shade800),
+        style: AppTextStyle.button.copyWith(color: AppColors.eerieBlack),
       ),
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.buttonInterior,
         shape: RoundedRectangleBorder(
+          side: const BorderSide(color: AppColors.eerieBlack, width: 2),
           borderRadius: BorderRadius.circular(20.0),
         ),
       ),

@@ -18,7 +18,7 @@ class MapPage extends StatelessWidget {
     return BlocProvider(
       create: ((context) => MapCubit(
             userRepository: context.read<AppCubit>().userRepository,
-            user: context.read<AppCubit>().user!,
+            user: context.read<AppCubit>().state.user!,
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
+import 'package:jogging/auth/user.dart';
 import 'package:jogging/pages/login/login_state.dart';
 import 'package:jogging/auth/repository.dart';
 
@@ -9,6 +10,7 @@ class LoginCubit extends Cubit<LoginState> {
           failure: LoginFailure.noFailureAtAll,
           password: '',
           email: '',
+          requestLoading: false,
         ));
   final UserRepository userRepository;
 
@@ -22,25 +24,29 @@ class LoginCubit extends Cubit<LoginState> {
         .copyWith(password: newPassword, failure: LoginFailure.noFailureAtAll));
   }
 
-  Future<void> loginUser() async {
+  Future<User?> loginUser() async {
     final oldState = state as LoginStateInitial;
+    emit(oldState.copyWith(requestLoading: true));
     if (!isEmailValid()) {
-      emit(oldState.copyWith(failure: LoginFailure.invalidEmail));
-      return;
+      emit(oldState.copyWith(
+          failure: LoginFailure.invalidEmail, requestLoading: false));
+      return null;
     }
 
     if (!isPasswordValid()) {
-      emit(oldState.copyWith(failure: LoginFailure.invalidPassword));
-      return;
+      emit(oldState.copyWith(
+          failure: LoginFailure.invalidPassword, requestLoading: false));
+      return null;
     }
 
-    final failure = await userRepository.login(
+    final result = await userRepository.login(
         email: oldState.email, password: oldState.password);
-    failure.fold((l) {
-      emit(oldState.copyWith(failure: l));
+    return result.fold((l) {
+      emit(oldState.copyWith(failure: l, requestLoading: false));
+      return null;
     }, (r) {
-      emit(LoginSuccessful());
-      return;
+      emit(LoginSuccessful(user: r));
+      return r;
     });
   }
 
