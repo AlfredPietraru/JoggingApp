@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/auth/user.dart';
+import 'package:jogging/pages/map/run_repository.dart';
 part 'map_state.dart';
 
 class MapCubit extends Cubit<MapState> {
-  MapCubit({required this.userRepository, required this.user})
+  MapCubit({required this.userRepository, required this.runRepository})
       : super(const MapInitial(
             initialLocation: LatLng(4, 4),
             serviceEnabled: false,
@@ -18,14 +17,15 @@ class MapCubit extends Cubit<MapState> {
   }
 
   int updatePeriod = 1;
-  late bool serviceEnabled;
-  late LocationPermission permission;
-  final User user;
+  int stageSize = 60;
   final UserRepository userRepository;
+  final RunRepository runRepository;
   Timer? timer;
   late LatLng initialLocation;
 
   void initialise() async {
+    late bool serviceEnabled;
+    late LocationPermission permission;
     if (state is! MapInitial) return;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
@@ -56,6 +56,7 @@ class MapCubit extends Cubit<MapState> {
     if (timer != null) return;
     Position pos = (state as MapLocationSuccesfull).center;
     emit(MapPositionTrack(positions: [pos], noStage: 0, noPositions: 1));
+    runRepository.resetRunRepository(DateTime.now(), pos);
     Position position = await Geolocator.getCurrentPosition();
     final oldState = state as MapPositionTrack;
     oldState.positions.add(position);
@@ -68,7 +69,15 @@ class MapCubit extends Cubit<MapState> {
         final oldState = state as MapPositionTrack;
         Position position = await Geolocator.getCurrentPosition();
         oldState.positions.add(position);
-        emit(oldState.copyWith(noPositions: oldState.noPositions + 1));
+        if (oldState.positions.length == 60) {
+          runRepository.convertPositionsListToString(oldState.positions);
+          emit(oldState.copyWith(
+              noPositions: 1,
+              noStage: oldState.noStage + 1,
+              positions: [oldState.positions.last]));
+        } else {
+          emit(oldState.copyWith(noPositions: oldState.noPositions + 1));
+        }
       },
     );
   }
@@ -79,16 +88,19 @@ class MapCubit extends Cubit<MapState> {
     timer = null;
     final oldState = state as MapPositionTrack;
     emit(MapLocationSuccesfull(
-        center: oldState.positions.last,
-        positions: oldState.positions,
-        noStage: oldState.noStage));
+      center: oldState.positions.last,
+      positions: oldState.positions,
+      noStage: oldState.noStage,
+    ));
 
     Future.delayed(
       const Duration(seconds: 1),
       () async {
         final oldState = state as MapLocationSuccesfull;
+        runRepository.convertPositionsListToString(oldState.positions);
         await userRepository.writePositionsToDatabase(
-            oldState.convertPositionsListToString(), user, 0);
+          runRepository,
+        );
         emit(oldState.copyWith(positions: []));
       },
     );

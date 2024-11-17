@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:jogging/auth/client.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/auth/user.dart';
+import 'package:jogging/pages/map/run_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
@@ -46,9 +47,8 @@ class UserRepository {
     });
   }
 
-  Future<void> writePositionsToDatabase(String positionInfo, User user, int noStep) async {
-    authenticationClient.writePositionsToDatabase(
-        positions: positionInfo, user: user, noStep: noStep);
+  Future<void> writePositionsToDatabase(RunRepository runRepository) async {
+    authenticationClient.writePositionsToDatabase(runRepository: runRepository);
   }
 
   void updateUserInformation(User user) {

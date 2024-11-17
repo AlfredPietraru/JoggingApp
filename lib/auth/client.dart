@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/auth/user.dart';
+import 'package:jogging/pages/map/run_repository.dart';
 
 class AuthenticationClient {
   AuthenticationClient({
@@ -88,14 +89,14 @@ class AuthenticationClient {
   }
 
   Future<void> writePositionsToDatabase(
-      {required String positions, required User user, required int noStep}) async {
+      {required RunRepository runRepository}) async {
     try {
       await _db
           .collection("users")
-          .doc(user.uid)
-          .collection("run_${user.numberOfRuns.toString()}")
-          .doc('step_$noStep')
-          .set({"data": positions});
+          .doc(runRepository.user.uid)
+          .collection("run_${runRepository.user.numberOfRuns.toString()}")
+          .doc('run_info')
+          .set(runRepository.convertToDatabaseOut());
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");
     }

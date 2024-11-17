@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
+import 'package:jogging/pages/map/run_repository.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -15,7 +16,9 @@ class MapPage extends StatelessWidget {
     return BlocProvider(
       create: ((context) => MapCubit(
             userRepository: context.read<AppCubit>().userRepository,
-            user: context.read<AppCubit>().state.user!,
+            runRepository: RunRepository(
+              user: context.read<AppCubit>().state.user!,
+            ),
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(

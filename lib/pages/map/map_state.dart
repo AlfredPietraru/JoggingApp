@@ -56,6 +56,7 @@ final class MapLocationSuccesfull extends MapState {
     Position? center,
     List<Position>? positions,
     int? noStage,
+    DateTime? dateTime,
   }) {
     return MapLocationSuccesfull(
       noStage: noStage ?? this.noStage,
@@ -64,27 +65,12 @@ final class MapLocationSuccesfull extends MapState {
     );
   }
 
-  String convertPositionsListToString() {
-    final computationClass = FlutterMapMath();
-    List<String> outData = [
-      "${0.0.toString()}/${positions[0].timestamp.toString()}"
-    ];
-    double distance = 0.0;
-    for (int i = 1; i < positions.length; i++) {
-      distance = computationClass.distanceBetween(
-          positions[i - 1].latitude,
-          positions[i - 1].longitude,
-          positions[i].latitude,
-          positions[i].longitude,
-          "meters");
-      outData.add(
-          "${distance.toStringAsFixed(2)}/${positions[i].timestamp.toString()}");
-    }
-    return outData.reduce((value, element) => "$value,$element");
-  }
-
   @override
-  List<Object> get props => [center, positions, noStage];
+  List<Object> get props => [
+        center,
+        positions,
+        noStage,
+      ];
 }
 
 final class MapPositionTrack extends MapState {
@@ -102,6 +88,7 @@ final class MapPositionTrack extends MapState {
     List<Position>? positions,
     int? noStage,
     int? noPositions,
+    DateTime? dateTime,
   }) {
     return MapPositionTrack(
       noPositions: noPositions ?? this.noPositions,
