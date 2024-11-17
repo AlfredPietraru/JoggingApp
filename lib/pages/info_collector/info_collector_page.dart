@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
+import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/custom_button.dart';
 import 'package:jogging/core/custom_textform.dart';
 import 'package:jogging/gen/assets.gen.dart';
@@ -32,6 +33,7 @@ class InfoCollector extends StatelessWidget {
         return BlocListener<InfoCollectorCubit, InfoCollectorState>(
           listener: (context, state) {
             if (state is InfoCollectorSuccessState) {
+              context.read<AppCubit>().setUser(state.user);
               Navigator.pushReplacement(context, MapPage.page());
             }
           },
@@ -184,7 +186,6 @@ class __InfoCollectorState extends State<_InfoCollector> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                
                 Align(
                   alignment: Alignment.center,
                   child: CustomButton(

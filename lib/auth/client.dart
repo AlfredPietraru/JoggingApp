@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -36,6 +37,7 @@ class AuthenticationClient {
         return const Left(CreateUserFailure.unknownFailure);
       }
       User user = User(
+        runs: const [],
         email: email,
         uid: userCredentials.user!.uid,
         firstName: firstName,
@@ -97,6 +99,13 @@ class AuthenticationClient {
           .collection("run_${runRepository.user.numberOfRuns.toString()}")
           .doc('run_info')
           .set(runRepository.convertToDatabaseOut());
+
+      List<String> runs = runRepository.user.runs;
+      runs.add("run_${runRepository.user.numberOfRuns.toString()}");
+      await _db.collection("users").doc(runRepository.user.uid).update({
+        "numberOfRuns": runRepository.user.numberOfRuns + 1,
+        "runs": runs,
+      });
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");
     }

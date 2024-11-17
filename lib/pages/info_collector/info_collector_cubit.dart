@@ -64,7 +64,7 @@ class InfoCollectorCubit extends Cubit<InfoCollectorState> {
     result.fold((l) {
       emit((state as InfoCollectorInitialState).copyWith(failure: l));
     }, (r) {
-      emit(InfoCollectorSuccessState());
+      emit(InfoCollectorSuccessState(user: r));
     });
   }
 

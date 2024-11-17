@@ -16,6 +16,7 @@ void main() async {
   final userRepository = UserRepository(
       authenticationClient: client,
       prefs: await SharedPreferences.getInstance());
+  // userRepository.deleteUserFromMemory();
   runApp(
     MultiBlocProvider(
       providers: [

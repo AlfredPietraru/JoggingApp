@@ -31,9 +31,17 @@ class AppCubit extends Cubit<AppState> {
   }
 
   void changeUserInformation(
-      {String? firstName, String? lastName, int? age, Sex? sex}) {
-    User newUser = state.user!
-        .copyWith(lastName: lastName, firstName: firstName, age: age, sex: sex);
+      {String? firstName,
+      String? lastName,
+      int? age,
+      Sex? sex,
+      List<String>? runs}) {
+    User newUser = state.user!.copyWith(
+        lastName: lastName,
+        firstName: firstName,
+        age: age,
+        sex: sex,
+        runs: runs);
     emit(state.copyWith(user: newUser));
     userRepository.writeUserToMemory(newUser);
     userRepository.updateUserInformation(newUser);

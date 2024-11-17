@@ -70,7 +70,10 @@ class UserRepository {
     if (sex == null) return null;
     final int? numberOfRuns = prefs.getInt('numberOfRuns');
     if (numberOfRuns == null) return null;
+    final List<String>? runs = prefs.getStringList('runs');
+    if (runs == null) return null;
     return User(
+      runs: runs,
       age: age,
       uid: uid,
       email: email,
@@ -82,6 +85,7 @@ class UserRepository {
   }
 
   void deleteUserFromMemory() async {
+    await prefs.remove('runs');
     await prefs.remove('age');
     await prefs.remove('email');
     await prefs.remove('firstName');
@@ -99,5 +103,6 @@ class UserRepository {
     await prefs.setString('uid', user.uid);
     await prefs.setString('sex', user.sex.toString());
     await prefs.setInt('numberOfRuns', user.numberOfRuns);
+    await prefs.setStringList('runs', user.runs);
   }
 }
