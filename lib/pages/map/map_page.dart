@@ -22,7 +22,16 @@ class MapPage extends StatelessWidget {
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is MapLocationSuccesfull) {
+              if (state.updateUser) {
+                print("aici");
+                context
+                    .read<AppCubit>()
+                    .setUser(context.read<MapCubit>().updateUser());
+              }
+            }
+          },
           child: const _MapPage(),
         );
       }),

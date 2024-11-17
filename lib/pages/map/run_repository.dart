@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/user.dart';
 
 class RunRepository {
-  final User user;
+  late User user;
   int noStage = 0;
   late Position initialPosition;
   List<String> stages = [];
@@ -58,5 +58,12 @@ class RunRepository {
       out["stage_${i.toString()}"] = stages[i];
     }
     return out;
+  }
+
+  User updateUser() {
+    List<String> runs = [...user.runs];
+    runs.add("run_${user.numberOfRuns}");
+    user = user.copyWith(runs: runs, numberOfRuns: user.numberOfRuns + 1);
+    return user;
   }
 }

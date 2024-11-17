@@ -41,8 +41,10 @@ final class MapLocationSuccesfull extends MapState {
   final Position center;
   final List<Position> positions;
   final int noStage;
+  final bool updateUser;
 
   const MapLocationSuccesfull({
+    required this.updateUser,
     required this.noStage,
     required this.positions,
     required this.center,
@@ -57,8 +59,10 @@ final class MapLocationSuccesfull extends MapState {
     List<Position>? positions,
     int? noStage,
     DateTime? dateTime,
+    bool? updateUser,
   }) {
     return MapLocationSuccesfull(
+      updateUser: updateUser ?? this.updateUser,
       noStage: noStage ?? this.noStage,
       center: center ?? this.center,
       positions: positions ?? this.positions,
@@ -70,6 +74,7 @@ final class MapLocationSuccesfull extends MapState {
         center,
         positions,
         noStage,
+        updateUser,
       ];
 }
 

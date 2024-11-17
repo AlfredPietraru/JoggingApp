@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
+import 'package:jogging/auth/user.dart';
 import 'package:jogging/pages/map/run_repository.dart';
 part 'map_state.dart';
 
@@ -46,7 +47,10 @@ class MapCubit extends Cubit<MapState> {
     }
     Position currentPosition = await Geolocator.getCurrentPosition();
     emit(MapLocationSuccesfull(
-        center: currentPosition, positions: const [], noStage: 0));
+        updateUser: false,
+        center: currentPosition,
+        positions: const [],
+        noStage: 0));
     initialLocation =
         LatLng(currentPosition.latitude, currentPosition.longitude);
   }
@@ -88,6 +92,7 @@ class MapCubit extends Cubit<MapState> {
     timer = null;
     final oldState = state as MapPositionTrack;
     emit(MapLocationSuccesfull(
+      updateUser: true,
       center: oldState.positions.last,
       positions: oldState.positions,
       noStage: oldState.noStage,
@@ -101,7 +106,7 @@ class MapCubit extends Cubit<MapState> {
         await userRepository.writePositionsToDatabase(
           runRepository,
         );
-        emit(oldState.copyWith(positions: []));
+        emit(oldState.copyWith(positions: [], updateUser: false));
       },
     );
   }
@@ -113,5 +118,9 @@ class MapCubit extends Cubit<MapState> {
       MapLocationSuccesfull() => oldState.returnCoordinates(),
       MapPositionTrack() => oldState.returnCoordinates(),
     };
+  }
+
+  User updateUser() {
+    return runRepository.updateUser();
   }
 }

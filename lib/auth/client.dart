@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -96,15 +95,14 @@ class AuthenticationClient {
       await _db
           .collection("users")
           .doc(runRepository.user.uid)
-          .collection("run_${runRepository.user.numberOfRuns.toString()}")
+          .collection(runRepository.user.runs.last)
           .doc('run_info')
           .set(runRepository.convertToDatabaseOut());
-
-      List<String> runs = runRepository.user.runs;
-      runs.add("run_${runRepository.user.numberOfRuns.toString()}");
+      print(runRepository.user.runs);
+      print(runRepository.user.numberOfRuns);
       await _db.collection("users").doc(runRepository.user.uid).update({
-        "numberOfRuns": runRepository.user.numberOfRuns + 1,
-        "runs": runs,
+        "numberOfRuns": runRepository.user.numberOfRuns,
+        "runs": runRepository.user.runs,
       });
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");
