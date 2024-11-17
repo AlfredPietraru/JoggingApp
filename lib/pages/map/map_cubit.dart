@@ -10,7 +10,10 @@ part 'map_state.dart';
 
 class MapCubit extends Cubit<MapState> {
   MapCubit({required this.userRepository, required this.user})
-      : super(MapInitial()) {
+      : super(const MapInitial(
+            initialLocation: LatLng(4, 4),
+            serviceEnabled: false,
+            permission: LocationPermission.unableToDetermine)) {
     initialise();
   }
 
@@ -19,136 +22,84 @@ class MapCubit extends Cubit<MapState> {
   late LocationPermission permission;
   final User user;
   final UserRepository userRepository;
-  List<Position> positionsList = [];
   Timer? timer;
-  late LatLng initialMapLocation;
+  late LatLng initialLocation;
 
   void initialise() async {
+    if (state is! MapInitial) return;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      emit(MapLocationFailed(
-          serviceEnabled: serviceEnabled,
-          permission: LocationPermission.unableToDetermine));
-      return;
-    }
+    if (!serviceEnabled) return;
+    final oldState = state as MapInitial;
+
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.deniedForever) {
-      emit(MapLocationFailed(
-        serviceEnabled: serviceEnabled,
-        permission: permission,
-      ));
+      emit(oldState.copyWith(serviceEnabled: true, permission: permission));
       return;
     }
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        emit(MapLocationFailed(
-          serviceEnabled: serviceEnabled,
-          permission: permission,
-        ));
+        emit(oldState.copyWith(serviceEnabled: true, permission: permission));
         return;
       }
     }
     Position currentPosition = await Geolocator.getCurrentPosition();
-    emit(
-      MapLocationSuccesfull(
-        center: LatLng(currentPosition.latitude, currentPosition.longitude),
-        serviceEnabled: serviceEnabled,
-      ),
-    );
-    initialMapLocation =
+    emit(MapLocationSuccesfull(
+        center: currentPosition, positions: const [], noStage: 0));
+    initialLocation =
         LatLng(currentPosition.latitude, currentPosition.longitude);
   }
 
   void startTrackingLocation() async {
     if (state is! MapLocationSuccesfull) return;
     if (timer != null) return;
-    final oldState = state as MapLocationSuccesfull;
-    _displayFakeMeasurement(oldState);
+    Position pos = (state as MapLocationSuccesfull).center;
+    emit(MapPositionTrack(positions: [pos], noStage: 0, noPositions: 1));
     Position position = await Geolocator.getCurrentPosition();
-    positionsList.add(position);
-    emit(
-      MapPositionTracking(
-          position: position,
-          numberHalfHourPassed: 0,
-          numberPositionsReceived: 0),
-    );
+    final oldState = state as MapPositionTrack;
+    oldState.positions.add(position);
+    emit(oldState.copyWith(noPositions: oldState.noPositions + 1));
 
     timer = Timer.periodic(
       Duration(seconds: updatePeriod),
       (Timer t) async {
+        if (state is MapLocationSuccesfull) return;
+        final oldState = state as MapPositionTrack;
         Position position = await Geolocator.getCurrentPosition();
-        positionsList.add(position);
-        if (state is MapPositionTracking) {
-          final oldState = state as MapPositionTracking;
-          emit(oldState.copyWith(
-            position: position,
-            numberPositionsReceived: oldState.numberPositionsReceived + 1,
-          ));
-        }
-        if (state is MapLocationSuccesfull) {
-          emit(
-            MapPositionTracking(
-                position: position,
-                numberHalfHourPassed: 0,
-                numberPositionsReceived: 0),
-          );
-        }
+        oldState.positions.add(position);
+        emit(oldState.copyWith(noPositions: oldState.noPositions + 1));
       },
     );
   }
 
   void stopTrackingLocation() {
-    if (state is! MapPositionTracking) return;
+    if (state is! MapPositionTrack) return;
     timer?.cancel();
     timer = null;
-    final oldState = state as MapPositionTracking;
-    Future.delayed(Duration(seconds: updatePeriod), () {
-      emit(
-        MapLocationSuccesfull(
-          center: oldState.returnCoordinates(),
-          serviceEnabled: true,
-        ),
-      );
-    });
-    emit(
-      MapLocationSuccesfull(
-        center: oldState.returnCoordinates(),
-        serviceEnabled: true,
-      ),
+    final oldState = state as MapPositionTrack;
+    emit(MapLocationSuccesfull(
+        center: oldState.positions.last,
+        positions: oldState.positions,
+        noStage: oldState.noStage));
+
+    Future.delayed(
+      const Duration(seconds: 1),
+      () async {
+        final oldState = state as MapLocationSuccesfull;
+        await userRepository.writePositionsToDatabase(
+            oldState.convertPositionsListToString(), user, 0);
+        emit(oldState.copyWith(positions: []));
+      },
     );
-    
-    Future.delayed(Duration.zero, () async {
-      await userRepository.writePositionsToDatabase(
-          _convertPositionsListToString(), user);
-      positionsList = [];
-    });
   }
 
-  void _displayFakeMeasurement(MapLocationSuccesfull oldState) {
-    emit(MapPositionTracking.fromCoordinates(
-      latitude: oldState.center.latitude,
-      longitude: oldState.center.longitude,
-    ));
-  }
-
-  String _convertPositionsListToString() {
-    final computationClass = FlutterMapMath();
-    List<String> outData = [
-      "(${0.0.toString()}/${positionsList[0].timestamp.toString()}"
-    ];
-    double distance = 0.0;
-    for (int i = 1; i < positionsList.length; i++) {
-      distance = computationClass.distanceBetween(
-          positionsList[i - 1].latitude,
-          positionsList[i - 1].longitude,
-          positionsList[i].latitude,
-          positionsList[i].longitude,
-          "meters");
-      outData.add(
-          "(${distance.toStringAsFixed(2)}/${positionsList[i].timestamp.toString()}");
-    }
-    return outData.reduce((value, element) => "$value,$element");
+  LatLng setMapCenter() {
+    final oldState = state;
+    return switch (oldState) {
+      MapInitial() => oldState.initialLocation,
+      MapLocationSuccesfull() => oldState.returnCoordinates(),
+      MapPositionTrack() => oldState.returnCoordinates(),
+    };
   }
 }

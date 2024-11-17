@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/custom_button.dart';

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jogging/auth/user.dart';
@@ -32,7 +30,7 @@ class SettingsPage extends StatelessWidget {
 }
 
 class _SettingsPage extends StatefulWidget {
-  const _SettingsPage({super.key});
+  const _SettingsPage();
   @override
   State<_SettingsPage> createState() => _SettingsPageState();
 }

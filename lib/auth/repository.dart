@@ -46,9 +46,9 @@ class UserRepository {
     });
   }
 
-  Future<void> writePositionsToDatabase(String positionInfo, User user) async {
+  Future<void> writePositionsToDatabase(String positionInfo, User user, int noStep) async {
     authenticationClient.writePositionsToDatabase(
-        positions: positionInfo, user: user);
+        positions: positionInfo, user: user, noStep: noStep);
   }
 
   void updateUserInformation(User user) {

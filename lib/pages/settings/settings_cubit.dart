@@ -58,7 +58,6 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   bool applyChanges() {
     final oldState = state as SettingsInitial;
-    print(user);
     if (user.firstName != oldState.firstName) return true;
     if (user.lastName != oldState.lastName) return true;
     if (user.age != oldState.age) return true;

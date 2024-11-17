@@ -27,6 +27,10 @@ class LoginPage extends StatelessWidget {
           listener: (context, state) {
             if (state is LoginSuccessful) {
               context.read<AppCubit>().setUser(state.user);
+              context
+                  .read<AppCubit>()
+                  .userRepository
+                  .writeUserToMemory(state.user);
               Navigator.push(context, MapPage.page());
             }
           },

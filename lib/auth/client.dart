@@ -88,13 +88,13 @@ class AuthenticationClient {
   }
 
   Future<void> writePositionsToDatabase(
-      {required String positions, required User user}) async {
+      {required String positions, required User user, required int noStep}) async {
     try {
       await _db
           .collection("users")
           .doc(user.uid)
           .collection("run_${user.numberOfRuns.toString()}")
-          .doc('stepOne')
+          .doc('step_$noStep')
           .set({"data": positions});
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");
