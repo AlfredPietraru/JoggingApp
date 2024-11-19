@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/auth/user.dart';
 import 'package:jogging/pages/map/run_repository.dart';
 part 'map_state.dart';
 
@@ -18,7 +17,7 @@ class MapCubit extends Cubit<MapState> {
   }
 
   int updatePeriod = 1;
-  int stageSize = 60;
+  int stageSize = 20;
   final UserRepository userRepository;
   RunRepository runRepository;
   Timer? timer;
@@ -58,7 +57,8 @@ class MapCubit extends Cubit<MapState> {
     emit(oldState.copyWith(
         positions: [oldState.center], nrStage: 0, status: MapStatus.tracking));
     Position position = await Geolocator.getCurrentPosition();
-    runRepository = runRepository.copyWith(dateTime: DateTime.now());
+    runRepository =
+        runRepository.copyWith(dateTime: DateTime.now(), stages: []);
     emit(MapTrack(
         center: position, positions: [position], status: MapStatus.tracking));
 
@@ -67,16 +67,20 @@ class MapCubit extends Cubit<MapState> {
       (Timer t) async {
         final oldState = state as MapTrack;
         if (oldState.status != MapStatus.tracking) return;
+        if (oldState.positions.length > 60) return;
         Position position = await Geolocator.getCurrentPosition();
         oldState.positions.add(position);
-        if (oldState.positions.length >= 60) {
+        if (oldState.positions.length == 60) {
           runRepository.convertPositionsListToString(oldState.positions);
           emit(oldState.copyWith(
             center: position,
             positions: [position],
           ));
-        } else {
+          return;
+        }
+        if (oldState.positions.length < 60) {
           emit(oldState.copyWith(center: position));
+          return;
         }
       },
     );
@@ -101,7 +105,9 @@ class MapCubit extends Cubit<MapState> {
     };
   }
 
-  void sendRunToDatabase(User user) async {
+  void sendRunToDatabase() async {
+    final user = runRepository.user
+        .copyWith(numberOfRuns: runRepository.user.numberOfRuns + 1);
     runRepository = runRepository.copyWith(user: user);
     final oldState = state as MapTrack;
     if (oldState.status != MapStatus.sending) return;

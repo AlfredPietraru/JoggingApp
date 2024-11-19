@@ -26,8 +26,10 @@ class MapPage extends StatelessWidget {
         return BlocListener<MapCubit, MapState>(
           listener: (context, state) {
             if (state is MapTrack && state.status == MapStatus.sending) {
-              context.read<AppCubit>().addRunToUser();
-              context.read<MapCubit>().sendRunToDatabase(context.read<AppCubit>().state.user!);
+              context
+                  .read<AppCubit>()
+                  .setUser(context.read<MapCubit>().runRepository.user);
+              context.read<MapCubit>().sendRunToDatabase();
             }
           },
           child: const _MapPage(),

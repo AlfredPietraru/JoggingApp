@@ -28,14 +28,7 @@ class AppCubit extends Cubit<AppState> {
     emit(
       state.copyWith(user: user, status: AppStatus.authenticated),
     );
-  }
-
-  void addRunToUser() {
-    List<String> oldRuns = state.user!.runs;
-    List<String> newRuns = [...oldRuns, "run_${state.user!.numberOfRuns}"];
-    emit(state.copyWith(
-        user: state.user!.copyWith(
-            runs: newRuns, numberOfRuns: state.user!.numberOfRuns + 1)));
+    userRepository.writeUserToMemory(user);
   }
 
   void changeUserInformation(
@@ -43,13 +36,13 @@ class AppCubit extends Cubit<AppState> {
       String? lastName,
       int? age,
       Sex? sex,
-      List<String>? runs}) {
+      int? numberOfRuns}) {
     User newUser = state.user!.copyWith(
         lastName: lastName,
         firstName: firstName,
         age: age,
         sex: sex,
-        runs: runs);
+        numberOfRuns: numberOfRuns);
     emit(state.copyWith(user: newUser));
     userRepository.writeUserToMemory(newUser);
     userRepository.updateUserInformation(newUser);

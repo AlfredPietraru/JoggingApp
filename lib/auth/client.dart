@@ -36,7 +36,6 @@ class AuthenticationClient {
         return const Left(CreateUserFailure.unknownFailure);
       }
       User user = User(
-        runs: const [],
         email: email,
         uid: userCredentials.user!.uid,
         firstName: firstName,
@@ -95,12 +94,11 @@ class AuthenticationClient {
       await _db
           .collection("users")
           .doc(runRepository.user.uid)
-          .collection(runRepository.user.runs.last)
+          .collection("run_${runRepository.user.numberOfRuns}")
           .doc('run_info')
           .set(runRepository.convertToDatabaseOut());
       await _db.collection("users").doc(runRepository.user.uid).update({
         "numberOfRuns": runRepository.user.numberOfRuns,
-        "runs": runRepository.user.runs,
       });
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");

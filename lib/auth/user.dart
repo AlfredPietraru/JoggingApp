@@ -12,12 +12,10 @@ final class User extends Equatable {
     required this.age,
     required this.sex,
     required this.numberOfRuns,
-    required this.runs,
   });
 
   factory User.getInitialUser(String email, String uid) {
     return User(
-        runs: const [],
         numberOfRuns: 0,
         uid: uid,
         email: email,
@@ -30,16 +28,16 @@ final class User extends Equatable {
   /// Creates a user from json
   factory User.fromJson(Map<String, dynamic> json, {required String id}) {
     return User(
-        uid: id,
-        email: json['email'] as String,
-        firstName: json['firstName'] as String,
-        lastName: json['lastName'] as String,
-        age: json['age'] as int,
-        sex: Sex.fromName(
-          json['sex'] as String,
-        ),
-        numberOfRuns: json['numberOfRuns'] as int,
-        runs: json['runs']);
+      uid: id,
+      email: json['email'] as String,
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      age: json['age'] as int,
+      sex: Sex.fromName(
+        json['sex'] as String,
+      ),
+      numberOfRuns: json['numberOfRuns'] as int,
+    );
   }
 
   /// The box for local users
@@ -50,7 +48,6 @@ final class User extends Equatable {
   final int age;
   final Sex sex;
   final int numberOfRuns;
-  final List<String> runs;
 
   User copyWith({
     String? email,
@@ -60,10 +57,8 @@ final class User extends Equatable {
     Sex? sex,
     String? uid,
     int? numberOfRuns,
-    List<String>? runs,
   }) {
     return User(
-      runs: runs ?? this.runs,
       uid: uid ?? this.uid,
       email: email ?? this.email,
       firstName: firstName ?? this.firstName,
@@ -83,7 +78,6 @@ final class User extends Equatable {
       'lastName': lastName,
       'sex': sex.toName(),
       'age': age,
-      'runs': runs,
       'numberOfRuns': numberOfRuns,
     };
   }

@@ -36,7 +36,8 @@ class _HistoryPage extends StatefulWidget {
 class __HistoryPageState extends State<_HistoryPage> {
   @override
   Widget build(BuildContext context) {
-    int listLength = context.read<AppCubit>().state.user!.runs.length;
+    int listLength = 0;
+    print(listLength);
     return BlocBuilder<HistoryCubit, HistoryState>(
       builder: (context, state) {
         return Scaffold(
@@ -47,12 +48,8 @@ class __HistoryPageState extends State<_HistoryPage> {
                 child: listLength != 0
                     ? ListView.builder(
                         itemCount: listLength,
-                        itemBuilder: (context, index) => ListTile(
-                          leading: Text(context
-                              .read<AppCubit>()
-                              .state
-                              .user!
-                              .runs[listLength - index - 1]),
+                        itemBuilder: (context, index) => const ListTile(
+                          leading: Text("waiii"),
                         ),
                       )
                     : const Text('It seams that there is nothing here yet'),
