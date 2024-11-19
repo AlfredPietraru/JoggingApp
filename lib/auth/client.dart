@@ -98,8 +98,6 @@ class AuthenticationClient {
           .collection(runRepository.user.runs.last)
           .doc('run_info')
           .set(runRepository.convertToDatabaseOut());
-      print(runRepository.user.runs);
-      print(runRepository.user.numberOfRuns);
       await _db.collection("users").doc(runRepository.user.uid).update({
         "numberOfRuns": runRepository.user.numberOfRuns,
         "runs": runRepository.user.runs,

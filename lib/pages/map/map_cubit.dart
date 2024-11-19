@@ -20,7 +20,7 @@ class MapCubit extends Cubit<MapState> {
   int updatePeriod = 1;
   int stageSize = 60;
   final UserRepository userRepository;
-  final RunRepository runRepository;
+  RunRepository runRepository;
   Timer? timer;
   late LatLng initialLocation;
 
@@ -46,81 +46,81 @@ class MapCubit extends Cubit<MapState> {
       }
     }
     Position currentPosition = await Geolocator.getCurrentPosition();
-    emit(MapLocationSuccesfull(
-        updateUser: false,
-        center: currentPosition,
-        positions: const [],
-        noStage: 0));
+    emit(MapTrack(
+        center: currentPosition, positions: const [], status: MapStatus.ready));
     initialLocation =
         LatLng(currentPosition.latitude, currentPosition.longitude);
   }
 
   void startTrackingLocation() async {
-    if (state is! MapLocationSuccesfull) return;
-    if (timer != null) return;
-    Position pos = (state as MapLocationSuccesfull).center;
-    emit(MapPositionTrack(positions: [pos], noStage: 0, noPositions: 1));
-    runRepository.resetRunRepository(DateTime.now(), pos);
+    final oldState = state as MapTrack;
+    if (oldState.status != MapStatus.ready || timer != null) return;
+    emit(oldState.copyWith(
+        positions: [oldState.center], nrStage: 0, status: MapStatus.tracking));
     Position position = await Geolocator.getCurrentPosition();
-    final oldState = state as MapPositionTrack;
-    oldState.positions.add(position);
-    emit(oldState.copyWith(noPositions: oldState.noPositions + 1));
+    runRepository = runRepository.copyWith(dateTime: DateTime.now());
+    emit(MapTrack(
+        center: position, positions: [position], status: MapStatus.tracking));
 
     timer = Timer.periodic(
       Duration(seconds: updatePeriod),
       (Timer t) async {
-        if (state is MapLocationSuccesfull) return;
-        final oldState = state as MapPositionTrack;
+        final oldState = state as MapTrack;
+        if (oldState.status != MapStatus.tracking) return;
         Position position = await Geolocator.getCurrentPosition();
         oldState.positions.add(position);
-        if (oldState.positions.length == 60) {
+        if (oldState.positions.length >= 60) {
           runRepository.convertPositionsListToString(oldState.positions);
           emit(oldState.copyWith(
-              noPositions: 1,
-              noStage: oldState.noStage + 1,
-              positions: [oldState.positions.last]));
+            center: position,
+            positions: [position],
+          ));
         } else {
-          emit(oldState.copyWith(noPositions: oldState.noPositions + 1));
+          emit(oldState.copyWith(center: position));
         }
       },
     );
   }
 
   void stopTrackingLocation() {
-    if (state is! MapPositionTrack) return;
     timer?.cancel();
     timer = null;
-    final oldState = state as MapPositionTrack;
-    emit(MapLocationSuccesfull(
-      updateUser: true,
-      center: oldState.positions.last,
-      positions: oldState.positions,
-      noStage: oldState.noStage,
-    ));
-
-    Future.delayed(
-      const Duration(seconds: 1),
-      () async {
-        final oldState = state as MapLocationSuccesfull;
-        runRepository.convertPositionsListToString(oldState.positions);
-        await userRepository.writePositionsToDatabase(
-          runRepository,
-        );
-        emit(oldState.copyWith(positions: [], updateUser: false));
-      },
-    );
+    final oldState = state as MapTrack;
+    if (oldState.status != MapStatus.tracking) return;
+    emit(oldState.copyWith(status: MapStatus.blocked));
+    Future.delayed(Duration(seconds: updatePeriod * 2), () {
+      emit(oldState.copyWith(status: MapStatus.sending));
+    });
   }
 
   LatLng setMapCenter() {
     final oldState = state;
     return switch (oldState) {
+      MapTrack() => oldState.returnCoordinates(),
       MapInitial() => oldState.initialLocation,
-      MapLocationSuccesfull() => oldState.returnCoordinates(),
-      MapPositionTrack() => oldState.returnCoordinates(),
     };
   }
 
-  User updateUser() {
-    return runRepository.updateUser();
+  void sendRunToDatabase(User user) async {
+    runRepository = runRepository.copyWith(user: user);
+    final oldState = state as MapTrack;
+    if (oldState.status != MapStatus.sending) return;
+    runRepository.convertPositionsListToString(oldState.positions);
+    await userRepository.writePositionsToDatabase(
+      runRepository,
+    );
+    emit(oldState.copyWith(positions: [], nrStage: 0, status: MapStatus.ready));
+  }
+
+  String displayButtonInfo() {
+    return switch (state) {
+      MapInitial() => 'No location found',
+      MapTrack() => switch ((state as MapTrack).status) {
+          MapStatus.ready => 'Start Tracking',
+          MapStatus.tracking => 'Stop Tracking',
+          MapStatus.sending => 'Sending info',
+          MapStatus.blocked => 'Start Tracking'
+        },
+    };
   }
 }

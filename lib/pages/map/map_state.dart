@@ -37,75 +37,35 @@ final class MapInitial extends MapState {
   List<Object> get props => [serviceEnabled, permission, initialLocation];
 }
 
-final class MapLocationSuccesfull extends MapState {
+enum MapStatus { ready, tracking, sending, blocked}
+
+final class MapTrack extends MapState {
   final Position center;
   final List<Position> positions;
-  final int noStage;
-  final bool updateUser;
+  final MapStatus status;
 
-  const MapLocationSuccesfull({
-    required this.updateUser,
-    required this.noStage,
-    required this.positions,
-    required this.center,
-  });
+  const MapTrack(
+      {required this.center,
+      required this.positions,
+      required this.status});
 
-  LatLng returnCoordinates() {
-    return LatLng(center.latitude, center.longitude);
-  }
-
-  MapLocationSuccesfull copyWith({
+  MapTrack copyWith({
     Position? center,
     List<Position>? positions,
-    int? noStage,
-    DateTime? dateTime,
-    bool? updateUser,
+    int? nrStage,
+    MapStatus? status,
   }) {
-    return MapLocationSuccesfull(
-      updateUser: updateUser ?? this.updateUser,
-      noStage: noStage ?? this.noStage,
+    return MapTrack(
+      status: status ?? this.status,
       center: center ?? this.center,
       positions: positions ?? this.positions,
     );
   }
 
-  @override
-  List<Object> get props => [
-        center,
-        positions,
-        noStage,
-        updateUser,
-      ];
-}
-
-final class MapPositionTrack extends MapState {
-  final List<Position> positions;
-  final int noStage;
-  final int noPositions;
-
-  const MapPositionTrack({
-    required this.noStage,
-    required this.positions,
-    required this.noPositions,
-  });
-
-  MapPositionTrack copyWith({
-    List<Position>? positions,
-    int? noStage,
-    int? noPositions,
-    DateTime? dateTime,
-  }) {
-    return MapPositionTrack(
-      noPositions: noPositions ?? this.noPositions,
-      noStage: noStage ?? this.noStage,
-      positions: positions ?? this.positions,
-    );
-  }
-
   LatLng returnCoordinates() {
-    return LatLng(positions.last.latitude, positions.last.longitude);
+    return LatLng(center.latitude, center.longitude);
   }
 
   @override
-  List<Object> get props => [noStage, noPositions];
+  List<Object> get props => [status, center, positions];
 }

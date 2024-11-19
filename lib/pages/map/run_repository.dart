@@ -1,69 +1,56 @@
 import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/user.dart';
 
 class RunRepository {
-  late User user;
-  int noStage = 0;
-  late Position initialPosition;
-  List<String> stages = [];
+  final User user;
+  final List<String> stages;
   final computationClass = FlutterMapMath();
-  late DateTime dateTime;
+  final DateTime dateTime;
 
-  RunRepository({required this.user});
+  RunRepository({
+    required this.user,
+    required this.dateTime,
+    required this.stages,
+  });
 
-  void resetRunRepository(
-    DateTime dateTime,
-    Position initialPosition,
-  ) {
-    stages = [];
-    noStage = 0;
-    this.dateTime = dateTime;
-    this.initialPosition = initialPosition;
+  RunRepository copyWith({
+    User? user,
+    DateTime? dateTime,
+    List<String>? stages,
+  }) {
+    return RunRepository(
+        user: user ?? this.user,
+        dateTime: dateTime ?? this.dateTime,
+        stages: stages ?? this.stages);
   }
 
-  void setDate(DateTime dateTime) {
-    this.dateTime = dateTime;
+  String _computeInfoSave(Position p1, Position p2) {
+    double distance = computationClass.distanceBetween(
+        p1.latitude, p1.longitude, p2.latitude, p2.longitude, "meters");
+    Duration time = p2.timestamp.difference(p1.timestamp);
+    return "${distance.toStringAsFixed(2)}/${time.inMilliseconds.toString()}/${p2.latitude}/${p2.longitude}";
   }
 
   void convertPositionsListToString(List<Position> positions) {
-    List<String> outData = ["${0.0.toString()}/${0.toString()}"];
-    double distance = 0.0;
-    late Duration time;
+    Position first = positions.first;
+    List<String> outData = [
+      "${0.0.toString()}/${0.toString()}/${first.latitude}/${first.longitude}"
+    ];
     for (int i = 1; i < positions.length; i++) {
-      distance = computationClass.distanceBetween(
-          positions[i - 1].latitude,
-          positions[i - 1].longitude,
-          positions[i].latitude,
-          positions[i].longitude,
-          "meters");
-      time = positions[i].timestamp.difference(positions[i - 1].timestamp);
-      outData.add(
-          "${distance.toStringAsFixed(2)}/${time.inMilliseconds.toString()}");
+      outData.add(_computeInfoSave(positions[i - 1], positions[i]));
     }
     stages.add(outData.reduce((value, element) => "$value,$element"));
-    noStage += 1;
   }
 
   Map<String, dynamic> convertToDatabaseOut() {
     Map<String, dynamic> out = {
-      "initialLocation":
-          LatLng(initialPosition.latitude, initialPosition.longitude)
-              .toString(),
       "start": dateTime.toString(),
-      "noStage": noStage
+      "noStage": stages.length,
     };
-    for (int i = 0; i < noStage; i++) {
+    for (int i = 0; i < stages.length; i++) {
       out["stage_${i.toString()}"] = stages[i];
     }
     return out;
-  }
-
-  User updateUser() {
-    List<String> runs = [...user.runs];
-    runs.add("run_${user.numberOfRuns}");
-    user = user.copyWith(runs: runs, numberOfRuns: user.numberOfRuns + 1);
-    return user;
   }
 }

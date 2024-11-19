@@ -18,18 +18,16 @@ class MapPage extends StatelessWidget {
             userRepository: context.read<AppCubit>().userRepository,
             runRepository: RunRepository(
               user: context.read<AppCubit>().state.user!,
+              dateTime: DateTime.now(),
+              stages: [],
             ),
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(
           listener: (context, state) {
-            if (state is MapLocationSuccesfull) {
-              if (state.updateUser) {
-                print("aici");
-                context
-                    .read<AppCubit>()
-                    .setUser(context.read<MapCubit>().updateUser());
-              }
+            if (state is MapTrack && state.status == MapStatus.sending) {
+              context.read<AppCubit>().addRunToUser();
+              context.read<MapCubit>().sendRunToDatabase(context.read<AppCubit>().state.user!);
             }
           },
           child: const _MapPage(),
@@ -64,17 +62,17 @@ class __MapPageState extends State<_MapPage> {
               actions: [
                 ElevatedButton(
                   onPressed: switch (oldState) {
-                    MapPositionTrack() =>
-                      context.read<MapCubit>().stopTrackingLocation,
-                    MapLocationSuccesfull() =>
-                      context.read<MapCubit>().startTrackingLocation,
+                    MapTrack() => switch ((oldState).status) {
+                        MapStatus.ready =>
+                          context.read<MapCubit>().startTrackingLocation,
+                        MapStatus.tracking =>
+                          context.read<MapCubit>().stopTrackingLocation,
+                        MapStatus.sending => null,
+                        MapStatus.blocked => null,
+                      },
                     _ => null,
                   },
-                  child: switch (oldState) {
-                    MapPositionTrack() => const Text('Stop Tracking'),
-                    MapLocationSuccesfull() => const Text('Start Tracking'),
-                    _ => const Text('No location found'),
-                  },
+                  child: Text(context.read<MapCubit>().displayButtonInfo()),
                 ),
               ],
             ),

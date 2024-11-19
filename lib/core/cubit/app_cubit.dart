@@ -30,6 +30,14 @@ class AppCubit extends Cubit<AppState> {
     );
   }
 
+  void addRunToUser() {
+    List<String> oldRuns = state.user!.runs;
+    List<String> newRuns = [...oldRuns, "run_${state.user!.numberOfRuns}"];
+    emit(state.copyWith(
+        user: state.user!.copyWith(
+            runs: newRuns, numberOfRuns: state.user!.numberOfRuns + 1)));
+  }
+
   void changeUserInformation(
       {String? firstName,
       String? lastName,
