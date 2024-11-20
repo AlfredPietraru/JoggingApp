@@ -1,14 +1,16 @@
 import 'dart:core';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/user.dart';
 
-class RunSession {
+class RunSession extends Equatable {
   final DateTime dateTime;
-  List<List<int>> times;
-  List<List<double>> distances;
-  List<List<LatLng>> coordinates;
+  final List<List<int>> times;
+  final List<List<double>> distances;
+  final List<List<LatLng>> coordinates;
   final computationClass = FlutterMapMath();
   final User user;
 
@@ -31,14 +33,26 @@ class RunSession {
   }
 
   factory RunSession.fromJson(Map<String, dynamic> data, User user) {
-    DateTime dt = (data['start'] as DateTime);
+    DateTime dt = (data['start'] as Timestamp).toDate();
     int nrStages = data["noStage"];
     List<List<LatLng>> coordinates = [];
     List<List<int>> times = [];
     List<List<double>> distances = [];
-
     for (int i = 0; i < nrStages; i++) {
       String info = data["stage_${i.toString()}"];
+      List<double> dist = [];
+      List<int> temp = [];
+      List<LatLng> coord = [];
+      List<String> splittedInfo = info.split(',');
+      for (String elem in splittedInfo) {
+        List<String> tokens = elem.split(' ');
+        dist.add(double.parse(tokens[0]));
+        temp.add(int.parse(tokens[1]));
+        coord.add(LatLng(double.parse(tokens[2]), double.parse(tokens[3])));
+      }
+      times.add(temp);
+      distances.add(dist);
+      coordinates.add(coord);
     }
     return RunSession(
       coordinates: coordinates,
@@ -96,14 +110,14 @@ class RunSession {
     final List<String> toStringValues = [];
     for (int i = 0; i < currentTimes.length; i++) {
       toStringValues.add(
-          "${currentDistances[i].toStringAsFixed(2)} ${currentTimes[i]} ${currentCoordinates[i].latitude} ${currentCoordinates[i].longitude}/");
+          "${currentDistances[i].toStringAsFixed(2)} ${currentTimes[i]} ${currentCoordinates[i].latitude} ${currentCoordinates[i].longitude} ");
     }
     return toStringValues.reduce((value, element) => "$value,$element");
   }
 
   Map<String, dynamic> convertToDatabaseOut() {
     Map<String, dynamic> out = {
-      "start": dateTime.toString(),
+      "start": dateTime,
       "noStage": distances.length,
     };
     for (int i = 0; i < distances.length; i++) {
@@ -111,4 +125,7 @@ class RunSession {
     }
     return out;
   }
+
+  @override
+  List<Object?> get props => [dateTime, times, coordinates, distances, user];
 }

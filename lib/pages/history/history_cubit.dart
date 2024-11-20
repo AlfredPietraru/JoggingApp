@@ -27,10 +27,10 @@ class HistoryCubit extends Cubit<HistoryState> {
     if (user.numberOfRuns > 0) {
       RunSession? runSession =
           await userRepository.returnRunData(user, toOutput[0]);
-      if (runSession != null) return;
+      if (runSession == null) return;
+      final oldState = state as HistoryInitial;
       emit(
-        (state as HistoryInitial)
-            .copyWith(allRuns: toOutput, runSession: runSession),
+        oldState.copyWith(allRuns: toOutput, runSession: runSession),
       );
     }
   }
