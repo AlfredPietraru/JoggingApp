@@ -4,11 +4,11 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/pages/map/run_repository.dart';
+import 'package:jogging/auth/runSession.dart';
 part 'map_state.dart';
 
 class MapCubit extends Cubit<MapState> {
-  MapCubit({required this.userRepository, required this.runRepository})
+  MapCubit({required this.userRepository, required this.runSession})
       : super(const MapInitial(
             initialLocation: LatLng(4, 4),
             serviceEnabled: false,
@@ -19,7 +19,7 @@ class MapCubit extends Cubit<MapState> {
   int updatePeriod = 1;
   int stageSize = 20;
   final UserRepository userRepository;
-  RunRepository runRepository;
+  RunSession runSession;
   Timer? timer;
   late LatLng initialLocation;
 
@@ -57,8 +57,7 @@ class MapCubit extends Cubit<MapState> {
     emit(oldState.copyWith(
         positions: [oldState.center], nrStage: 0, status: MapStatus.tracking));
     Position position = await Geolocator.getCurrentPosition();
-    runRepository =
-        runRepository.copyWith(dateTime: DateTime.now(), stages: []);
+    runSession = runSession.copyWith(dateTime: DateTime.now());
     emit(MapTrack(
         center: position, positions: [position], status: MapStatus.tracking));
 
@@ -67,18 +66,18 @@ class MapCubit extends Cubit<MapState> {
       (Timer t) async {
         final oldState = state as MapTrack;
         if (oldState.status != MapStatus.tracking) return;
-        if (oldState.positions.length > 60) return;
+        if (oldState.positions.length > stageSize) return;
         Position position = await Geolocator.getCurrentPosition();
         oldState.positions.add(position);
-        if (oldState.positions.length == 60) {
-          runRepository.convertPositionsListToString(oldState.positions);
+        if (oldState.positions.length == stageSize) {
+          runSession.addPositionsToSessions(oldState.positions);
           emit(oldState.copyWith(
             center: position,
             positions: [position],
           ));
           return;
         }
-        if (oldState.positions.length < 60) {
+        if (oldState.positions.length < stageSize) {
           emit(oldState.copyWith(center: position));
           return;
         }
@@ -106,15 +105,10 @@ class MapCubit extends Cubit<MapState> {
   }
 
   void sendRunToDatabase() async {
-    final user = runRepository.user
-        .copyWith(numberOfRuns: runRepository.user.numberOfRuns + 1);
-    runRepository = runRepository.copyWith(user: user);
     final oldState = state as MapTrack;
     if (oldState.status != MapStatus.sending) return;
-    runRepository.convertPositionsListToString(oldState.positions);
-    await userRepository.writePositionsToDatabase(
-      runRepository,
-    );
+    runSession.addPositionsToSessions(oldState.positions);
+    await userRepository.writePositionsToDatabase(runSession);
     emit(oldState.copyWith(positions: [], nrStage: 0, status: MapStatus.ready));
   }
 

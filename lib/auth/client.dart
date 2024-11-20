@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:jogging/auth/failures.dart';
+import 'package:jogging/auth/runSession.dart';
 import 'package:jogging/auth/user.dart';
-import 'package:jogging/pages/map/run_repository.dart';
 
 class AuthenticationClient {
   AuthenticationClient({
@@ -89,19 +89,41 @@ class AuthenticationClient {
   }
 
   Future<void> writePositionsToDatabase(
-      {required RunRepository runRepository}) async {
+      {required RunSession runSession}) async {
     try {
       await _db
           .collection("users")
-          .doc(runRepository.user.uid)
-          .collection("run_${runRepository.user.numberOfRuns}")
+          .doc(runSession.user.uid)
+          .collection("run_${runSession.user.numberOfRuns}")
           .doc('run_info')
-          .set(runRepository.convertToDatabaseOut());
-      await _db.collection("users").doc(runRepository.user.uid).update({
-        "numberOfRuns": runRepository.user.numberOfRuns,
+          .set(runSession.convertToDatabaseOut());
+      await _db.collection("users").doc(runSession.user.uid).update({
+        "numberOfRuns": runSession.user.numberOfRuns + 1,
       });
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrioerea");
+    }
+  }
+
+  Future<List<String>> returnRunData(User user, String runName) async {
+    try {
+      final runCollection = await _db
+          .collection("users")
+          .doc(user.uid)
+          .collection(runName)
+          .doc("run_info")
+          .get();
+      Map<String, dynamic>? mapValues = runCollection.data();
+      if (mapValues == null) return [];
+      int numberStages = mapValues["noStage"];
+      List<String> out = [];
+      for (int i = 0; i < numberStages; i++) {
+        out.add(mapValues["stage_${i.toString()}"].toString());
+      }
+      return out;
+    } on FirebaseException catch (e) {
+      print(e.toString());
+      return [];
     }
   }
 

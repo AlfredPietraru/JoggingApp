@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:jogging/auth/runSession.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
-import 'package:jogging/pages/map/run_repository.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -16,19 +16,20 @@ class MapPage extends StatelessWidget {
     return BlocProvider(
       create: ((context) => MapCubit(
             userRepository: context.read<AppCubit>().userRepository,
-            runRepository: RunRepository(
-              user: context.read<AppCubit>().state.user!,
-              dateTime: DateTime.now(),
-              stages: [],
-            ),
+            runSession: RunSession(
+                coordinates: [],
+                distances: [],
+                times: [],
+                dateTime: DateTime.now(),
+                user: context.read<AppCubit>().state.user!),
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(
           listener: (context, state) {
             if (state is MapTrack && state.status == MapStatus.sending) {
-              context
-                  .read<AppCubit>()
-                  .setUser(context.read<MapCubit>().runRepository.user);
+              context.read<AppCubit>().changeUserInformation(
+                  numberOfRuns:
+                      context.read<AppCubit>().state.user!.numberOfRuns + 1);
               context.read<MapCubit>().sendRunToDatabase();
             }
           },

@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:jogging/auth/client.dart';
 import 'package:jogging/auth/failures.dart';
+import 'package:jogging/auth/runSession.dart';
 import 'package:jogging/auth/user.dart';
-import 'package:jogging/pages/map/run_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
@@ -47,8 +47,12 @@ class UserRepository {
     });
   }
 
-  Future<void> writePositionsToDatabase(RunRepository runRepository) async {
-    authenticationClient.writePositionsToDatabase(runRepository: runRepository);
+  Future<List<String>> returnRunData(User user, String runName) async {
+    return await authenticationClient.returnRunData(user, runName);
+  }
+
+  Future<void> writePositionsToDatabase(RunSession runSession) async {
+    authenticationClient.writePositionsToDatabase(runSession: runSession);
   }
 
   void updateUserInformation(User user) {
