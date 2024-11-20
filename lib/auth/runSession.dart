@@ -6,7 +6,7 @@ import 'package:jogging/auth/user.dart';
 
 class RunSession {
   final DateTime dateTime;
-  List<List<double>> times;
+  List<List<int>> times;
   List<List<double>> distances;
   List<List<LatLng>> coordinates;
   final computationClass = FlutterMapMath();
@@ -20,10 +20,39 @@ class RunSession {
     required this.distances,
   });
 
+  factory RunSession.initialRunSession(User user, DateTime dateTime) {
+    return RunSession(
+      coordinates: [],
+      user: user,
+      dateTime: dateTime,
+      times: [],
+      distances: [],
+    );
+  }
+
+  factory RunSession.fromJson(Map<String, dynamic> data, User user) {
+    DateTime dt = (data['start'] as DateTime);
+    int nrStages = data["noStage"];
+    List<List<LatLng>> coordinates = [];
+    List<List<int>> times = [];
+    List<List<double>> distances = [];
+
+    for (int i = 0; i < nrStages; i++) {
+      String info = data["stage_${i.toString()}"];
+    }
+    return RunSession(
+      coordinates: coordinates,
+      user: user,
+      dateTime: dt,
+      times: times,
+      distances: distances,
+    );
+  }
+
   RunSession copyWith({
     List<List<LatLng>>? coordinates,
     DateTime? dateTime,
-    List<List<double>>? times,
+    List<List<int>>? times,
     List<List<double>>? distances,
     User? user,
   }) {
@@ -38,7 +67,7 @@ class RunSession {
 
   void addPositionsToSessions(List<Position> pos) {
     List<double> currentDistances = [0.0];
-    List<double> currentTimes = [0.0];
+    List<int> currentTimes = [0];
     List<LatLng> currentCoordinates = [
       LatLng(pos[0].latitude, pos[0].longitude)
     ];
@@ -53,35 +82,21 @@ class RunSession {
     coordinates.add(currentCoordinates);
   }
 
-  (double, double, LatLng) infoFromPositions(Position p1, Position p2) {
+  (double, int, LatLng) infoFromPositions(Position p1, Position p2) {
     double distance = computationClass.distanceBetween(
         p1.latitude, p1.longitude, p2.latitude, p2.longitude, "meters");
-    double time =
-        p2.timestamp.difference(p1.timestamp).inMilliseconds.toDouble();
+    int time = p2.timestamp.difference(p1.timestamp).inMilliseconds;
     return (distance, time, LatLng(p2.latitude, p2.longitude));
   }
 
-  // "${distance.toStringAsFixed(2)}/${time.inMilliseconds.toString()}/${p2.latitude}/${p2.longitude}";
-
-  // void convertPositionsListToString(List<Position> positions) {
-  //   Position first = positions.first;
-  //   List<String> outData = [
-  //     "${0.0.toString()}/${0.toString()}/${first.latitude}/${first.longitude}"
-  //   ];
-  //   for (int i = 1; i < positions.length; i++) {
-  //     outData.add(_computeInfoSave(positions[i - 1], positions[i]));
-  //   }
-  //   // stages.add(outData.reduce((value, element) => "$value,$element"));
-  // }
-
   String _convertOneListToString(int index) {
-    final List<double> currentTimes = times[index];
+    final List<int> currentTimes = times[index];
     final List<double> currentDistances = distances[index];
     final List<LatLng> currentCoordinates = coordinates[index];
     final List<String> toStringValues = [];
     for (int i = 0; i < currentTimes.length; i++) {
       toStringValues.add(
-          "${currentDistances[i].toStringAsFixed(2)}/${currentTimes[i]}${currentCoordinates[i].latitude}/${currentCoordinates[i].longitude}");
+          "${currentDistances[i].toStringAsFixed(2)} ${currentTimes[i]} ${currentCoordinates[i].latitude} ${currentCoordinates[i].longitude}/");
     }
     return toStringValues.reduce((value, element) => "$value,$element");
   }

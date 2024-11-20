@@ -47,7 +47,7 @@ class UserRepository {
     });
   }
 
-  Future<List<String>> returnRunData(User user, String runName) async {
+  Future<RunSession?> returnRunData(User user, String runName) async {
     return await authenticationClient.returnRunData(user, runName);
   }
 

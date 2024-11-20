@@ -55,11 +55,11 @@ class AuthenticationClient {
   }
 
   Future<void> updateUserInformation(User user) async {
-    Map<String, String> updateInfo = {
+    Map<String, dynamic> updateInfo = {
       "firstName": user.firstName,
       "lastName": user.lastName,
       'sex': user.sex.toName(),
-      'age': user.age.toString(),
+      'age': user.age,
     };
     try {
       await _db.collection("users").doc(user.uid).update(updateInfo);
@@ -105,7 +105,7 @@ class AuthenticationClient {
     }
   }
 
-  Future<List<String>> returnRunData(User user, String runName) async {
+  Future<RunSession?> returnRunData(User user, String runName) async {
     try {
       final runCollection = await _db
           .collection("users")
@@ -114,16 +114,11 @@ class AuthenticationClient {
           .doc("run_info")
           .get();
       Map<String, dynamic>? mapValues = runCollection.data();
-      if (mapValues == null) return [];
-      int numberStages = mapValues["noStage"];
-      List<String> out = [];
-      for (int i = 0; i < numberStages; i++) {
-        out.add(mapValues["stage_${i.toString()}"].toString());
-      }
-      return out;
+      if (mapValues == null) return null;
+      return RunSession.fromJson(mapValues, user);
     } on FirebaseException catch (e) {
       print(e.toString());
-      return [];
+      return null;
     }
   }
 

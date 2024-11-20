@@ -91,7 +91,7 @@ class MapCubit extends Cubit<MapState> {
     final oldState = state as MapTrack;
     if (oldState.status != MapStatus.tracking) return;
     emit(oldState.copyWith(status: MapStatus.blocked));
-    Future.delayed(Duration(seconds: updatePeriod * 2), () {
+    Future.delayed(const Duration(seconds: 5), () {
       emit(oldState.copyWith(status: MapStatus.sending));
     });
   }

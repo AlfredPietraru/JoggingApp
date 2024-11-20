@@ -10,11 +10,10 @@ sealed class HistoryState extends Equatable {
 final class HistoryInitial extends HistoryState {
   final int idx;
   final List<String> allRuns;
-  final List<double> distance;
-  final List<double> timeValues;
+  final RunSession runSession;
+  
   const HistoryInitial({
-    required this.distance,
-    required this.timeValues,
+    required this.runSession,
     required this.allRuns,
     required this.idx,
   });
@@ -22,18 +21,15 @@ final class HistoryInitial extends HistoryState {
   HistoryInitial copyWith({
     List<String>? allRuns,
     int? idx,
-    List<String>? runData,
-    List<double>? distance,
-    List<double>? timeValues,
+    RunSession? runSession,
   }) {
     return HistoryInitial(
       allRuns: allRuns ?? this.allRuns,
       idx: idx ?? this.idx,
-      distance: distance ?? this.distance,
-      timeValues: timeValues ?? this.timeValues,
+      runSession: runSession ?? this.runSession,
     );
   }
 
   @override
-  List<Object> get props => [idx, allRuns, distance, timeValues];
+  List<Object> get props => [idx, allRuns, runSession];
 }

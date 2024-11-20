@@ -78,7 +78,7 @@ class __HistoryPageState extends State<_HistoryPage> {
           ),
           body: Padding(
             padding: AppPadding.page,
-            child: oldState.distance.isEmpty
+            child: oldState.runSession.coordinates.isEmpty
                 ? const Text("No element found")
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

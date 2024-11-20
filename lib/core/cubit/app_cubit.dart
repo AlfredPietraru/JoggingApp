@@ -54,5 +54,6 @@ class AppCubit extends Cubit<AppState> {
 
   void deleteUserFromMemory() async {
     userRepository.deleteUserFromMemory();
+    emit(const AppState(user: null, status: AppStatus.unauthenticated));
   }
 }
