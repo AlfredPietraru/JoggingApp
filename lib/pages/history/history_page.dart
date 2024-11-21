@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/pages/history/help.dart';
 import 'package:jogging/pages/history/history_cubit.dart';
 
 class HistoryPage extends StatelessWidget {
@@ -37,6 +38,7 @@ class _HistoryPage extends StatefulWidget {
 
 class __HistoryPageState extends State<_HistoryPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HistoryCubit, HistoryState>(
@@ -76,38 +78,143 @@ class __HistoryPageState extends State<_HistoryPage> {
             backgroundColor: AppColors.fernGreen,
             actions: const [MyBackButton()],
           ),
-          body: Padding(
-            padding: AppPadding.page,
-            child: oldState.runSession.coordinates.isEmpty
-                ? const Text("No element found")
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          body: oldState.runSession.coordinates.isEmpty
+              ? const Text("No element found")
+              : Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.lg),
+                child: ListView(
                     children: [
                       SizedBox(
                         height: 300,
                         width: MediaQuery.of(context).size.width,
-                        child: LineChart(
-                          LineChartData(
-                            gridData: FlGridData(
-                              show: true,
-                              drawVerticalLine: true,
-                              horizontalInterval: 1,
-                              verticalInterval: 1,
-                              getDrawingHorizontalLine: (value) {
-                                return const FlLine(
-                                  color: AppColors.hunterGreen,
-                                  strokeWidth: 1,
-                                );
-                              },
-                            ),
-                          ),
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.linear,
-                        ),
+                        child: oldState.timeSpeedArray.isEmpty
+                            ? const CircularProgressIndicator()
+                            : Padding(
+                                padding: const EdgeInsets.only(right: AppSpacing.xlg),
+                                child: LineChart(
+                                  LineChartData(
+                                    gridData: FlGridData(
+                                      show: true,
+                                      drawHorizontalLine: true,
+                                      drawVerticalLine: true,
+                                      horizontalInterval: 50,
+                                      verticalInterval: 50,
+                                      getDrawingHorizontalLine: (value) {
+                                        return FlLine(
+                                          color: AppColors.eerieBlack
+                                              .withOpacity(0.5),
+                                          strokeWidth: 2,
+                                        );
+                                      },
+                                      getDrawingVerticalLine: (value) {
+                                        return FlLine(
+                                          color: AppColors.hunterGreen
+                                              .withOpacity(0.5),
+                                          strokeWidth: 2,
+                                        );
+                                      },
+                                    ),
+                                    titlesData: FlTitlesData(
+                                      show: true,
+                                      bottomTitles: AxisTitles(
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          reservedSize: 22,
+                                          interval: context
+                                              .read<HistoryCubit>()
+                                              .setDataInterval(),
+                                          getTitlesWidget: (value, meta) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: AppSpacing.sm),
+                                              child: Text(
+                                                context.read<HistoryCubit>().convertToClockFormat(value),
+                                                style: const TextStyle(
+                                                  color: AppColors.eerieBlack,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      leftTitles: AxisTitles(
+                                        sideTitles: SideTitles(
+                                          showTitles: true,
+                                          reservedSize: 60,
+                                          interval: 1,
+                                          getTitlesWidget: (value, meta) {
+                                            return Text(
+                                              "${value.toStringAsFixed(1)}m/s",
+                                              style: const TextStyle(
+                                                color: AppColors.eerieBlack,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      topTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                      rightTitles: const AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false),
+                                      ),
+                                    ),
+                                    borderData: FlBorderData(
+                                      show: true,
+                                      border: Border.all(
+                                          color: const Color(0xff37434d)),
+                                    ),
+                                    minX: 0,
+                                    minY: context
+                                        .read<HistoryCubit>()
+                                        .getMinSpeed(),
+                                    maxY: context
+                                        .read<HistoryCubit>()
+                                        .getMaximSpeed(),
+                                    lineBarsData: [
+                                      LineChartBarData(
+                                        spots: List.from(oldState.timeSpeedArray
+                                            .map((e) =>
+                                                FlSpot(e.$1.toDouble(), e.$2))),
+                                        isCurved: true,
+                                        barWidth: 5,
+                                        isStrokeCapRound: true,
+                                        belowBarData: BarAreaData(
+                                          show: true,
+                                          color: Colors.blueAccent
+                                              .withOpacity(0.2),
+                                        ),
+                                        dotData: FlDotData(
+                                          show: true,
+                                          checkToShowDot: (spot, barData) =>
+                                              true,
+                                          getDotPainter:
+                                              (spot, percent, barData, index) {
+                                            return FlDotCirclePainter(
+                                              radius: 4,
+                                              color: Colors.redAccent,
+                                              strokeWidth: 2,
+                                              strokeColor: AppColors.eerieBlack,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.linear,
+                                ),
+                              ),
                       ),
                     ],
                   ),
-          ),
+              ),
         );
       },
     );

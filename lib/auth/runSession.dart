@@ -1,4 +1,3 @@
-import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
@@ -50,6 +49,7 @@ class RunSession extends Equatable {
         temp.add(int.parse(tokens[1]));
         coord.add(LatLng(double.parse(tokens[2]), double.parse(tokens[3])));
       }
+
       times.add(temp);
       distances.add(dist);
       coordinates.add(coord);
@@ -79,16 +79,49 @@ class RunSession extends Equatable {
     );
   }
 
+  int returnDataSize() {
+    if (times.length == 1) return times[0].length;
+    return times.map((e) => e.length).reduce((a, b) => a + b);
+  }
+
+  int returnFromTimeList(int index) {
+    for (int i = 0; i < times.length; i++) {
+      if (times[i].length <= index) {
+        index = index - times[i].length;
+      } else {
+        return times[i][index];
+      }
+    }
+    return -1;
+  }
+
+  double returnFromDistanceList(int index) {
+    for (int i = 0; i < distances.length; i++) {
+      if (distances[i].length <= index) {
+        index = index - distances[i].length;
+      } else {
+        return distances[i][index];
+      }
+    }
+    return -1;
+  }
+
   void addPositionsToSessions(List<Position> pos) {
-    List<double> currentDistances = [0.0];
-    List<int> currentTimes = [0];
+    double lastDistance = 0;
+    int lastTime = 0;
+    if (times.isNotEmpty) {
+      lastTime = times.last.last;
+      lastDistance = distances.last.last;
+    }
+    List<double> currentDistances = [lastDistance];
+    List<int> currentTimes = [lastTime];
     List<LatLng> currentCoordinates = [
       LatLng(pos[0].latitude, pos[0].longitude)
     ];
     for (int i = 1; i < pos.length; i++) {
       final result = infoFromPositions(pos[i - 1], pos[i]);
-      currentDistances.add(result.$1);
-      currentTimes.add(result.$2);
+      currentDistances.add(currentDistances[i - 1] + result.$1);
+      currentTimes.add(currentTimes[i - 1] + result.$2);
       currentCoordinates.add(result.$3);
     }
     times.add(currentTimes);
@@ -99,7 +132,7 @@ class RunSession extends Equatable {
   (double, int, LatLng) infoFromPositions(Position p1, Position p2) {
     double distance = computationClass.distanceBetween(
         p1.latitude, p1.longitude, p2.latitude, p2.longitude, "meters");
-    int time = p2.timestamp.difference(p1.timestamp).inMilliseconds;
+    int time = p2.timestamp.difference(p1.timestamp).inSeconds;
     return (distance, time, LatLng(p2.latitude, p2.longitude));
   }
 

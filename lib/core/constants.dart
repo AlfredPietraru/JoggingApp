@@ -113,7 +113,7 @@ class AppColors {
 
 abstract class AppPadding {
   /// The default unit of spacing
-  static const double unit = 16;
+  static const double unit = 16; 
 
   /// the standard padding for a page, specifically an onboarding page
   /// (at least for now)

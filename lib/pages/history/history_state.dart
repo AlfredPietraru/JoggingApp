@@ -11,8 +11,10 @@ final class HistoryInitial extends HistoryState {
   final int idx;
   final List<String> allRuns;
   final RunSession runSession;
-  
+  final List<(int, double)> timeSpeedArray;
+
   const HistoryInitial({
+    required this.timeSpeedArray,
     required this.runSession,
     required this.allRuns,
     required this.idx,
@@ -22,11 +24,13 @@ final class HistoryInitial extends HistoryState {
     List<String>? allRuns,
     int? idx,
     RunSession? runSession,
+    List<(int, double)>? timeSpeedArray,
   }) {
     return HistoryInitial(
       allRuns: allRuns ?? this.allRuns,
       idx: idx ?? this.idx,
       runSession: runSession ?? this.runSession,
+      timeSpeedArray: timeSpeedArray ?? this.timeSpeedArray,
     );
   }
 
