@@ -25,12 +25,13 @@ class MapPage extends StatelessWidget {
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is MapTrack && state.status == MapStatus.sending) {
               context.read<AppCubit>().changeUserInformation(
                   numberOfRuns:
                       context.read<AppCubit>().state.user!.numberOfRuns + 1);
               context.read<MapCubit>().sendRunToDatabase();
+              return;
             }
           },
           child: const _MapPage(),
@@ -66,8 +67,9 @@ class __MapPageState extends State<_MapPage> {
                 ElevatedButton(
                   onPressed: switch (oldState) {
                     MapTrack() => switch ((oldState).status) {
-                        MapStatus.ready =>
-                          context.read<MapCubit>().startTrackingLocation,
+                        MapStatus.ready => oldState.enableButton
+                            ? context.read<MapCubit>().startTrackingLocation
+                            : null,
                         MapStatus.tracking =>
                           context.read<MapCubit>().stopTrackingLocation,
                         MapStatus.sending => null,

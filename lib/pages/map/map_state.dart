@@ -37,28 +37,32 @@ final class MapInitial extends MapState {
   List<Object> get props => [serviceEnabled, permission, initialLocation];
 }
 
-enum MapStatus { ready, tracking, sending, blocked}
+enum MapStatus { ready, tracking, sending, blocked }
 
 final class MapTrack extends MapState {
   final Position center;
   final List<Position> positions;
   final MapStatus status;
+  final bool enableButton;
 
-  const MapTrack(
-      {required this.center,
-      required this.positions,
-      required this.status});
+  const MapTrack({
+    required this.enableButton,
+    required this.center,
+    required this.positions,
+    required this.status,
+  });
 
   MapTrack copyWith({
     Position? center,
     List<Position>? positions,
-    int? nrStage,
     MapStatus? status,
+    bool? enableButton,
   }) {
     return MapTrack(
       status: status ?? this.status,
       center: center ?? this.center,
       positions: positions ?? this.positions,
+      enableButton: enableButton ?? this.enableButton,
     );
   }
 

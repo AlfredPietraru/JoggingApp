@@ -16,11 +16,10 @@ class MapCubit extends Cubit<MapState> {
     initialise();
   }
 
-  int updatePeriod = 1;
-  int stageSize = 20;
+  late StreamSubscription<Position> _positionStreamSubscription;
+  int stageSize = 100;
   final UserRepository userRepository;
   RunSession runSession;
-  Timer? timer;
   late LatLng initialLocation;
 
   void initialise() async {
@@ -46,54 +45,58 @@ class MapCubit extends Cubit<MapState> {
     }
     Position currentPosition = await Geolocator.getCurrentPosition();
     emit(MapTrack(
-        center: currentPosition, positions: const [], status: MapStatus.ready));
+      center: currentPosition,
+      positions: const [],
+      status: MapStatus.ready,
+      enableButton: true,
+    ));
     initialLocation =
         LatLng(currentPosition.latitude, currentPosition.longitude);
   }
 
-  void startTrackingLocation() async {
-    final oldState = state as MapTrack;
-    if (oldState.status != MapStatus.ready || timer != null) return;
-    emit(oldState.copyWith(
-        positions: [oldState.center], nrStage: 0, status: MapStatus.tracking));
-    Position position = await Geolocator.getCurrentPosition();
-    runSession = runSession.copyWith(dateTime: DateTime.now());
-    emit(MapTrack(
-        center: position, positions: [position], status: MapStatus.tracking));
+  Future<void> startTrackingLocation() async {
+    final currentState = state;
+    if (currentState is! MapTrack) return;
+    if (currentState.status != MapStatus.ready) return;
 
-    timer = Timer.periodic(
-      Duration(seconds: updatePeriod),
-      (Timer t) async {
-        final oldState = state as MapTrack;
-        if (oldState.status != MapStatus.tracking) return;
-        if (oldState.positions.length > stageSize) return;
-        Position position = await Geolocator.getCurrentPosition();
-        oldState.positions.add(position);
-        if (oldState.positions.length == stageSize) {
-          runSession.addPositionsToSessions(oldState.positions);
-          emit(oldState.copyWith(
+    _positionStreamSubscription = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    ).listen((Position position) {
+      final oldState = state as MapTrack;
+      if (oldState.status != MapStatus.tracking) return;
+      if (oldState.positions.length < stageSize) {
+        emit(oldState.copyWith(
+          center: position,
+          positions: [...oldState.positions, position],
+        ));
+      } else {
+        runSession.addPositionsToSessions(oldState.positions);
+        emit(
+          oldState.copyWith(
             center: position,
             positions: [position],
-          ));
-          return;
-        }
-        if (oldState.positions.length < stageSize) {
-          emit(oldState.copyWith(center: position));
-          return;
-        }
-      },
+          ),
+        );
+      }
+    });
+
+    emit(
+      currentState.copyWith(
+        positions: [currentState.center],
+        status: MapStatus.tracking,
+        enableButton: true,
+      ),
     );
   }
 
   void stopTrackingLocation() {
-    timer?.cancel();
-    timer = null;
     final oldState = state as MapTrack;
+    _positionStreamSubscription.cancel();
     if (oldState.status != MapStatus.tracking) return;
-    emit(oldState.copyWith(status: MapStatus.blocked));
-    Future.delayed(const Duration(seconds: 5), () {
-      emit(oldState.copyWith(status: MapStatus.sending));
-    });
+    emit(oldState.copyWith(status: MapStatus.sending));
   }
 
   LatLng setMapCenter() {
@@ -109,7 +112,7 @@ class MapCubit extends Cubit<MapState> {
     if (oldState.status != MapStatus.sending) return;
     runSession.addPositionsToSessions(oldState.positions);
     await userRepository.writePositionsToDatabase(runSession);
-    emit(oldState.copyWith(positions: [], nrStage: 0, status: MapStatus.ready));
+    emit(oldState.copyWith(positions: [], status: MapStatus.ready));
   }
 
   String displayButtonInfo() {
