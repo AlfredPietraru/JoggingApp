@@ -1,10 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
-import 'package:jogging/pages/history/help.dart';
 import 'package:jogging/pages/history/history_cubit.dart';
 
 class HistoryPage extends StatelessWidget {
@@ -38,6 +40,17 @@ class _HistoryPage extends StatefulWidget {
 
 class __HistoryPageState extends State<_HistoryPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late GoogleMapController mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +89,20 @@ class __HistoryPageState extends State<_HistoryPage> {
             ),
             toolbarHeight: 100,
             backgroundColor: AppColors.fernGreen,
-            actions: const [MyBackButton()],
+            actions: [
+              const MyBackButton(),
+              ElevatedButton(
+                onPressed: context.read<HistoryCubit>().displayOnMap,
+                child: Text(
+                    oldState.displayOnMap ? "Get Statistics" : "Show on Map"),
+              ),
+            ],
           ),
           body: oldState.runSession.coordinates.isEmpty
               ? const Text("No element found")
               : Padding(
-                padding: const EdgeInsets.only(top: AppSpacing.lg),
-                child: ListView(
+                  padding: const EdgeInsets.only(top: AppSpacing.lg),
+                  child: ListView(
                     children: [
                       SizedBox(
                         height: 300,
@@ -90,7 +110,8 @@ class __HistoryPageState extends State<_HistoryPage> {
                         child: oldState.timeSpeedArray.isEmpty
                             ? const CircularProgressIndicator()
                             : Padding(
-                                padding: const EdgeInsets.only(right: AppSpacing.xlg),
+                                padding: const EdgeInsets.only(
+                                    right: AppSpacing.xlg),
                                 child: LineChart(
                                   LineChartData(
                                     gridData: FlGridData(
@@ -128,7 +149,10 @@ class __HistoryPageState extends State<_HistoryPage> {
                                               padding: const EdgeInsets.only(
                                                   top: AppSpacing.sm),
                                               child: Text(
-                                                context.read<HistoryCubit>().convertToClockFormat(value),
+                                                context
+                                                    .read<HistoryCubit>()
+                                                    .convertToClockFormat(
+                                                        value),
                                                 style: const TextStyle(
                                                   color: AppColors.eerieBlack,
                                                   fontWeight: FontWeight.bold,
@@ -212,9 +236,57 @@ class __HistoryPageState extends State<_HistoryPage> {
                                 ),
                               ),
                       ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                        child: SizedBox(
+                          height: 400,
+                          child: GoogleMap(
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: CameraPosition(
+                              target: context
+                                  .read<HistoryCubit>()
+                                  .setStartingPoint(),
+                              zoom: 15.0,
+                            ),
+                            polylines: <Polyline>{
+                              Polyline(
+                                polylineId: const PolylineId("path"),
+                                color: Colors.red,
+                                consumeTapEvents: true,
+                                width: 4,
+                                points: context
+                                    .read<HistoryCubit>()
+                                    .allGraphPoints(),
+                              )
+                            },
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId('InitialUserLocation'),
+                                position: context
+                                    .read<HistoryCubit>()
+                                    .setStartingPoint(),
+                                infoWindow:
+                                    const InfoWindow(title: 'Initial Location'),
+                              ),
+                              Marker(
+                                markerId: const MarkerId('CurrentUserLocation'),
+                                position:
+                                    context.read<HistoryCubit>().setEndPoint(),
+                                infoWindow:
+                                    const InfoWindow(title: 'Current Location'),
+                              ),
+                            },
+                            gestureRecognizers: Set()
+                              ..add(Factory<OneSequenceGestureRecognizer>(
+                                () => EagerGestureRecognizer(),
+                              )),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-              ),
+                ),
         );
       },
     );

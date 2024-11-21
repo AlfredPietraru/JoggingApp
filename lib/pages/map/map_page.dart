@@ -56,6 +56,12 @@ class __MapPageState extends State<_MapPage> {
   }
 
   @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => BlocBuilder<MapCubit, MapState>(
         builder: (context, state) {
           final oldState = state;
@@ -95,17 +101,16 @@ class __MapPageState extends State<_MapPage> {
                           ),
                           markers: {
                             Marker(
-                              markerId: const MarkerId('InitialUserLocation'),
+                              markerId: const MarkerId('Starting Point'),
                               position:
                                   context.read<MapCubit>().initialLocation,
                               infoWindow:
-                                  const InfoWindow(title: 'Initial Location'),
+                                  const InfoWindow(title: 'Starting Point'),
                             ),
                             Marker(
-                              markerId: const MarkerId('CurrentUserLocation'),
+                              markerId: const MarkerId('End point'),
                               position: context.read<MapCubit>().setMapCenter(),
-                              infoWindow:
-                                  const InfoWindow(title: 'Current Location'),
+                              infoWindow: const InfoWindow(title: 'End point'),
                             ),
                           },
                         ),

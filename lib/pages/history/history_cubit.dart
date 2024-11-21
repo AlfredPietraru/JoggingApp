@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/auth/runSession.dart';
 import 'package:jogging/auth/user.dart';
@@ -11,6 +12,7 @@ part 'history_state.dart';
 class HistoryCubit extends Cubit<HistoryState> {
   HistoryCubit({required this.user, required this.userRepository})
       : super(HistoryInitial(
+          displayOnMap: false,
           idx: 0,
           allRuns: [],
           timeSpeedArray: [],
@@ -32,11 +34,8 @@ class HistoryCubit extends Cubit<HistoryState> {
       RunSession? runSession =
           await userRepository.returnRunData(user, toOutput[0]);
       if (runSession == null) return;
-      final oldState = state as HistoryInitial;
-      print(runSession.distances[0]);
-      print(runSession.times[0]);
       emit(
-        oldState.copyWith(
+        (state as HistoryInitial).copyWith(
             allRuns: toOutput,
             runSession: runSession,
             timeSpeedArray: createTimeSpeedArray(runSession)),
@@ -44,11 +43,35 @@ class HistoryCubit extends Cubit<HistoryState> {
     }
   }
 
+  LatLng setStartingPoint() {
+    if (state is! HistoryInitial) return const LatLng(4, 4);
+    final oldState = state as HistoryInitial;
+    if (oldState.runSession.coordinates.isEmpty) return const LatLng(4, 4);
+    return oldState.runSession.coordinates[0].first;
+  }
+
+  LatLng setEndPoint() {
+    if (state is! HistoryInitial) return const LatLng(4, 4);
+    final oldState = state as HistoryInitial;
+    if (oldState.runSession.coordinates.isEmpty) return const LatLng(4, 4);
+    return oldState.runSession.coordinates.last.last;
+  }
+
   String convertToClockFormat(double value) {
     int hours = value ~/ 3600;
     int minutes = (value % 3600) ~/ 60;
     int seconds = (value % 60).toInt();
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  List<LatLng> allGraphPoints() {
+    final oldState = state as HistoryInitial;
+    if (oldState.runSession.coordinates.isEmpty) return [];
+    List<LatLng> out = [...oldState.runSession.coordinates[0]];
+    for (int i = 1; i < oldState.runSession.coordinates.length; i++) {
+      out = out + [...oldState.runSession.coordinates[i]];
+    }
+    return out;
   }
 
   List<(int, double)> createTimeSpeedArray(RunSession session) {
@@ -129,5 +152,10 @@ class HistoryCubit extends Cubit<HistoryState> {
       runSession: runSession,
       timeSpeedArray: createTimeSpeedArray(runSession),
     ));
+  }
+
+  void displayOnMap() {
+    final oldState = state as HistoryInitial;
+    emit(oldState.copyWith(displayOnMap: oldState.displayOnMap));
   }
 }

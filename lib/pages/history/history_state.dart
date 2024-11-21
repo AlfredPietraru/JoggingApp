@@ -12,8 +12,10 @@ final class HistoryInitial extends HistoryState {
   final List<String> allRuns;
   final RunSession runSession;
   final List<(int, double)> timeSpeedArray;
+  final bool displayOnMap;
 
   const HistoryInitial({
+    required this.displayOnMap,
     required this.timeSpeedArray,
     required this.runSession,
     required this.allRuns,
@@ -25,8 +27,10 @@ final class HistoryInitial extends HistoryState {
     int? idx,
     RunSession? runSession,
     List<(int, double)>? timeSpeedArray,
+    bool? displayOnMap,
   }) {
     return HistoryInitial(
+      displayOnMap: displayOnMap ?? this.displayOnMap,
       allRuns: allRuns ?? this.allRuns,
       idx: idx ?? this.idx,
       runSession: runSession ?? this.runSession,
@@ -35,5 +39,5 @@ final class HistoryInitial extends HistoryState {
   }
 
   @override
-  List<Object> get props => [idx, allRuns, runSession];
+  List<Object> get props => [idx, allRuns, runSession, displayOnMap];
 }
