@@ -37,7 +37,7 @@ class MyNavigationDrawer extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               CustomListTile(
-                  onTap: () {}, icon: Assets.icons.home, name: "Home"),
+                  onTap: () {}, icon: Assets.icons.home, name: "Explore"),
               CustomListTile(
                   onTap: () {
                     Navigator.push(context, SettingsPage.page());

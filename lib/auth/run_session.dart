@@ -23,11 +23,11 @@ class RunSession extends Equatable {
 
   factory RunSession.initialRunSession(User user, DateTime dateTime) {
     return RunSession(
-      coordinates: [],
+      coordinates: const [],
       user: user,
       dateTime: dateTime,
-      times: [],
-      distances: [],
+      times: const [],
+      distances: const [],
     );
   }
 

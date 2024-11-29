@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/auth/runSession.dart';
+import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';
 
 part 'history_state.dart';
@@ -14,8 +14,8 @@ class HistoryCubit extends Cubit<HistoryState> {
       : super(HistoryInitial(
           displayOnMap: false,
           idx: 0,
-          allRuns: [],
-          timeSpeedArray: [],
+          allRuns: const [],
+          timeSpeedArray: const [],
           runSession: RunSession.initialRunSession(user, DateTime.now()),
         )) {
     initialize();
@@ -134,11 +134,34 @@ class HistoryCubit extends Cubit<HistoryState> {
     return max(value.$2 - 0.5, 0);
   }
 
+  double getDistance(MeasurementUnit unit) {
+    final oldState = state as HistoryInitial;
+    if (oldState.runSession.distances.isEmpty) return 0;
+    return switch (unit) {
+      MeasurementUnit.meters => oldState.runSession.distances.last.last,
+      MeasurementUnit.kilometers =>
+        (oldState.runSession.distances.last.last).round() / 1000
+    };
+  }
+
+  String getTime() {
+    final oldState = state as HistoryInitial;
+    if (oldState.runSession.times.isEmpty) return "00:00";
+    int value = oldState.runSession.times.last.last;
+    int hours = value ~/ 3600;
+    int minutes = (value % 3600) ~/ 60;
+    int seconds = (value % 60).toInt();
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
   double getMaximSpeed() {
     if (state is! HistoryInitial) return -1;
     final oldState = state as HistoryInitial;
-    (int, double) value = oldState.timeSpeedArray
-        .reduce((curr, next) => curr.$2 > next.$2 ? curr : next);
+    (int, double) value = oldState.timeSpeedArray.reduce((curr, next) {
+      final (_, speed1) = curr;
+      final (_, speed2) = next;
+      return speed1 > speed2 ? curr : next;
+    });
     return value.$2 + 0.5;
   }
 

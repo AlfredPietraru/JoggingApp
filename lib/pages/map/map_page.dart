@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:jogging/auth/runSession.dart';
+import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
@@ -17,9 +17,9 @@ class MapPage extends StatelessWidget {
       create: ((context) => MapCubit(
             userRepository: context.read<AppCubit>().userRepository,
             runSession: RunSession(
-                coordinates: [],
-                distances: [],
-                times: [],
+                coordinates: const [],
+                distances: const [],
+                times: const [],
                 dateTime: DateTime.now(),
                 user: context.read<AppCubit>().state.user!),
           )),

@@ -7,6 +7,11 @@ sealed class HistoryState extends Equatable {
   List<Object> get props => [];
 }
 
+enum MeasurementUnit {
+  meters,
+  kilometers,
+}
+
 final class HistoryInitial extends HistoryState {
   final int idx;
   final List<String> allRuns;

@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/auth/runSession.dart';
+import 'package:jogging/auth/run_session.dart';
 part 'map_state.dart';
 
 class MapCubit extends Cubit<MapState> {

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:jogging/auth/client.dart';
 import 'package:jogging/auth/failures.dart';
-import 'package:jogging/auth/runSession.dart';
+import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

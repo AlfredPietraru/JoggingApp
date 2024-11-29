@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:jogging/auth/failures.dart';
-import 'package:jogging/auth/runSession.dart';
+import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';
 
 class AuthenticationClient {
@@ -101,7 +101,7 @@ class AuthenticationClient {
         "numberOfRuns": runSession.user.numberOfRuns + 1,
       });
     } on FirebaseException {
-      print("A picat si nu e bine ca nu a mers scrioerea");
+      print("A picat si nu e bine ca nu a mers scrierea");
     }
   }
 
