@@ -57,7 +57,6 @@ class __HistoryPageState extends State<_HistoryPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<HistoryCubit, HistoryState>(
       builder: (context, state) {
-        final oldState = state as HistoryInitial;
         return Scaffold(
           key: _scaffoldKey,
           drawer: Drawer(
@@ -65,16 +64,16 @@ class __HistoryPageState extends State<_HistoryPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md, vertical: AppSpacing.xlg),
-                child: oldState.allRuns.isNotEmpty
+                child: state.allRuns.isNotEmpty
                     ? ListView.builder(
-                        itemCount: oldState.allRuns.length,
+                        itemCount: state.allRuns.length,
                         itemBuilder: (context, index) => _LocalListTile(
-                          name: oldState.allRuns[index],
+                          name: state.allRuns[index],
                           onTap: () {
                             context.read<HistoryCubit>().selectNewRun(index);
                             Navigator.pop(context);
                           },
-                          isSelected: index == oldState.idx,
+                          isSelected: index == state.idx,
                         ),
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -93,7 +92,7 @@ class __HistoryPageState extends State<_HistoryPage> {
             actions: const [MyBackButton(), SizedBox(width: AppSpacing.xxlg)],
           ),
           body: Container(
-            child: oldState.runSession.coordinates.isEmpty
+            child: state.runSession.coordinates.isEmpty
                 ? const Text("No element found")
                 : Padding(
                     padding: const EdgeInsets.only(top: AppSpacing.lg),
@@ -102,7 +101,7 @@ class __HistoryPageState extends State<_HistoryPage> {
                         SizedBox(
                           height: 300,
                           width: MediaQuery.of(context).size.width,
-                          child: oldState.timeSpeedArray.isEmpty
+                          child: state.timeSpeedArray.isEmpty
                               ? const CircularProgressIndicator()
                               : Padding(
                                   padding: const EdgeInsets.only(
@@ -198,8 +197,7 @@ class __HistoryPageState extends State<_HistoryPage> {
                                           .getMaximSpeed(),
                                       lineBarsData: [
                                         LineChartBarData(
-                                          spots: List.from(oldState
-                                              .timeSpeedArray
+                                          spots: List.from(state.timeSpeedArray
                                               .map((e) => FlSpot(
                                                   e.$1.toDouble(), e.$2))),
                                           isCurved: true,
@@ -246,7 +244,7 @@ class __HistoryPageState extends State<_HistoryPage> {
                                   padding: const EdgeInsets.only(
                                       left: AppSpacing.sm),
                                   child: Text(
-                                      oldState.runSession.dateTime.toString(),
+                                      state.runSession.dateTime.toString(),
                                       style: generalStyle),
                                 ),
                                 const Divider(),

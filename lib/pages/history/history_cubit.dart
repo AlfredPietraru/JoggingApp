@@ -11,7 +11,7 @@ part 'history_state.dart';
 
 class HistoryCubit extends Cubit<HistoryState> {
   HistoryCubit({required this.user, required this.userRepository})
-      : super(HistoryInitial(
+      : super(HistoryState(
           displayOnMap: false,
           idx: 0,
           allRuns: const [],
@@ -35,7 +35,7 @@ class HistoryCubit extends Cubit<HistoryState> {
           await userRepository.returnRunData(user, toOutput[0]);
       if (runSession == null) return;
       emit(
-        (state as HistoryInitial).copyWith(
+        state.copyWith(
             allRuns: toOutput,
             runSession: runSession,
             timeSpeedArray: createTimeSpeedArray(runSession)),
@@ -44,17 +44,13 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   LatLng setStartingPoint() {
-    if (state is! HistoryInitial) return const LatLng(4, 4);
-    final oldState = state as HistoryInitial;
-    if (oldState.runSession.coordinates.isEmpty) return const LatLng(4, 4);
-    return oldState.runSession.coordinates[0].first;
+    if (state.runSession.coordinates.isEmpty) return const LatLng(4, 4);
+    return state.runSession.coordinates[0].first;
   }
 
   LatLng setEndPoint() {
-    if (state is! HistoryInitial) return const LatLng(4, 4);
-    final oldState = state as HistoryInitial;
-    if (oldState.runSession.coordinates.isEmpty) return const LatLng(4, 4);
-    return oldState.runSession.coordinates.last.last;
+    if (state.runSession.coordinates.isEmpty) return const LatLng(4, 4);
+    return state.runSession.coordinates.last.last;
   }
 
   String convertToClockFormat(double value) {
@@ -65,11 +61,10 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   List<LatLng> allGraphPoints() {
-    final oldState = state as HistoryInitial;
-    if (oldState.runSession.coordinates.isEmpty) return [];
-    List<LatLng> out = [...oldState.runSession.coordinates[0]];
-    for (int i = 1; i < oldState.runSession.coordinates.length; i++) {
-      out = out + [...oldState.runSession.coordinates[i]];
+    if (state.runSession.coordinates.isEmpty) return [];
+    List<LatLng> out = [...state.runSession.coordinates[0]];
+    for (int i = 1; i < state.runSession.coordinates.length; i++) {
+      out = out + [...state.runSession.coordinates[i]];
     }
     return out;
   }
@@ -120,34 +115,28 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   double setDataInterval() {
-    if (state is! HistoryInitial) return -1;
-    final oldState = state as HistoryInitial;
-    int totalTime = oldState.runSession.times.last.last;
+    int totalTime = state.runSession.times.last.last;
     return (totalTime / 3 * 100).round() / 100;
   }
 
   double getMinSpeed() {
-    if (state is! HistoryInitial) return -1;
-    final oldState = state as HistoryInitial;
-    (int, double) value = oldState.timeSpeedArray
+    (int, double) value = state.timeSpeedArray
         .reduce((curr, next) => curr.$2 < next.$2 ? curr : next);
     return max(value.$2 - 0.5, 0);
   }
 
   double getDistance(MeasurementUnit unit) {
-    final oldState = state as HistoryInitial;
-    if (oldState.runSession.distances.isEmpty) return 0;
+    if (state.runSession.distances.isEmpty) return 0;
     return switch (unit) {
-      MeasurementUnit.meters => oldState.runSession.distances.last.last,
+      MeasurementUnit.meters => state.runSession.distances.last.last,
       MeasurementUnit.kilometers =>
-        (oldState.runSession.distances.last.last).round() / 1000
+        (state.runSession.distances.last.last).round() / 1000
     };
   }
 
   String getTime() {
-    final oldState = state as HistoryInitial;
-    if (oldState.runSession.times.isEmpty) return "00:00";
-    int value = oldState.runSession.times.last.last;
+    if (state.runSession.times.isEmpty) return "00:00";
+    int value = state.runSession.times.last.last;
     int hours = value ~/ 3600;
     int minutes = (value % 3600) ~/ 60;
     int seconds = (value % 60).toInt();
@@ -155,9 +144,7 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   double getMaximSpeed() {
-    if (state is! HistoryInitial) return -1;
-    final oldState = state as HistoryInitial;
-    (int, double) value = oldState.timeSpeedArray.reduce((curr, next) {
+    (int, double) value = state.timeSpeedArray.reduce((curr, next) {
       final (_, speed1) = curr;
       final (_, speed2) = next;
       return speed1 > speed2 ? curr : next;
@@ -166,11 +153,10 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   void selectNewRun(int index) async {
-    final oldState = state as HistoryInitial;
     RunSession? runSession =
-        await userRepository.returnRunData(user, oldState.allRuns[index]);
+        await userRepository.returnRunData(user, state.allRuns[index]);
     if (runSession == null) return;
-    emit(oldState.copyWith(
+    emit(state.copyWith(
       idx: index,
       runSession: runSession,
       timeSpeedArray: createTimeSpeedArray(runSession),
@@ -178,7 +164,6 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   void displayOnMap() {
-    final oldState = state as HistoryInitial;
-    emit(oldState.copyWith(displayOnMap: oldState.displayOnMap));
+    emit(state.copyWith(displayOnMap: state.displayOnMap));
   }
 }

@@ -1,25 +1,20 @@
 part of 'history_cubit.dart';
 
-sealed class HistoryState extends Equatable {
-  const HistoryState();
 
-  @override
-  List<Object> get props => [];
-}
 
 enum MeasurementUnit {
   meters,
   kilometers,
 }
 
-final class HistoryInitial extends HistoryState {
+final class HistoryState extends Equatable {
   final int idx;
   final List<String> allRuns;
   final RunSession runSession;
   final List<(int, double)> timeSpeedArray;
   final bool displayOnMap;
 
-  const HistoryInitial({
+  const HistoryState({
     required this.displayOnMap,
     required this.timeSpeedArray,
     required this.runSession,
@@ -27,14 +22,14 @@ final class HistoryInitial extends HistoryState {
     required this.idx,
   });
 
-  HistoryInitial copyWith({
+  HistoryState copyWith({
     List<String>? allRuns,
     int? idx,
     RunSession? runSession,
     List<(int, double)>? timeSpeedArray,
     bool? displayOnMap,
   }) {
-    return HistoryInitial(
+    return HistoryState(
       displayOnMap: displayOnMap ?? this.displayOnMap,
       allRuns: allRuns ?? this.allRuns,
       idx: idx ?? this.idx,
