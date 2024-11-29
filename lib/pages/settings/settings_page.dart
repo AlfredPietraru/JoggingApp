@@ -49,7 +49,6 @@ class _SettingsPageState extends State<_SettingsPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
-        final oldState = state as SettingsInitial;
         return Scaffold(
           body: Padding(
             padding: AppPadding.page,
@@ -66,10 +65,10 @@ class _SettingsPageState extends State<_SettingsPage> {
                       ? ElevatedButton(
                           onPressed: () {
                             context.read<AppCubit>().changeUserInformation(
-                                  age: oldState.age,
-                                  firstName: oldState.firstName,
-                                  lastName: oldState.lastName,
-                                  sex: oldState.sex,
+                                  age: state.age,
+                                  firstName: state.firstName,
+                                  lastName: state.lastName,
+                                  sex: state.sex,
                                 );
                           },
                           child: const Text('Save changes'),
@@ -91,20 +90,20 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Divider(),
                   EditableZone(
                     label: "First Name:",
-                    value: oldState.firstName,
+                    value: state.firstName,
                     onPressedEditButton:
                         context.read<SettingsCubit>().toggleEditFirstName,
-                    showEditingWindow: oldState.editFirstName,
+                    showEditingWindow: state.editFirstName,
                     textController: firstNameController,
                     onChanged: context.read<SettingsCubit>().changeFirstName,
                   ),
                   const Divider(),
                   EditableZone(
                     label: "Last Name:",
-                    value: oldState.lastName,
+                    value: state.lastName,
                     onPressedEditButton:
                         context.read<SettingsCubit>().toggleEditLastName,
-                    showEditingWindow: oldState.editLastName,
+                    showEditingWindow: state.editLastName,
                     textController: lastNameController,
                     onChanged: context.read<SettingsCubit>().changeLastName,
                   ),
@@ -124,9 +123,9 @@ class _SettingsPageState extends State<_SettingsPage> {
                             'Sex:',
                             style: AppTextStyle.body.copyWith(fontSize: 20),
                           ),
-                          oldState.editSex
+                          state.editSex
                               ? DropdownButton<String>(
-                                  value: oldState.sex.toName(),
+                                  value: state.sex.toName(),
                                   onChanged:
                                       context.read<SettingsCubit>().changeSex,
                                   items: [
@@ -145,7 +144,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                                   ],
                                 )
                               : Text(
-                                  oldState.sex.toName(),
+                                  state.sex.toName(),
                                   style:
                                       AppTextStyle.body.copyWith(fontSize: 20),
                                 ),
@@ -170,7 +169,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                             'Age:',
                             style: AppTextStyle.body.copyWith(fontSize: 20),
                           ),
-                          oldState.editAge
+                          state.editAge
                               ? NumberPicker(
                                   axis: Axis.horizontal,
                                   selectedTextStyle: AppTextStyle.body.copyWith(
@@ -179,14 +178,14 @@ class _SettingsPageState extends State<_SettingsPage> {
                                       MediaQuery.of(context).size.width / 6,
                                   textStyle:
                                       AppTextStyle.body.copyWith(fontSize: 20),
-                                  value: oldState.age,
+                                  value: state.age,
                                   minValue: 18,
                                   maxValue: 100,
                                   onChanged:
                                       context.read<SettingsCubit>().changeAge,
                                 )
                               : Text(
-                                  oldState.age.toString(),
+                                  state.age.toString(),
                                   style:
                                       AppTextStyle.body.copyWith(fontSize: 20),
                                 ),

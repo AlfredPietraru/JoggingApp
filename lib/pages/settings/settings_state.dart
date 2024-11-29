@@ -1,13 +1,6 @@
 part of 'settings_cubit.dart';
 
-sealed class SettingsState extends Equatable {
-  const SettingsState();
-
-  @override
-  List<Object> get props => [];
-}
-
-final class SettingsInitial extends SettingsState {
+final class SettingsState extends Equatable {
   final String firstName;
   final String lastName;
   final int age;
@@ -18,7 +11,7 @@ final class SettingsInitial extends SettingsState {
   final bool editAge;
   final bool applyChanges;
 
-  const SettingsInitial(
+  const SettingsState(
       {required this.editFirstName,
       required this.editLastName,
       required this.editSex,
@@ -29,7 +22,7 @@ final class SettingsInitial extends SettingsState {
       required this.age,
       required this.sex});
 
-  SettingsInitial copyWith({
+  SettingsState copyWith({
     String? firstName,
     String? lastName,
     int? age,
@@ -40,7 +33,7 @@ final class SettingsInitial extends SettingsState {
     bool? editAge,
     bool? applyChanges,
   }) {
-    return SettingsInitial(
+    return SettingsState(
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       age: age ?? this.age,

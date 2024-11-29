@@ -6,7 +6,7 @@ part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
   SettingsCubit({required this.user})
-      : super(SettingsInitial(
+      : super(SettingsState(
           applyChanges: false,
           age: user.age,
           firstName: user.firstName,
@@ -21,47 +21,42 @@ class SettingsCubit extends Cubit<SettingsState> {
   final User user;
 
   void changeFirstName(String firstName) {
-    emit((state as SettingsInitial).copyWith(firstName: firstName));
+    emit(state.copyWith(firstName: firstName));
   }
 
   void changeLastName(String lastName) {
-    emit((state as SettingsInitial).copyWith(lastName: lastName));
+    emit(state.copyWith(lastName: lastName));
   }
 
   void changeAge(int age) {
-    emit((state as SettingsInitial).copyWith(age: age));
+    emit(state.copyWith(age: age));
   }
 
   void changeSex(String? sex) {
-    emit((state as SettingsInitial).copyWith(sex: Sex.fromName(sex!)));
+    emit(state.copyWith(sex: Sex.fromName(sex!)));
   }
 
   void toggleEditFirstName() {
-    emit((state as SettingsInitial)
-        .copyWith(editFirstName: !(state as SettingsInitial).editFirstName));
+    emit(state.copyWith(editFirstName: !state.editFirstName));
   }
 
   void toggleEditLastName() {
-    emit((state as SettingsInitial)
-        .copyWith(editLastName: !(state as SettingsInitial).editLastName));
+    emit(state.copyWith(editLastName: !state.editLastName));
   }
 
   void toggleEditSex() {
-    emit((state as SettingsInitial)
-        .copyWith(editSex: !(state as SettingsInitial).editSex));
+    emit(state.copyWith(editSex: !state.editSex));
   }
 
   void toggleEditAge() {
-    emit((state as SettingsInitial)
-        .copyWith(editAge: !(state as SettingsInitial).editAge));
+    emit(state.copyWith(editAge: !state.editAge));
   }
 
   bool applyChanges() {
-    final oldState = state as SettingsInitial;
-    if (user.firstName != oldState.firstName) return true;
-    if (user.lastName != oldState.lastName) return true;
-    if (user.age != oldState.age) return true;
-    if (user.sex != oldState.sex) return true;
+    if (user.firstName != state.firstName) return true;
+    if (user.lastName != state.lastName) return true;
+    if (user.age != state.age) return true;
+    if (user.sex != state.sex) return true;
     return false;
   }
 }

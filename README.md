@@ -10,3 +10,6 @@ fara validare la parola
 // objectBox -> suplimentar (baza de date vectoriale), drift, hive
 // prefs.getUser -> 
 // internationalizare -> .arb file,  
+
+
+De ce este HistoryState un sealed class daca are o singura subclasa?
