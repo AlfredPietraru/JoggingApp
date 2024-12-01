@@ -59,6 +59,7 @@ dependencies:
   flutter_map_math: ^0.1.7
   bloc: ^8.1.4
   fl_chart: ^0.69.0
+  rx_shared_preferences: ^4.0.0
 
 dev_dependencies:
   flutter_test:

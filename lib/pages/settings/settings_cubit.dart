@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jogging/auth/repository.dart';
 import 'package:jogging/auth/user.dart';
 
 part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit({required this.user})
+  SettingsCubit({required this.userRepository, required User user})
       : super(SettingsState(
           applyChanges: false,
           age: user.age,
@@ -18,7 +20,7 @@ class SettingsCubit extends Cubit<SettingsState> {
           editAge: false,
         ));
 
-  final User user;
+  final UserRepository userRepository;
 
   void changeFirstName(String firstName) {
     emit(state.copyWith(firstName: firstName));
@@ -52,7 +54,18 @@ class SettingsCubit extends Cubit<SettingsState> {
     emit(state.copyWith(editAge: !state.editAge));
   }
 
-  bool applyChanges() {
+  void updateUser(User user) {
+    userRepository.updateUserInformation(
+      user.copyWith(
+        firstName: state.firstName,
+        lastName: state.lastName,
+        age: state.age,
+        sex: state.sex,
+      ),
+    );
+  }
+
+  bool applyChanges(User user) {
     if (user.firstName != state.firstName) return true;
     if (user.lastName != state.lastName) return true;
     if (user.age != state.age) return true;

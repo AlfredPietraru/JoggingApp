@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jogging/gen/assets.gen.dart';
+import 'package:jogging/pages/explore.dart';
 import 'package:jogging/pages/history/history_page.dart';
 import 'package:jogging/pages/settings/settings_page.dart';
 
@@ -37,7 +38,11 @@ class MyNavigationDrawer extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               CustomListTile(
-                  onTap: () {}, icon: Assets.icons.home, name: "Explore"),
+                  onTap: () {
+                    Navigator.push(context, Explore.page());
+                  },
+                  icon: Assets.icons.home,
+                  name: "Explore"),
               CustomListTile(
                   onTap: () {
                     Navigator.push(context, SettingsPage.page());

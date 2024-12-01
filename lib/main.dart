@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jogging/auth/client.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/pages/landing_page.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/pages/map/map_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import 'firebase_options.dart';
+// ignore: depend_on_referenced_packages
+import 'package:disposebag/disposebag.dart' show DisposeBagConfigs;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  DisposeBagConfigs.logger = null;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final client = AuthenticationClient();
   final userRepository = UserRepository(
-      authenticationClient: client,
-      prefs: await SharedPreferences.getInstance());
+    prefs: RxSharedPreferences(
+      SharedPreferences.getInstance(),
+      const RxSharedPreferencesDefaultLogger(),
+    ),
+  );
   // userRepository.deleteUserFromMemory();
   runApp(
     MultiBlocProvider(
@@ -56,6 +60,9 @@ class _MyAppState extends State<MyApp> {
         builder: (context, state) {
           return Container(
             child: switch (status) {
+              AppStatus.lostConnection => const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                ),
               AppStatus.unauthenticated => const LandingPage(),
               AppStatus.initializing => const Scaffold(
                   body: Center(child: CircularProgressIndicator())),

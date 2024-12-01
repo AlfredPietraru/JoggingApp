@@ -21,6 +21,7 @@ class SettingsPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => SettingsCubit(
         user: context.read<AppCubit>().state.user!,
+        userRepository: context.read<AppCubit>().userRepository,
       ),
       child: Builder(builder: (context) {
         return const _SettingsPage();
@@ -47,8 +48,10 @@ class _SettingsPageState extends State<_SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = context.select((AppCubit bloc) => bloc.state.user);
+
     return BlocBuilder<SettingsCubit, SettingsState>(
-      builder: (context, state) {
+      builder: (context, settingsState) {
         return Scaffold(
           body: Padding(
             padding: AppPadding.page,
@@ -61,15 +64,10 @@ class _SettingsPageState extends State<_SettingsPage> {
                     alignment: Alignment.topLeft,
                     child: MyBackButton(),
                   ),
-                  context.read<SettingsCubit>().applyChanges()
+                  context.read<SettingsCubit>().applyChanges(userState!)
                       ? ElevatedButton(
                           onPressed: () {
-                            context.read<AppCubit>().changeUserInformation(
-                                  age: state.age,
-                                  firstName: state.firstName,
-                                  lastName: state.lastName,
-                                  sex: state.sex,
-                                );
+                            context.read<SettingsCubit>().updateUser(userState);
                           },
                           child: const Text('Save changes'),
                         )
@@ -90,20 +88,20 @@ class _SettingsPageState extends State<_SettingsPage> {
                   const Divider(),
                   EditableZone(
                     label: "First Name:",
-                    value: state.firstName,
+                    value: settingsState.firstName,
                     onPressedEditButton:
                         context.read<SettingsCubit>().toggleEditFirstName,
-                    showEditingWindow: state.editFirstName,
+                    showEditingWindow: settingsState.editFirstName,
                     textController: firstNameController,
                     onChanged: context.read<SettingsCubit>().changeFirstName,
                   ),
                   const Divider(),
                   EditableZone(
                     label: "Last Name:",
-                    value: state.lastName,
+                    value: settingsState.lastName,
                     onPressedEditButton:
                         context.read<SettingsCubit>().toggleEditLastName,
-                    showEditingWindow: state.editLastName,
+                    showEditingWindow: settingsState.editLastName,
                     textController: lastNameController,
                     onChanged: context.read<SettingsCubit>().changeLastName,
                   ),
@@ -123,9 +121,9 @@ class _SettingsPageState extends State<_SettingsPage> {
                             'Sex:',
                             style: AppTextStyle.body.copyWith(fontSize: 20),
                           ),
-                          state.editSex
+                          settingsState.editSex
                               ? DropdownButton<String>(
-                                  value: state.sex.toName(),
+                                  value: settingsState.sex.toName(),
                                   onChanged:
                                       context.read<SettingsCubit>().changeSex,
                                   items: [
@@ -144,7 +142,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                                   ],
                                 )
                               : Text(
-                                  state.sex.toName(),
+                                  settingsState.sex.toName(),
                                   style:
                                       AppTextStyle.body.copyWith(fontSize: 20),
                                 ),
@@ -169,7 +167,7 @@ class _SettingsPageState extends State<_SettingsPage> {
                             'Age:',
                             style: AppTextStyle.body.copyWith(fontSize: 20),
                           ),
-                          state.editAge
+                          settingsState.editAge
                               ? NumberPicker(
                                   axis: Axis.horizontal,
                                   selectedTextStyle: AppTextStyle.body.copyWith(
@@ -178,14 +176,14 @@ class _SettingsPageState extends State<_SettingsPage> {
                                       MediaQuery.of(context).size.width / 6,
                                   textStyle:
                                       AppTextStyle.body.copyWith(fontSize: 20),
-                                  value: state.age,
+                                  value: settingsState.age,
                                   minValue: 18,
                                   maxValue: 100,
                                   onChanged:
                                       context.read<SettingsCubit>().changeAge,
                                 )
                               : Text(
-                                  state.age.toString(),
+                                  settingsState.age.toString(),
                                   style:
                                       AppTextStyle.body.copyWith(fontSize: 20),
                                 ),
@@ -384,9 +382,11 @@ class LogOutAlertDialog extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              context.read<AppCubit>().deleteUserFromMemory();
-              Navigator.of(context).popUntil((Route<dynamic> route) => false);
-              Navigator.push(context, LandingPage.page());
+              context
+                  .read<AppCubit>()
+                  .userRepository
+                  .deleteUserFromMemory();
+              Navigator.pushReplacement(context, LandingPage.page());
             },
           ),
         ),

@@ -40,7 +40,7 @@ class _HistoryPage extends StatefulWidget {
 
 class __HistoryPageState extends State<_HistoryPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late GoogleMapController mapController;
+  late GoogleMapController? mapController;
   final TextStyle generalStyle = AppTextStyle.body.copyWith(fontSize: 20);
 
   void _onMapCreated(GoogleMapController controller) {
@@ -49,7 +49,7 @@ class __HistoryPageState extends State<_HistoryPage> {
 
   @override
   void dispose() {
-    mapController.dispose();
+    mapController?.dispose();
     super.dispose();
   }
 

@@ -17,9 +17,12 @@ class MapPage extends StatelessWidget {
       create: ((context) => MapCubit(
             userRepository: context.read<AppCubit>().userRepository,
             runSession: RunSession(
-                coordinates: const [],
-                distances: const [],
-                times: const [],
+                // ignore: prefer_const_literals_to_create_immutables
+                coordinates: [],
+                // ignore: prefer_const_literals_to_create_immutables
+                distances: [],
+                // ignore: prefer_const_literals_to_create_immutables
+                times: [],
                 dateTime: DateTime.now(),
                 user: context.read<AppCubit>().state.user!),
           )),
@@ -27,9 +30,7 @@ class MapPage extends StatelessWidget {
         return BlocListener<MapCubit, MapState>(
           listener: (context, state) async {
             if (state is MapTrack && state.status == MapStatus.sending) {
-              context.read<AppCubit>().changeUserInformation(
-                  numberOfRuns:
-                      context.read<AppCubit>().state.user!.numberOfRuns + 1);
+              context.read<AppCubit>().changeNumberRuns();
               context.read<MapCubit>().sendRunToDatabase();
               return;
             }
