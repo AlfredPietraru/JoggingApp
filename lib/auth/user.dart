@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 /// local user of the app
@@ -23,6 +25,31 @@ final class User extends Equatable {
         lastName: "",
         age: 0,
         sex: Sex.other);
+  }
+
+  factory User.fromSharedPreferences(String values) {
+    final userData = jsonDecode(values) as Map<String, dynamic>;
+    return User(
+      uid: userData['uid'],
+      email: userData['email'],
+      firstName: userData['firstName'],
+      lastName: userData['lastName'],
+      age: userData['age'],
+      sex: Sex.fromName(userData['sex']),
+      numberOfRuns: userData['numberOfRuns'],
+    );
+  }
+
+  String toSharedPreferences() {
+    return jsonEncode({
+      'uid': uid,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'sex': sex.toName(),
+      'age': age,
+      'numberOfRuns': numberOfRuns,
+    });
   }
 
   /// Creates a user from json

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:jogging/auth/client.dart';
 import 'package:jogging/auth/failures.dart';
@@ -60,49 +62,26 @@ class UserRepository {
   }
 
   User? getUserFromMemory() {
-    final int? age = prefs.getInt('age');
-    if (age == null) return null;
-    final String? email = prefs.getString('email');
-    if (email == null) return null;
-    final String? firstName = prefs.getString('firstName');
-    if (firstName == null) return null;
-    final String? lastName = prefs.getString('lastName');
-    if (lastName == null) return null;
-    final String? uid = prefs.getString('uid');
-    if (uid == null) return null;
-    final String? sex = prefs.getString('sex');
-    if (sex == null) return null;
-    final int? numberOfRuns = prefs.getInt('numberOfRuns');
-    if (numberOfRuns == null) return null;
+    String? data = prefs.getString('user_data');
+    print(data);
+    if (data == null) return null;
+    Map<String, dynamic> userData = jsonDecode(data) as Map<String, dynamic>;
     return User(
-      age: age,
-      uid: uid,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      sex: Sex.fromName(sex),
-      numberOfRuns: numberOfRuns,
+      age: userData['age'],
+      uid: userData['uid'],
+      email: userData['email'],
+      firstName: userData['firstName'],
+      lastName: userData['lastName'],
+      sex: Sex.fromName(userData['sex']),
+      numberOfRuns: userData['numberOfRuns'],
     );
   }
 
   void deleteUserFromMemory() async {
-    await prefs.remove('runs');
-    await prefs.remove('age');
-    await prefs.remove('email');
-    await prefs.remove('firstName');
-    await prefs.remove('lastName');
-    await prefs.remove('uid');
-    await prefs.remove('sex');
-    await prefs.remove('numberOfRuns');
+    await prefs.remove('user_data');
   }
 
   void writeUserToMemory(User user) async {
-    await prefs.setString('email', user.email);
-    await prefs.setString('firstName', user.firstName);
-    await prefs.setString('lastName', user.lastName);
-    await prefs.setInt('age', user.age);
-    await prefs.setString('uid', user.uid);
-    await prefs.setString('sex', user.sex.toString());
-    await prefs.setInt('numberOfRuns', user.numberOfRuns);
+    await prefs.setString('user_data', user.toSharedPreferences());
   }
 }
