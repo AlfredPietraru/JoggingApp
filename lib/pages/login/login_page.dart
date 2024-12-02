@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
-import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/custom_button.dart';
 import 'package:jogging/core/custom_textform.dart';
 import 'package:jogging/pages/login/login_cubit.dart';
@@ -24,13 +23,8 @@ class LoginPage extends StatelessWidget {
           LoginCubit(userRepository: context.read<UserRepository>()),
       child: Builder(builder: (context) {
         return BlocListener<LoginCubit, LoginState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is LoginSuccessful) {
-              context.read<AppCubit>().setUser(state.user);
-              context
-                  .read<AppCubit>()
-                  .userRepository
-                  .writeUserToMemory(state.user);
               Navigator.push(context, MapPage.page());
             }
           },

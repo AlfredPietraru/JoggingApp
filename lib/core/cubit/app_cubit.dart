@@ -47,7 +47,6 @@ class AppCubit extends Cubit<AppState> {
         emit(const AppState(user: null, status: AppStatus.lostConnection));
         return;
       }
-      emit(AppState(user: user, status: AppStatus.authenticated));
       userRepository.writeUserToMemory(user);
     });
   }
@@ -58,18 +57,7 @@ class AppCubit extends Cubit<AppState> {
             state.user!.copyWith(numberOfRuns: state.user!.numberOfRuns + 1)));
   }
 
-  void setUser(User user) {
-    emit(
-      state.copyWith(user: user, status: AppStatus.authenticated),
-    );
-    userRepository.writeUserToMemory(user);
-  }
-
   String getFullUserName() {
     return "${state.user!.firstName} ${state.user!.lastName}";
-  }
-
-  void deleteUserFromMemory() async {
-    userRepository.deleteUserFromMemory();
   }
 }

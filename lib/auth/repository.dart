@@ -48,7 +48,6 @@ class UserRepository {
           .collection("users")
           .doc(userCredentials.user!.uid)
           .set(user.toJson());
-      writeUserToMemory(user);
       return Right(user);
     } on firebase_auth.FirebaseAuthException catch (e) {
       return Left(_mapCreateUserFailures(e.code));
@@ -156,7 +155,7 @@ class UserRepository {
     return User.fromJson(userValues.data()!, id: id);
   }
 
-  void deleteUserFromMemory() async {
+  Future<void> deleteUserFromMemory() async {
     final keyIsContained = await prefs.containsKey('user_data');
     if (keyIsContained) {
       print("S-au gasit datele user-ului care vor fi sterse");
@@ -166,14 +165,13 @@ class UserRepository {
     print("Nu s-a gasit nimic despre user in shared preferences");
   }
 
-  void writeUserToMemory(User user) async {
-    prefs.updateString('user_data', (p0) => user.toSharedPreferences());
+  Future<void> writeUserToMemory(User user) async {
+    await prefs.updateString('user_data', (p0) => user.toSharedPreferences());
   }
 
   Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
     try {
       await _db.collection("users").doc(user.uid).set(user.toJson());
-      writeUserToMemory(user);
       return null;
     } on FirebaseException {
       return CreateUserFailure.unknownFailure;
