@@ -29,11 +29,16 @@ class AppCubit extends Cubit<AppState> {
   void initialize() async {
     sharedPrefsSubscription =
         userRepository.getLocalUserStream().listen((event) {
-      emit(state.copyWith(user: event));
+      if (event == null) {
+        emit(state.copyWith(user: event, status: AppStatus.unauthenticated));
+      } else {
+        emit(state.copyWith(user: event, status: AppStatus.authenticated));
+      }
     });
 
     firebaseSubscription = userRepository.userIdString().listen((id) async {
       if (id == null) {
+        print("Userul nu este authentificat");
         emit(const AppState(user: null, status: AppStatus.unauthenticated));
         return;
       }

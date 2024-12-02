@@ -9,26 +9,44 @@ class InfoCollectorCubit extends Cubit<InfoCollectorState> {
     required this.email,
     required this.password,
     required this.userRepository,
-  }) : super(InfoCollectorInitialState(
-          email: email,
-          password: password,
-          sex: Sex.other,
-          age: 18,
-          firstName: '',
-          lastName: '',
-          failure: CreateUserFailure.noFailureAtAll,
-          stopFromClicking: false,
-        ));
+  }) : super(
+          InfoCollectorInitialState(
+            description: "Hello, I am using Jogging Time.",
+            email: email,
+            password: password,
+            sex: Sex.other,
+            age: 18,
+            firstName: '',
+            lastName: '',
+            failure: CreateUserFailure.noFailureAtAll,
+            stopFromClicking: false,
+          ),
+        );
+
   final UserRepository userRepository;
   final String email;
   final String password;
 
   void changeFirstName(String firstName) {
-    emit((state as InfoCollectorInitialState).copyWith(
+    emit(
+      (state as InfoCollectorInitialState).copyWith(
         firstName: firstName,
         failure: _isNameValid(firstName)
             ? CreateUserFailure.noFailureAtAll
-            : CreateUserFailure.invalidFirstName));
+            : CreateUserFailure.invalidFirstName,
+      ),
+    );
+  }
+
+  void changeDescription(String description) {
+    emit(
+      (state as InfoCollectorInitialState).copyWith(
+        description: description,
+        failure: _isDescriptionValid(description)
+            ? CreateUserFailure.noFailureAtAll
+            : CreateUserFailure.invalidDescription,
+      ),
+    );
   }
 
   void changeLastName(String lastName) {
@@ -55,12 +73,14 @@ class InfoCollectorCubit extends Cubit<InfoCollectorState> {
     final oldState = state as InfoCollectorInitialState;
     emit((state as InfoCollectorInitialState).copyWith(stopFromClicking: true));
     final result = await userRepository.createUser(
-        email: email,
-        password: password,
-        firstName: oldState.firstName,
-        lastName: oldState.lastName,
-        age: oldState.age,
-        sex: oldState.sex);
+      email: email,
+      password: password,
+      firstName: oldState.firstName,
+      lastName: oldState.lastName,
+      age: oldState.age,
+      sex: oldState.sex,
+      description: oldState.description,
+    );
     result.fold((l) {
       emit((state as InfoCollectorInitialState).copyWith(failure: l));
     }, (r) {
@@ -72,5 +92,10 @@ class InfoCollectorCubit extends Cubit<InfoCollectorState> {
     if (name == "") return false;
     RegExp nameRegExp = RegExp(r"^[a-zA-Z]+([ '-][a-zA-Z]+)*$");
     return nameRegExp.hasMatch(name);
+  }
+
+  bool _isDescriptionValid(String description) {
+    if (description.length < 160) return true;
+    return false;
   }
 }

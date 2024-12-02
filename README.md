@@ -11,9 +11,15 @@ fara validare la parola
 // internationalizare -> .arb file,  
 
 Functionalitati:
-teste unitare -> teste pentru comunicarea cu firebase / teste functionare pentru grafuri  
+teste unitare -> teste pentru comunicarea cu firebase -> teste adaugare useri in baza de date  
+                 / teste functionare pentru grafuri  
 imbunatire siguranta aplicatie -> situatia in care utilizatorul nu are internet
 notificari push 
 pagina de explore -> gasire alti utilizatori, adaugare la sectiunea de prieteni 
 vizualizare profil + capacitate de adaugare poza de profil, 
+mutare pagina de settings -> 
+map page -> adaugare distanta parcursa, modificare culoare pozitie curenta, alegere de a trimite alergarea la
+server 
+
+user -> adaugare description section 
 

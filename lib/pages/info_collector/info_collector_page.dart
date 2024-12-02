@@ -54,12 +54,14 @@ class _InfoCollector extends StatefulWidget {
 class __InfoCollectorState extends State<_InfoCollector> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
+  final descriptionController = TextEditingController();
   String decision = Sex.male.toName();
 
   @override
   void dispose() {
     lastNameController.dispose();
     firstNameController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
@@ -184,6 +186,28 @@ class __InfoCollectorState extends State<_InfoCollector> {
                       ),
                     ],
                   ),
+                ),
+                TextField(
+                  controller: descriptionController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.aquamarine,
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.hunterGreen, width: 3),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: AppColors.enabledFieldOrange, width: 3),
+                    ),
+                    labelText: "Your Description",
+                    labelStyle: AppTextStyle.body.copyWith(
+                        color: AppColors.eerieBlack,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  onChanged:
+                      context.read<InfoCollectorCubit>().changeDescription,
                 ),
                 const SizedBox(height: 40),
                 Align(

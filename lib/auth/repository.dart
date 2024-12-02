@@ -26,6 +26,7 @@ class UserRepository {
     required String lastName,
     required int age,
     required Sex sex,
+    required String description,
   }) async {
     try {
       final userCredentials = await _firebaseAuth
@@ -34,6 +35,7 @@ class UserRepository {
         return const Left(CreateUserFailure.unknownFailure);
       }
       User user = User(
+        description: description,
         email: email,
         uid: userCredentials.user!.uid,
         firstName: firstName,
@@ -135,6 +137,7 @@ class UserRepository {
     if (data == null) return null;
     Map<String, dynamic> userData = jsonDecode(data) as Map<String, dynamic>;
     return User(
+      description: userData['description'],
       age: userData['age'],
       uid: userData['uid'],
       email: userData['email'],
@@ -154,7 +157,13 @@ class UserRepository {
   }
 
   void deleteUserFromMemory() async {
-    await prefs.remove('user_data');
+    final keyIsContained = await prefs.containsKey('user_data');
+    if (keyIsContained) {
+      print("S-au gasit datele user-ului care vor fi sterse");
+      await prefs.remove('user_data');
+      return;
+    }
+    print("Nu s-a gasit nimic despre user in shared preferences");
   }
 
   void writeUserToMemory(User user) async {

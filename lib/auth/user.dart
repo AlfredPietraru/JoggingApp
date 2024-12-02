@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 /// local user of the app
 final class User extends Equatable {
   const User({
+    required this.description,
     required this.uid,
     required this.email,
     required this.firstName,
@@ -18,6 +19,7 @@ final class User extends Equatable {
 
   factory User.getInitialUser(String email, String uid) {
     return User(
+        description: "",
         numberOfRuns: 0,
         uid: uid,
         email: email,
@@ -30,6 +32,7 @@ final class User extends Equatable {
   factory User.fromSharedPreferences(String values) {
     final userData = jsonDecode(values) as Map<String, dynamic>;
     return User(
+      description: userData['description'],
       uid: userData['uid'],
       email: userData['email'],
       firstName: userData['firstName'],
@@ -42,6 +45,7 @@ final class User extends Equatable {
 
   String toSharedPreferences() {
     return jsonEncode({
+      'description': description,
       'uid': uid,
       'email': email,
       'firstName': firstName,
@@ -64,6 +68,7 @@ final class User extends Equatable {
         json['sex'] as String,
       ),
       numberOfRuns: json['numberOfRuns'] as int,
+      description: json['description'] as String,
     );
   }
 
@@ -75,6 +80,7 @@ final class User extends Equatable {
   final int age;
   final Sex sex;
   final int numberOfRuns;
+  final String description;
 
   User copyWith({
     String? email,
@@ -84,6 +90,7 @@ final class User extends Equatable {
     Sex? sex,
     String? uid,
     int? numberOfRuns,
+    String? description,
   }) {
     return User(
       uid: uid ?? this.uid,
@@ -93,6 +100,7 @@ final class User extends Equatable {
       age: age ?? this.age,
       sex: sex ?? this.sex,
       numberOfRuns: numberOfRuns ?? this.numberOfRuns,
+      description: description ?? this.description,
     );
   }
 
@@ -106,6 +114,7 @@ final class User extends Equatable {
       'sex': sex.toName(),
       'age': age,
       'numberOfRuns': numberOfRuns,
+      'description': description,
     };
   }
 
@@ -116,6 +125,7 @@ final class User extends Equatable {
         lastName,
         sex,
         age,
+        description,
         numberOfRuns,
       ];
 }

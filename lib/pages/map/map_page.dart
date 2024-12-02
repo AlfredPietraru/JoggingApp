@@ -112,6 +112,8 @@ class __MapPageState extends State<_MapPage> {
                               markerId: const MarkerId('End point'),
                               position: context.read<MapCubit>().setMapCenter(),
                               infoWindow: const InfoWindow(title: 'End point'),
+                              icon: BitmapDescriptor.defaultMarkerWithHue(
+                                  BitmapDescriptor.hueYellow),
                             ),
                           },
                         ),

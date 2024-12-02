@@ -13,7 +13,10 @@ class InfoCollectorInitialState extends InfoCollectorState {
   final String firstName;
   final String lastName;
   final bool stopFromClicking;
+  final String description;
+
   InfoCollectorInitialState({
+    required this.description,
     required this.email,
     required this.password,
     required this.sex,
@@ -33,6 +36,7 @@ class InfoCollectorInitialState extends InfoCollectorState {
     String? lastName,
     CreateUserFailure? failure,
     bool? stopFromClicking,
+    String? description,
   }) {
     return InfoCollectorInitialState(
       email: email ?? this.email,
@@ -43,12 +47,13 @@ class InfoCollectorInitialState extends InfoCollectorState {
       lastName: lastName ?? this.lastName,
       failure: failure ?? this.failure,
       stopFromClicking: stopFromClicking ?? this.stopFromClicking,
+      description: description ?? this.description,
     );
   }
 
   @override
   List<Object?> get props =>
-      [email, firstName, lastName, age, sex, failure, stopFromClicking];
+      [email, firstName, lastName, age, sex, failure, stopFromClicking, description];
 }
 
 class InfoCollectorSuccessState extends InfoCollectorState {

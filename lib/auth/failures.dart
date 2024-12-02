@@ -8,6 +8,7 @@ enum CreateUserFailure {
   invalidFirstName,
   invalidLastName,
   noInternetConnection,
+  invalidDescription,
 }
 
 enum ChangePasswordFailure {
