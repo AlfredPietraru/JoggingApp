@@ -1,14 +1,12 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:jogging/auth/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/repository.dart';
-import 'package:jogging/auth/user.dart';
+import 'package:jogging/pages/profile/profile_state.dart';
 
-part 'settings_state.dart';
-
-class SettingsCubit extends Cubit<SettingsState> {
-  SettingsCubit({required this.userRepository, required User user})
-      : super(SettingsState(
+class ProfileCubit extends Cubit<ProfileState> {
+  ProfileCubit({required this.userRepository, required User user})
+      : super(ProfileState(
           applyChanges: false,
           age: user.age,
           firstName: user.firstName,

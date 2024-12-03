@@ -3,7 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/explore.dart';
 import 'package:jogging/pages/history/history_page.dart';
-import 'package:jogging/pages/settings/settings_page.dart';
+import 'package:jogging/pages/profile/profile_page.dart';
+import 'package:jogging/pages/settings_page.dart';
 
 class MyNavigationDrawer extends StatelessWidget {
   const MyNavigationDrawer({super.key});
@@ -43,6 +44,12 @@ class MyNavigationDrawer extends StatelessWidget {
                   },
                   icon: Assets.icons.home,
                   name: "Explore"),
+              CustomListTile(
+                  onTap: () {
+                    Navigator.push(context, ProfilePage.page());
+                  },
+                  icon: Assets.icons.home,
+                  name: "Profile"),
               CustomListTile(
                   onTap: () {
                     Navigator.push(context, SettingsPage.page());

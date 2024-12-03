@@ -15,7 +15,6 @@ class CustomTextForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      
       controller: controller,
       decoration: InputDecoration(
         filled: true,
@@ -26,7 +25,7 @@ class CustomTextForm extends StatelessWidget {
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.enabledFieldOrange, width: 3),
         ),
-        labelText: labelText,
+        // labelText: labelText,
         labelStyle: AppTextStyle.body.copyWith(
             color: AppColors.eerieBlack,
             fontSize: 25,

@@ -15,7 +15,7 @@ import 'package:jogging/main.dart';
 import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import 'package:disposebag/disposebag.dart' show DisposeBagConfigs;
 
-import 'create_user_test.dart';
+import 'create_users/create_user_test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,7 @@ void main() async {
       const RxSharedPreferencesDefaultLogger(),
     ),
   );
-  final testUserCreateDeleteLoginJson = TestUserCreateDeleteLoginJson(
+  final testCreateMoreUsers = TestCreateMoreUsers(
       fileName: "user_data.json", userRepository: userRepository);
   
 

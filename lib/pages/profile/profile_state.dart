@@ -1,6 +1,7 @@
-part of 'settings_cubit.dart';
+import 'package:equatable/equatable.dart';
+import 'package:jogging/auth/user.dart';
 
-final class SettingsState extends Equatable {
+final class ProfileState extends Equatable {
   final String firstName;
   final String lastName;
   final int age;
@@ -11,7 +12,7 @@ final class SettingsState extends Equatable {
   final bool editAge;
   final bool applyChanges;
 
-  const SettingsState(
+  const ProfileState(
       {required this.editFirstName,
       required this.editLastName,
       required this.editSex,
@@ -22,7 +23,7 @@ final class SettingsState extends Equatable {
       required this.age,
       required this.sex});
 
-  SettingsState copyWith({
+  ProfileState copyWith({
     String? firstName,
     String? lastName,
     int? age,
@@ -33,7 +34,7 @@ final class SettingsState extends Equatable {
     bool? editAge,
     bool? applyChanges,
   }) {
-    return SettingsState(
+    return ProfileState(
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       age: age ?? this.age,
