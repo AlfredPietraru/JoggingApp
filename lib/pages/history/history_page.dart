@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/history/history_cubit.dart';
 
 class HistoryPage extends StatelessWidget {
@@ -67,7 +68,11 @@ class __HistoryPageState extends State<_HistoryPage> {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                       )
-                    : const Text('It seams that there is nothing here yet'),
+                    : const Column(
+                        children: [
+                          Text('Nothing to show here yet'),
+                        ],
+                      ),
               ),
             ),
           ),
@@ -82,7 +87,7 @@ class __HistoryPageState extends State<_HistoryPage> {
           ),
           body: Container(
             child: state.runSession.coordinates.isEmpty
-                ? const Text("No element found")
+                ? const ContentNoRunningInHistory()
                 : Padding(
                     padding: const EdgeInsets.only(top: AppSpacing.lg),
                     child: ListView(
@@ -261,6 +266,40 @@ class __HistoryPageState extends State<_HistoryPage> {
           ),
         );
       },
+    );
+  }
+}
+
+class ContentNoRunningInHistory extends StatelessWidget {
+  const ContentNoRunningInHistory({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: AppSpacing.lg),
+        Center(
+          child: Text(
+            "There is no run yet",
+            style: AppTextStyle.body,
+          ),
+        ),
+        Center(
+          child: Text(
+            "Go for a jog and come here again.",
+            style: AppTextStyle.body,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Image(
+          image: AssetImage(Assets.images.nothing.path),
+          width: 300,
+          height: 300,
+        ),
+      ],
     );
   }
 }
