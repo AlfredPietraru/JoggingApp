@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/run_session.dart';
+import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
@@ -30,8 +31,9 @@ class MapPage extends StatelessWidget {
         return BlocListener<MapCubit, MapState>(
           listener: (context, state) async {
             if (state is MapTrack && state.status == MapStatus.sending) {
+              final idx = context.read<AppCubit>().state.user!.numberOfRuns + 1;
               context.read<AppCubit>().changeNumberRuns();
-              context.read<MapCubit>().sendRunToDatabase();
+              context.read<MapCubit>().sendRunToDatabase(idx);
               return;
             }
           },
@@ -77,8 +79,18 @@ class __MapPageState extends State<_MapPage> {
                         MapStatus.ready => oldState.enableButton
                             ? context.read<MapCubit>().startTrackingLocation
                             : null,
-                        MapStatus.tracking =>
-                          context.read<MapCubit>().stopTrackingLocation,
+                        MapStatus.tracking => () {
+                            final mapCubit = context.read<MapCubit>();
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return BlocProvider<MapCubit>.value(
+                                  value: mapCubit,
+                                  child: const SendRunToDatabaseDialog(),
+                                );
+                              },
+                            );
+                          },
                         MapStatus.sending => null,
                         MapStatus.blocked => null,
                       },
@@ -103,8 +115,15 @@ class __MapPageState extends State<_MapPage> {
                           markers: {
                             Marker(
                               markerId: const MarkerId('Starting Point'),
-                              position:
-                                  context.read<MapCubit>().initialLocation,
+                              position: oldState is MapTrack
+                                  ? switch (oldState.status) {
+                                      MapStatus.tracking => context
+                                          .read<MapCubit>()
+                                          .initialLocation,
+                                      _ =>
+                                        context.read<MapCubit>().setMapCenter(),
+                                    }
+                                  : context.read<MapCubit>().initialLocation,
                               infoWindow:
                                   const InfoWindow(title: 'Starting Point'),
                             ),
@@ -123,4 +142,77 @@ class __MapPageState extends State<_MapPage> {
           );
         },
       );
+}
+
+class SendRunToDatabaseDialog extends StatelessWidget {
+  const SendRunToDatabaseDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Center(
+        child: Text(
+          'Sending current run to database',
+          textAlign: TextAlign.center,
+          style:
+              AppTextStyle.headline1.copyWith(color: AppColors.textColorBrown),
+        ),
+      ),
+      content: Text(
+        'Are you sure you want to proceed?',
+        style: AppTextStyle.alert.copyWith(color: AppColors.textColorBrown),
+        textAlign: TextAlign.center,
+      ),
+      elevation: 20,
+      backgroundColor: AppColors.buttonInterior,
+      actionsPadding: const EdgeInsets.all(AppSpacing.xlg),
+      actionsAlignment: MainAxisAlignment.spaceAround,
+      actions: [
+        SizedBox(
+          width: 120,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.enabledFieldOrange,
+              shadowColor: AppColors.costalBlue,
+              elevation: 10,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              side: const BorderSide(color: AppColors.eerieBlack, width: 2),
+            ),
+            onPressed: () {
+              context.read<MapCubit>().resetToReadyState();
+              Navigator.pop(context);
+            },
+            child: Text(
+              "No",
+              style: AppTextStyle.alert.copyWith(
+                color: AppColors.textColorBrown,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 120,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.enabledFieldOrange,
+              shadowColor: AppColors.costalBlue,
+              elevation: 10,
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              side: const BorderSide(color: AppColors.eerieBlack, width: 2),
+            ),
+            onPressed: () {
+              context.read<MapCubit>().stopTrackingLocation();
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Yes",
+              style: AppTextStyle.alert.copyWith(
+                color: AppColors.textColorBrown,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

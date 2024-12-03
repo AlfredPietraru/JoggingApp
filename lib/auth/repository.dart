@@ -100,16 +100,17 @@ class UserRepository {
     }
   }
 
-  Future<void> writePositionsToDatabase(RunSession runSession) async {
+  Future<void> writePositionsToDatabase(
+      RunSession runSession, int index) async {
     try {
       await _db
           .collection("users")
           .doc(runSession.user.uid)
-          .collection("run_${runSession.user.numberOfRuns}")
+          .collection("run_$index")
           .doc('run_info')
           .set(runSession.convertToDatabaseOut());
       await _db.collection("users").doc(runSession.user.uid).update({
-        "numberOfRuns": runSession.user.numberOfRuns + 1,
+        "numberOfRuns": index,
       });
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrierea");

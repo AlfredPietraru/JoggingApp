@@ -21,5 +21,6 @@ mutare pagina de settings ->
 map page -> adaugare distanta parcursa, modificare culoare pozitie curenta, alegere de a trimite alergarea la
 server 
 
+late GoogleMapController? mapController; -> neinitializat
 <!-- user -> adaugare description section  -->
 

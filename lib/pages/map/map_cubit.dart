@@ -54,6 +54,12 @@ class MapCubit extends Cubit<MapState> {
         LatLng(currentPosition.latitude, currentPosition.longitude);
   }
 
+  void resetToReadyState() {
+    final oldState = state as MapTrack;
+     emit(oldState.copyWith(positions: [], status: MapStatus.ready));
+  }
+
+
   Future<void> startTrackingLocation() async {
     final currentState = state;
     if (currentState is! MapTrack) return;
@@ -107,11 +113,11 @@ class MapCubit extends Cubit<MapState> {
     };
   }
 
-  void sendRunToDatabase() async {
+  void sendRunToDatabase(int runIndex) async {
     final oldState = state as MapTrack;
     if (oldState.status != MapStatus.sending) return;
     runSession.addPositionsToSessions(oldState.positions);
-    await userRepository.writePositionsToDatabase(runSession);
+    await userRepository.writePositionsToDatabase(runSession, runIndex);
     emit(oldState.copyWith(positions: [], status: MapStatus.ready));
   }
 
