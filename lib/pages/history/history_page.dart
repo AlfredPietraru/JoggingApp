@@ -40,18 +40,7 @@ class _HistoryPage extends StatefulWidget {
 
 class __HistoryPageState extends State<_HistoryPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late GoogleMapController? mapController;
   final TextStyle generalStyle = AppTextStyle.body.copyWith(fontSize: 20);
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  @override
-  void dispose() {
-    mapController?.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -265,63 +254,77 @@ class __HistoryPageState extends State<_HistoryPage> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.lg),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                          child: SizedBox(
-                            height: 400,
-                            child: GoogleMap(
-                              onMapCreated: _onMapCreated,
-                              initialCameraPosition: CameraPosition(
-                                target: context
-                                    .read<HistoryCubit>()
-                                    .setStartingPoint(),
-                                zoom: 15.0,
-                              ),
-                              polylines: <Polyline>{
-                                Polyline(
-                                  polylineId: const PolylineId("path"),
-                                  color: Colors.red,
-                                  consumeTapEvents: true,
-                                  width: 4,
-                                  points: context
-                                      .read<HistoryCubit>()
-                                      .allGraphPoints(),
-                                )
-                              },
-                              markers: {
-                                Marker(
-                                  markerId:
-                                      const MarkerId('InitialUserLocation'),
-                                  position: context
-                                      .read<HistoryCubit>()
-                                      .setStartingPoint(),
-                                  infoWindow: const InfoWindow(
-                                      title: 'Initial Location'),
-                                ),
-                                Marker(
-                                  markerId: const MarkerId('FinalUserLocation'),
-                                  position: context
-                                      .read<HistoryCubit>()
-                                      .setEndPoint(),
-                                  infoWindow: const InfoWindow(
-                                      title: 'FinalUserLocation'),
-                                ),
-                              },
-                              gestureRecognizers: Set()
-                                ..add(
-                                  Factory<OneSequenceGestureRecognizer>(
-                                    () => EagerGestureRecognizer(),
-                                  ),
-                                ),
-                            ),
-                          ),
-                        ),
+                        if (state.allRuns.isNotEmpty) const LocalMap(),
                       ],
                     ),
                   ),
           ),
         );
       },
+    );
+  }
+}
+
+class LocalMap extends StatefulWidget {
+  const LocalMap({super.key});
+
+  @override
+  State<LocalMap> createState() => _LocalMapState();
+}
+
+class _LocalMapState extends State<LocalMap> {
+  late GoogleMapController mapController;
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+      child: SizedBox(
+        height: 400,
+        child: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: context.read<HistoryCubit>().setStartingPoint(),
+            zoom: 15.0,
+          ),
+          polylines: <Polyline>{
+            Polyline(
+              polylineId: const PolylineId("path"),
+              color: Colors.red,
+              consumeTapEvents: true,
+              width: 4,
+              points: context.read<HistoryCubit>().allGraphPoints(),
+            )
+          },
+          markers: {
+            Marker(
+              markerId: const MarkerId('InitialUserLocation'),
+              position: context.read<HistoryCubit>().setStartingPoint(),
+              infoWindow: const InfoWindow(title: 'Initial Location'),
+            ),
+            Marker(
+              markerId: const MarkerId('FinalUserLocation'),
+              position: context.read<HistoryCubit>().setEndPoint(),
+              infoWindow: const InfoWindow(title: 'FinalUserLocation'),
+            ),
+          },
+          gestureRecognizers: Set()
+            ..add(
+              Factory<OneSequenceGestureRecognizer>(
+                () => EagerGestureRecognizer(),
+              ),
+            ),
+        ),
+      ),
     );
   }
 }
