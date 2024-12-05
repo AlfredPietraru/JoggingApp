@@ -3,7 +3,6 @@ import 'package:jogging/auth/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/pages/profile/profile_state.dart';
-import 'package:photo_manager/photo_manager.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required this.userRepository, required User user})

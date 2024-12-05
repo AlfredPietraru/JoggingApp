@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';

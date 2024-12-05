@@ -24,3 +24,6 @@ server
 late GoogleMapController? mapController; -> neinitializat
 <!-- user -> adaugare description section  -->
 
+
+Tests:
+from json / to Json
