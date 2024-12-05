@@ -69,11 +69,11 @@ class _ExploreState extends State<_Explore> {
             const SizedBox(height: AppSpacing.sm),
             Text("User found:", style: AppTextStyle.body),
             const SizedBox(height: AppSpacing.md),
-            for (int i = 0; i < exploreState.userId.length; i++)
+            for (int i = 0; i < exploreState.users.length; i++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                 child: UserContainer(
-                  user: exploreState.userId[i],
+                  user: exploreState.users[i],
                   tapAdd: () {},
                   tapDelete: () {},
                   tapViewProfile: () {},

@@ -76,6 +76,12 @@ class UserRepository {
     }
   }
 
+  Future<List<User>> getAllUsers() async {
+    final snapshot = await _db.collection("users").get();
+    return List.from(snapshot.docs
+        .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
+  }
+
   Future<void> logOut() async {
     await _firebaseAuth.signOut();
     // await deleteUserFromMemory();

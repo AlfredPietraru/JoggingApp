@@ -7,10 +7,13 @@ part 'explore_state.dart';
 
 class ExploreCubit extends Cubit<ExploreState> {
   ExploreCubit({required this.userRepository})
-      : super(const ExploreState(name: "", userId: []));
+      : super(const ExploreState(name: "", users: [])) {
+    getInfoFromServer();
+  }
 
   final UserRepository userRepository;
-  void getInfoFromServer() {
+  Future<void> getInfoFromServer() async {
+    emit(state.copyWith(users: await userRepository.getAllUsers()));
     // userRepository.getUserFromDatabase(id)
   }
 }
