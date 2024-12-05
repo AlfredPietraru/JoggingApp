@@ -15,10 +15,12 @@ final class User extends Equatable {
     required this.age,
     required this.sex,
     required this.numberOfRuns,
+    required this.friendList,
   });
 
   factory User.getInitialUser(String email, String uid) {
     return User(
+        friendList: [],
         description: "",
         numberOfRuns: 0,
         uid: uid,
@@ -32,6 +34,7 @@ final class User extends Equatable {
   factory User.fromSharedPreferences(String values) {
     final userData = jsonDecode(values) as Map<String, dynamic>;
     return User(
+      friendList: userData['friendList'],
       description: userData['description'],
       uid: userData['uid'],
       email: userData['email'],
@@ -45,6 +48,7 @@ final class User extends Equatable {
 
   String toSharedPreferences() {
     return jsonEncode({
+      'friendList': friendList,
       'description': description,
       'uid': uid,
       'email': email,
@@ -57,8 +61,10 @@ final class User extends Equatable {
   }
 
   /// Creates a user from json
-  factory User.fromJson(Map<String, dynamic> json, {required String id}) {
+  factory User.fromJson(
+      {required Map<String, dynamic> json, required String id}) {
     return User(
+      friendList: json['friendList'] as List<String>,
       uid: id,
       email: json['email'] as String,
       firstName: json['firstName'] as String,
@@ -73,6 +79,7 @@ final class User extends Equatable {
   }
 
   /// The box for local users
+  final List<String> friendList;
   final String uid;
   final String email;
   final String firstName;
@@ -91,8 +98,10 @@ final class User extends Equatable {
     String? uid,
     int? numberOfRuns,
     String? description,
+    List<String>? friendList,
   }) {
     return User(
+      friendList: friendList ?? this.friendList,
       uid: uid ?? this.uid,
       email: email ?? this.email,
       firstName: firstName ?? this.firstName,
@@ -108,6 +117,7 @@ final class User extends Equatable {
   Map<String, dynamic> toJson() {
     /// creates a json with all the fields
     return {
+      'friendList': friendList,
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
@@ -127,6 +137,7 @@ final class User extends Equatable {
         age,
         description,
         numberOfRuns,
+        friendList,
       ];
 }
 

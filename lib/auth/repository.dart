@@ -38,6 +38,7 @@ class UserRepository {
         return const Left(CreateUserFailure.unknownFailure);
       }
       User user = User(
+        friendList: const [],
         description: description,
         email: email,
         uid: userCredentials.user!.uid,
@@ -70,7 +71,7 @@ class UserRepository {
       if (userValues.data() == null || userValues.data()!.isEmpty) {
         return const Left(LoginFailure.noDataInsertedYet);
       }
-      return Right(User.fromJson(userValues.data()!, id: uid));
+      return Right(User.fromJson(json: userValues.data()!, id: uid));
     } on firebase_auth.FirebaseAuthException catch (e) {
       return Left(_mapLoginFailures(e.code));
     }
@@ -81,9 +82,7 @@ class UserRepository {
     await deleteUserFromMemory();
   }
 
-  Future<void> sendImageToDatabase(String path) async {
-    
-  }
+  Future<void> sendImageToDatabase(String path) async {}
 
   Future<Uint8List?> getProfilePicture(String path) async {
     final imageRef = _storage.child(path);
@@ -155,7 +154,7 @@ class UserRepository {
     if (userValues.data() == null || userValues.data()!.isEmpty) {
       return null;
     }
-    return User.fromJson(userValues.data()!, id: id);
+    return User.fromJson(json: userValues.data()!, id: id);
   }
 
   void updateUserInformation(User user) async {
@@ -177,16 +176,7 @@ class UserRepository {
     String? data = await prefs.getString('user_data');
     if (data == null) return null;
     Map<String, dynamic> userData = jsonDecode(data) as Map<String, dynamic>;
-    return User(
-      description: userData['description'],
-      age: userData['age'],
-      uid: userData['uid'],
-      email: userData['email'],
-      firstName: userData['firstName'],
-      lastName: userData['lastName'],
-      sex: Sex.fromName(userData['sex']),
-      numberOfRuns: userData['numberOfRuns'],
-    );
+    return User.fromJson(json: userData, id: userData['uid']);
   }
 
   Future<void> deleteUserFromMemory() async {

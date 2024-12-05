@@ -1,60 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/user.dart';
 import 'package:jogging/core/constants.dart';
-import 'package:jogging/core/cubit/app_cubit.dart';
 
-class Explore extends StatefulWidget {
-  const Explore({super.key});
-  static Route<void> page() =>
-      MaterialPageRoute<void>(builder: (_) => const Explore());
-
-  @override
-  State<Explore> createState() => _ExploreState();
-}
-
-class _ExploreState extends State<Explore> {
-  @override
-  Widget build(BuildContext context) {
-    final user = context.read<AppCubit>().state.user!;
-    return Scaffold(
-      body: Padding(
-        padding: AppPadding.page,
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('go back'),
-            ),
-            _UserContainer(
-              user: user,
-              description:
-                  "Buna, numele meu este Pietraru Alfred si folosesc Jogging Time. Imi place sa fac sport si sa calatoresc. Suna-ma daca vei vrea sa iesim la un moment dat.",
-              tapAdd: () {},
-              tapDelete: () {},
-              tapViewProfile: () {},
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _UserContainer extends StatelessWidget {
-  const _UserContainer({
+class UserContainer extends StatelessWidget {
+  const UserContainer({
     super.key,
     required this.user,
-    required this.description,
     required this.tapAdd,
     required this.tapDelete,
     required this.tapViewProfile,
   });
 
   final User user;
-  final String description;
   final Function() tapAdd;
   final Function() tapDelete;
   final Function() tapViewProfile;
@@ -94,8 +51,7 @@ class _UserContainer extends StatelessWidget {
                     children: [
                       Text(
                         textAlign: TextAlign.center,
-                        "Stochirlea Ingrid Ana Maria de Rosa a la mires",
-                        // "${user.firstName} ${user.lastName}",
+                        "${user.firstName} ${user.lastName}",
                         style: AppTextStyle.body.copyWith(fontSize: 20),
                         maxLines: 2,
                       ),
@@ -114,7 +70,7 @@ class _UserContainer extends StatelessWidget {
                 Wrap(children: [
                   Center(
                     child: Text(
-                      description,
+                      user.description,
                       textAlign: TextAlign.center,
                       style: AppTextStyle.body.copyWith(fontSize: 16),
                     ),

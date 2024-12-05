@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jogging/gen/assets.gen.dart';
-import 'package:jogging/pages/explore.dart';
+import 'package:jogging/pages/explore_page.dart';
 import 'package:jogging/pages/history/history_page.dart';
 import 'package:jogging/pages/profile/profile_page.dart';
 import 'package:jogging/pages/settings_page.dart';
