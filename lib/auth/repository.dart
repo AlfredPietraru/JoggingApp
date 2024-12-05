@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';
@@ -75,6 +77,28 @@ class UserRepository {
     }
   }
 
+  Future<void> logOut() async {
+    await _firebaseAuth.signOut();
+    await deleteUserFromMemory();
+  }
+
+  Future<void> sendImageToDatabase(String path) async {
+    
+  }
+
+  Future<Uint8List?> getProfilePicture(String path) async {
+    final imageRef = _storage.child(path);
+    try {
+      final imageBytes = await imageRef.getData();
+      if (imageBytes == null) return null;
+      return imageBytes;
+    } catch (e) {
+      print(
+          "Profile picture not found. Or there is no connection to the internet");
+    }
+    return null;
+  }
+
   Stream<String?> userIdString() {
     return _firebaseAuth.authStateChanges().map((firebase_auth.User? user) {
       if (user == null) {
@@ -118,7 +142,7 @@ class UserRepository {
     }
   }
 
-    Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
+  Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
     try {
       await _db.collection("users").doc(user.uid).set(user.toJson());
       return null;

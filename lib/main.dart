@@ -20,7 +20,6 @@ void main() async {
       const RxSharedPreferencesDefaultLogger(),
     ),
   );
-  // userRepository.deleteUserFromMemory();
   runApp(
     MultiBlocProvider(
       providers: [

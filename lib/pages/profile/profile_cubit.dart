@@ -3,11 +3,12 @@ import 'package:jogging/auth/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/pages/profile/profile_state.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required this.userRepository, required User user})
       : super(ProfileState(
-          buttonEnabled: true,
+          image: "${user.uid}/images/profile.png",
           applyChanges: false,
           age: user.age,
           firstName: user.firstName,
@@ -64,9 +65,11 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
-  void toggleChangePhotoButton(bool? value) {
-    if (value == null) return;
-    emit(state.copyWith(buttonEnabled: value));
+  Future<void> requestPhoto(String uid) async {
+    return;
+  }
+
+  Future<void> choosePhoto(String uid) async {
   }
 
   bool applyChanges(User user) {

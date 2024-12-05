@@ -175,7 +175,7 @@ class LogOutAlertDialog extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              context.read<AppCubit>().userRepository.deleteUserFromMemory();
+              context.read<AppCubit>().userRepository.logOut();
               Navigator.pushReplacement(context, LandingPage.page());
             },
           ),

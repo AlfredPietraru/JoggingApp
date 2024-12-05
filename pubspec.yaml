@@ -62,6 +62,7 @@ dependencies:
   rx_shared_preferences: ^4.0.0
   photo_manager: ^3.6.3
   photo_view: ^0.15.0
+  image_picker: ^1.0.0
 
 dev_dependencies:
   flutter_test:

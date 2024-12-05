@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 import 'package:jogging/auth/user.dart';
 
@@ -11,10 +13,10 @@ final class ProfileState extends Equatable {
   final bool editSex;
   final bool editAge;
   final bool applyChanges;
-  final bool buttonEnabled;
+  final String image;
 
   const ProfileState(
-      {required this.buttonEnabled,
+      {required this.image,
       required this.editFirstName,
       required this.editLastName,
       required this.editSex,
@@ -35,10 +37,9 @@ final class ProfileState extends Equatable {
     bool? editSex,
     bool? editAge,
     bool? applyChanges,
-    bool? buttonEnabled,
+    String? image,
   }) {
     return ProfileState(
-      buttonEnabled: buttonEnabled ?? this.buttonEnabled,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       age: age ?? this.age,
@@ -48,6 +49,7 @@ final class ProfileState extends Equatable {
       editSex: editSex ?? this.editSex,
       editAge: editAge ?? this.editAge,
       applyChanges: applyChanges ?? this.applyChanges,
+      image: image ?? this.image,
     );
   }
 
@@ -62,6 +64,6 @@ final class ProfileState extends Equatable {
         editLastName,
         editAge,
         editSex,
-        buttonEnabled,
+        image,
       ];
 }

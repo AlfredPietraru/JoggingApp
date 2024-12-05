@@ -64,40 +64,25 @@ class __ProfilePageState extends State<_ProfilePage> {
                   child: MyBackButton(),
                 ),
                 Center(
-                  child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: Stack(
-                      children: [
-                        Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: Image.asset(
-                            Assets.images.noProfilePhoto.path,
-                            height: 200,
-                            width: 200,
-                          ),
-                        ),
-                        if (profileState.buttonEnabled)
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                print("Aici");
-                              },
-                              child: const Text('Change Photo +'),
-                            ),
-                          ),
-                      ],
+                  child: GestureDetector(
+                    onTap: () {
+                      context.read<ProfileCubit>().choosePhoto(userState!.uid);
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.asset(
+                        Assets.images.noProfilePhoto.path,
+                        height: 200,
+                        width: 200,
+                      ),
                     ),
                   ),
                 ),
-                Checkbox(
-                    value: profileState.buttonEnabled,
-                    onChanged:
-                        context.read<ProfileCubit>().toggleChangePhotoButton),
                 const SizedBox(height: AppPadding.unit),
                 Text(
                   'Current user information:',
