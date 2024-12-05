@@ -17,24 +17,24 @@ class AppCubit extends Cubit<AppState> {
 
   final UserRepository userRepository;
   late final StreamSubscription<String?> firebaseSubscription;
-  late final StreamSubscription<User?> sharedPrefsSubscription;
+  // late final StreamSubscription<User?> sharedPrefsSubscription;
 
   @override
   Future<void> close() {
     firebaseSubscription.cancel();
-    sharedPrefsSubscription.cancel();
+    // sharedPrefsSubscription.cancel();
     return super.close();
   }
 
   void initialize() async {
-    sharedPrefsSubscription =
-        userRepository.getLocalUserStream().listen((event) {
-      if (event == null) {
-        emit(state.copyWith(user: event, status: AppStatus.unauthenticated));
-      } else {
-        emit(state.copyWith(user: event, status: AppStatus.authenticated));
-      }
-    });
+    // sharedPrefsSubscription =
+    //     userRepository.getLocalUserStream().listen((event) {
+    //   if (event == null) {
+    //     emit(state.copyWith(user: event, status: AppStatus.unauthenticated));
+    //   } else {
+    //     emit(state.copyWith(user: event, status: AppStatus.authenticated));
+    //   }
+    // });
 
     firebaseSubscription = userRepository.userIdString().listen((id) async {
       if (id == null) {
@@ -47,8 +47,13 @@ class AppCubit extends Cubit<AppState> {
         emit(const AppState(user: null, status: AppStatus.lostConnection));
         return;
       }
-      userRepository.writeUserToMemory(user);
+      emit(AppState(user: user, status: AppStatus.authenticated));
+      // userRepository.writeUserToMemory(user);
     });
+  }
+
+  void changeUser(User user) {
+    emit(state.copyWith(user: user));
   }
 
   void changeNumberRuns() {

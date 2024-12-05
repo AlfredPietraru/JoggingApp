@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
@@ -79,7 +78,7 @@ class UserRepository {
 
   Future<void> logOut() async {
     await _firebaseAuth.signOut();
-    await deleteUserFromMemory();
+    // await deleteUserFromMemory();
   }
 
   Future<void> sendImageToDatabase(String path) async {}
@@ -166,32 +165,32 @@ class UserRepository {
     };
     try {
       await _db.collection("users").doc(user.uid).update(updateInfo);
-      prefs.setString('user_data', user.toSharedPreferences());
+      // prefs.setString('user_data', user.toSharedPreferences());
     } on FirebaseException {
       print("nu este internet");
     }
   }
 
-  Future<User?> getUserFromMemory() async {
-    String? data = await prefs.getString('user_data');
-    if (data == null) return null;
-    Map<String, dynamic> userData = jsonDecode(data) as Map<String, dynamic>;
-    return User.fromJson(json: userData, id: userData['uid']);
-  }
+  // Future<User?> getUserFromMemory() async {
+  //   String? data = await prefs.getString('user_data');
+  //   if (data == null) return null;
+  //   Map<String, dynamic> userData = jsonDecode(data) as Map<String, dynamic>;
+  //   return User.fromJson(json: userData, id: userData['uid']);
+  // }
 
-  Future<void> deleteUserFromMemory() async {
-    final keyIsContained = await prefs.containsKey('user_data');
-    if (keyIsContained) {
-      print("S-au gasit datele user-ului care vor fi sterse");
-      await prefs.remove('user_data');
-      return;
-    }
-    print("Nu s-a gasit nimic despre user in shared preferences");
-  }
+  // Future<void> deleteUserFromMemory() async {
+  //   final keyIsContained = await prefs.containsKey('user_data');
+  //   if (keyIsContained) {
+  //     print("S-au gasit datele user-ului care vor fi sterse");
+  //     await prefs.remove('user_data');
+  //     return;
+  //   }
+  //   print("Nu s-a gasit nimic despre user in shared preferences");
+  // }
 
-  Future<void> writeUserToMemory(User user) async {
-    await prefs.updateString('user_data', (p0) => user.toSharedPreferences());
-  }
+  // Future<void> writeUserToMemory(User user) async {
+  //   await prefs.updateString('user_data', (p0) => user.toSharedPreferences());
+  // }
 
   LoginFailure _mapLoginFailures(String errorCode) {
     return switch (errorCode) {
@@ -214,10 +213,10 @@ class UserRepository {
     };
   }
 
-  Stream<User?> getLocalUserStream() {
-    return prefs.getStringStream('user_data').map((data) {
-      if (data == null) return null;
-      return User.fromSharedPreferences(data);
-    });
-  }
+  // Stream<User?> getLocalUserStream() {
+  //   return prefs.getStringStream('user_data').map((data) {
+  //     if (data == null) return null;
+  //     return User.fromSharedPreferences(data);
+  //   });
+  // }
 }

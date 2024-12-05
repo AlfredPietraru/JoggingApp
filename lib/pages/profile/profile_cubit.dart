@@ -53,25 +53,24 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(editAge: !state.editAge));
   }
 
-  void updateUser(User user) {
-    userRepository.updateUserInformation(
-      user.copyWith(
-        firstName: state.firstName,
-        lastName: state.lastName,
-        age: state.age,
-        sex: state.sex,
-      ),
+  User updateUser(User user) {
+    final newUser = user.copyWith(
+      firstName: state.firstName,
+      lastName: state.lastName,
+      age: state.age,
+      sex: state.sex,
     );
+    userRepository.updateUserInformation(newUser);
+    return newUser;
   }
 
   Future<void> requestPhoto(String uid) async {
     return;
   }
 
-  Future<void> choosePhoto(String uid) async {
-  }
+  Future<void> choosePhoto(String uid) async {}
 
-  bool applyChanges(User user) {
+  bool shouldApplyChanges(User user) {
     if (user.firstName != state.firstName) return true;
     if (user.lastName != state.lastName) return true;
     if (user.age != state.age) return true;

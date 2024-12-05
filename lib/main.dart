@@ -20,6 +20,7 @@ void main() async {
       const RxSharedPreferencesDefaultLogger(),
     ),
   );
+  
   runApp(
     MultiBlocProvider(
       providers: [

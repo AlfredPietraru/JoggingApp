@@ -7,6 +7,7 @@ import 'package:jogging/core/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/editable_zone.dart';
+import 'package:jogging/core/user_container.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/profile/profile_cubit.dart';
 import 'package:jogging/pages/profile/profile_state.dart';
@@ -194,14 +195,23 @@ class __ProfilePageState extends State<_ProfilePage> {
                                 profileState.age.toString(),
                                 style: AppTextStyle.body.copyWith(fontSize: 20),
                               ),
+                        const SizedBox(height: 20),
+                        UserContainer(
+                          user: userState!,
+                          tapAdd: () {},
+                          tapDelete: () {},
+                          tapViewProfile: () {},
+                        ),
+                        const SizedBox(height: 20),
                         if (context
                             .read<ProfileCubit>()
-                            .applyChanges(userState!))
+                            .shouldApplyChanges(userState))
                           ElevatedButton(
                             onPressed: () {
-                              context
+                              final newUser = context
                                   .read<ProfileCubit>()
                                   .updateUser(userState);
+                              context.read<AppCubit>().changeUser(newUser);
                             },
                             child: const Text('Save changes'),
                           ),

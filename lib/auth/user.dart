@@ -64,7 +64,7 @@ final class User extends Equatable {
   factory User.fromJson(
       {required Map<String, dynamic> json, required String id}) {
     return User(
-      friendList: json['friendList'] as List<String>,
+      friendList: List<String>.from(json['friendList'] as List),
       uid: id,
       email: json['email'] as String,
       firstName: json['firstName'] as String,
