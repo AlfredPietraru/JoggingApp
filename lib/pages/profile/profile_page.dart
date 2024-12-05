@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jogging/auth/user.dart';
@@ -62,13 +63,41 @@ class __ProfilePageState extends State<_ProfilePage> {
                   alignment: Alignment.topLeft,
                   child: MyBackButton(),
                 ),
-                if (context.read<ProfileCubit>().applyChanges(userState!))
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<ProfileCubit>().updateUser(userState);
-                    },
-                    child: const Text('Save changes'),
+                Center(
+                  child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: Stack(
+                      children: [
+                        Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                            Assets.images.noProfilePhoto.path,
+                            height: 200,
+                            width: 200,
+                          ),
+                        ),
+                        if (profileState.buttonEnabled)
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                print("Aici");
+                              },
+                              child: const Text('Change Photo +'),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
+                ),
+                Checkbox(
+                    value: profileState.buttonEnabled,
+                    onChanged:
+                        context.read<ProfileCubit>().toggleChangePhotoButton),
                 const SizedBox(height: AppPadding.unit),
                 Text(
                   'Current user information:',
@@ -180,6 +209,17 @@ class __ProfilePageState extends State<_ProfilePage> {
                                 profileState.age.toString(),
                                 style: AppTextStyle.body.copyWith(fontSize: 20),
                               ),
+                        if (context
+                            .read<ProfileCubit>()
+                            .applyChanges(userState!))
+                          ElevatedButton(
+                            onPressed: () {
+                              context
+                                  .read<ProfileCubit>()
+                                  .updateUser(userState);
+                            },
+                            child: const Text('Save changes'),
+                          ),
                       ],
                     ),
                   ],

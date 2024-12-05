@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';
@@ -18,6 +19,7 @@ class UserRepository {
   final RxSharedPreferences prefs;
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final _db = FirebaseFirestore.instance;
+  final _storage = FirebaseStorage.instance.ref();
 
   Future<Either<CreateUserFailure, User>> createUser({
     required String email,
@@ -100,8 +102,7 @@ class UserRepository {
     }
   }
 
-  Future<void> writePositionsToDatabase(
-      RunSession runSession, int index) async {
+  Future<void> writeRunData(RunSession runSession, int index) async {
     try {
       await _db
           .collection("users")
@@ -115,6 +116,23 @@ class UserRepository {
     } on FirebaseException {
       print("A picat si nu e bine ca nu a mers scrierea");
     }
+  }
+
+    Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
+    try {
+      await _db.collection("users").doc(user.uid).set(user.toJson());
+      return null;
+    } on FirebaseException {
+      return CreateUserFailure.unknownFailure;
+    }
+  }
+
+  Future<User?> getUserFromDatabase(String id) async {
+    final userValues = await _db.collection("users").doc(id).get();
+    if (userValues.data() == null || userValues.data()!.isEmpty) {
+      return null;
+    }
+    return User.fromJson(userValues.data()!, id: id);
   }
 
   void updateUserInformation(User user) async {
@@ -148,14 +166,6 @@ class UserRepository {
     );
   }
 
-  Future<User?> getUserFromDatabase(String id) async {
-    final userValues = await _db.collection("users").doc(id).get();
-    if (userValues.data() == null || userValues.data()!.isEmpty) {
-      return null;
-    }
-    return User.fromJson(userValues.data()!, id: id);
-  }
-
   Future<void> deleteUserFromMemory() async {
     final keyIsContained = await prefs.containsKey('user_data');
     if (keyIsContained) {
@@ -168,15 +178,6 @@ class UserRepository {
 
   Future<void> writeUserToMemory(User user) async {
     await prefs.updateString('user_data', (p0) => user.toSharedPreferences());
-  }
-
-  Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
-    try {
-      await _db.collection("users").doc(user.uid).set(user.toJson());
-      return null;
-    } on FirebaseException {
-      return CreateUserFailure.unknownFailure;
-    }
   }
 
   LoginFailure _mapLoginFailures(String errorCode) {

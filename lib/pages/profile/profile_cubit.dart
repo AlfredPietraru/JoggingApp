@@ -7,6 +7,7 @@ import 'package:jogging/pages/profile/profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required this.userRepository, required User user})
       : super(ProfileState(
+          buttonEnabled: true,
           applyChanges: false,
           age: user.age,
           firstName: user.firstName,
@@ -61,6 +62,11 @@ class ProfileCubit extends Cubit<ProfileState> {
         sex: state.sex,
       ),
     );
+  }
+
+  void toggleChangePhotoButton(bool? value) {
+    if (value == null) return;
+    emit(state.copyWith(buttonEnabled: value));
   }
 
   bool applyChanges(User user) {

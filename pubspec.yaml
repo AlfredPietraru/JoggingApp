@@ -60,6 +60,8 @@ dependencies:
   bloc: ^8.1.4
   fl_chart: ^0.69.0
   rx_shared_preferences: ^4.0.0
+  photo_manager: ^3.6.3
+  photo_view: ^0.15.0
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +90,7 @@ flutter:
   assets:
     - assets/images/ceahlau.jpg
     - assets/images/nothing.jpg
+    - assets/images/noProfilePhoto.png
     - assets/icons/runner.svg
     - assets/icons/settings.svg
     - assets/icons/home.svg

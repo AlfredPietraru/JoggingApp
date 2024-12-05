@@ -56,9 +56,8 @@ class MapCubit extends Cubit<MapState> {
 
   void resetToReadyState() {
     final oldState = state as MapTrack;
-     emit(oldState.copyWith(positions: [], status: MapStatus.ready));
+    emit(oldState.copyWith(positions: [], status: MapStatus.ready));
   }
-
 
   Future<void> startTrackingLocation() async {
     final currentState = state;
@@ -117,7 +116,7 @@ class MapCubit extends Cubit<MapState> {
     final oldState = state as MapTrack;
     if (oldState.status != MapStatus.sending) return;
     runSession.addPositionsToSessions(oldState.positions);
-    await userRepository.writePositionsToDatabase(runSession, runIndex);
+    await userRepository.writeRunData(runSession, runIndex);
     emit(oldState.copyWith(positions: [], status: MapStatus.ready));
   }
 

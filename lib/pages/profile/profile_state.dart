@@ -11,9 +11,11 @@ final class ProfileState extends Equatable {
   final bool editSex;
   final bool editAge;
   final bool applyChanges;
+  final bool buttonEnabled;
 
   const ProfileState(
-      {required this.editFirstName,
+      {required this.buttonEnabled,
+      required this.editFirstName,
       required this.editLastName,
       required this.editSex,
       required this.editAge,
@@ -33,8 +35,10 @@ final class ProfileState extends Equatable {
     bool? editSex,
     bool? editAge,
     bool? applyChanges,
+    bool? buttonEnabled,
   }) {
     return ProfileState(
+      buttonEnabled: buttonEnabled ?? this.buttonEnabled,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       age: age ?? this.age,
@@ -57,6 +61,7 @@ final class ProfileState extends Equatable {
         editFirstName,
         editLastName,
         editAge,
-        editSex
+        editSex,
+        buttonEnabled,
       ];
 }

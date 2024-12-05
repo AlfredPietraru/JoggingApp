@@ -33,8 +33,9 @@ class MyNavigationDrawer extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Image.asset(
-                  Assets.images.ceahlau.path,
+                  Assets.images.noProfilePhoto.path,
                   height: 150,
+                  width: 150,
                 ),
               ),
               const SizedBox(height: 20),
