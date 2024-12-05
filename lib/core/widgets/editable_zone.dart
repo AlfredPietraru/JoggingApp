@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogging/core/constants.dart';
-import 'package:jogging/core/custom_textform.dart';
+import 'package:jogging/core/widgets/custom_textform.dart';
 import 'package:jogging/pages/profile/profile_page.dart';
 
 class EditableZone extends StatelessWidget {

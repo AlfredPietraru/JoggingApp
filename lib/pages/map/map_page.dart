@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
-import 'package:jogging/core/navigation_drawer.dart';
+import 'package:jogging/core/widgets/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
 
 class MapPage extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jogging/core/back_button.dart';
+import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/constants.dart';
-import 'package:jogging/core/custom_button.dart';
-import 'package:jogging/core/custom_textform.dart';
+import 'package:jogging/core/widgets/custom_button.dart';
+import 'package:jogging/core/widgets/custom_textform.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/info_collector/info_collector_page.dart';
 

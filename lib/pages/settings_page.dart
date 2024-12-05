@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:jogging/core/back_button.dart';
+import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';

@@ -3,11 +3,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jogging/auth/user.dart';
-import 'package:jogging/core/back_button.dart';
+import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
-import 'package:jogging/core/editable_zone.dart';
-import 'package:jogging/core/user_container.dart';
+import 'package:jogging/core/widgets/editable_zone.dart';
+import 'package:jogging/core/widgets/user_container.dart';
 import 'package:jogging/gen/assets.gen.dart';
 import 'package:jogging/pages/profile/profile_cubit.dart';
 import 'package:jogging/pages/profile/profile_state.dart';
@@ -198,9 +198,9 @@ class __ProfilePageState extends State<_ProfilePage> {
                         const SizedBox(height: 20),
                         UserContainer(
                           user: userState!,
-                          tapAdd: () {},
-                          tapDelete: () {},
-                          tapViewProfile: () {},
+                          tapAdd: null,
+                          tapDelete: null,
+                          tapViewProfile: null,
                         ),
                         const SizedBox(height: 20),
                         if (context

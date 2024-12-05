@@ -76,8 +76,19 @@ class UserRepository {
     }
   }
 
-  Future<List<User>> getAllUsers() async {
-    final snapshot = await _db.collection("users").get();
+  Future<List<User>> getAllUsers(int limit) async {
+    final snapshot = await _db.collection("users").limit(limit).get();
+    return List.from(snapshot.docs
+        .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
+  }
+
+  Future<List<User>> getNonRepeatingUsers(List<User> users, int limit) async {
+    final List<String> userIds = List.from(users.map((u) => u.uid));
+    final snapshot = await _db
+        .collection("users")
+        .where(FieldPath.documentId, whereNotIn: userIds)
+        .limit(limit)
+        .get();
     return List.from(snapshot.docs
         .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
   }

@@ -12,9 +12,9 @@ class UserContainer extends StatelessWidget {
   });
 
   final User user;
-  final Function() tapAdd;
-  final Function() tapDelete;
-  final Function() tapViewProfile;
+  final Function()? tapAdd;
+  final Function()? tapDelete;
+  final Function()? tapViewProfile;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -78,31 +78,32 @@ class UserContainer extends StatelessWidget {
                 ]),
               ],
             ),
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: AppColors.enabledFieldOrange,
-                  child: IconButton(
-                      onPressed: tapAdd,
+            if (tapAdd != null && tapDelete != null)
+              Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: AppColors.enabledFieldOrange,
+                    child: IconButton(
+                        onPressed: tapAdd,
+                        icon: const Icon(
+                          Icons.plus_one,
+                          color: AppColors.hunterGreen,
+                        )),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  CircleAvatar(
+                    backgroundColor: AppColors.enabledFieldOrange,
+                    child: IconButton(
+                      onPressed: tapDelete,
                       icon: const Icon(
-                        Icons.plus_one,
+                        Icons.delete,
                         color: AppColors.hunterGreen,
-                      )),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                CircleAvatar(
-                  backgroundColor: AppColors.enabledFieldOrange,
-                  child: IconButton(
-                    onPressed: tapDelete,
-                    icon: const Icon(
-                      Icons.delete,
-                      color: AppColors.hunterGreen,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-              ],
-            ),
+                  const SizedBox(width: AppSpacing.sm),
+                ],
+              ),
           ],
         ),
       ),

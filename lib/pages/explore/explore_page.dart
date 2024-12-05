@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jogging/core/back_button.dart';
+import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
-import 'package:jogging/core/user_container.dart';
+import 'package:jogging/core/widgets/user_container.dart';
 import 'package:jogging/pages/explore/explore_cubit.dart';
 
 class Explore extends StatelessWidget {
@@ -32,14 +32,6 @@ class _Explore extends StatefulWidget {
 }
 
 class _ExploreState extends State<_Explore> {
-  TextEditingController controller = TextEditingController();
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final exploreState = context.watch<ExploreCubit>().state;
@@ -61,10 +53,9 @@ class _ExploreState extends State<_Explore> {
               onSubmitted: (value) {
                 print(value);
               },
-              controller: controller,
               backgroundColor:
                   const MaterialStatePropertyAll(AppColors.aquamarine),
-              hintText: "Search user name",
+              hintText: "Search ",
             ),
             const SizedBox(height: AppSpacing.sm),
             Text("User found:", style: AppTextStyle.body),
@@ -75,10 +66,28 @@ class _ExploreState extends State<_Explore> {
                 child: UserContainer(
                   user: exploreState.users[i],
                   tapAdd: () {},
-                  tapDelete: () {},
+                  tapDelete: () {
+                    context
+                        .read<ExploreCubit>()
+                        .deleteUserFromView(exploreState.users[i].uid);
+                  },
                   tapViewProfile: () {},
                 ),
               ),
+            Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                onPressed: context.read<ExploreCubit>().getNextUsers,
+                child: Text(
+                  switch (exploreState.status) {
+                    ExploreError.noError => "Get more users",
+                    ExploreError.noUsersFoundError =>
+                      "No more users to be found.",
+                  },
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
           ],
         ),
       ),
