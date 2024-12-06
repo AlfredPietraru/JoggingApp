@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jogging/auth/failures.dart';
 import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/auth/user.dart';
+import 'package:jogging/core/friend_request.dart';
 import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -185,6 +186,34 @@ class UserRepository {
       // prefs.setString('user_data', user.toSharedPreferences());
     } on FirebaseException {
       print("nu este internet");
+    }
+  }
+
+  Future<void> sendFriendRequest(FriendRequest request) async {
+    try {
+      await _db
+          .collection("friend_requests")
+          .doc(request.receiverId)
+          .collection("requests")
+          .doc(request.senderId)
+          .set(request.toJson());
+    } on FirebaseException {
+      print("nu a mers de trimis request-ul");
+    }
+  }
+
+  Future<List<FriendRequest>> checkReceivedFriendRequests(String uid) async {
+    try {
+      final snapshot = await _db
+          .collection("friend_requests")
+          .doc(uid)
+          .collection("requests")
+          .get();
+      return List.from(
+          snapshot.docs.map((doc) => FriendRequest.fromJson(doc.data())));
+    } on FirebaseException catch (e) {
+      print(e.code);
+      return [];
     }
   }
 

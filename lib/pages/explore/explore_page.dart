@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
-import 'package:jogging/core/widgets/user_container.dart';
+import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/pages/explore/explore_cubit.dart';
+import 'package:jogging/pages/explore/explore_find_friends_view.dart';
 
 class Explore extends StatelessWidget {
   const Explore({super.key});
@@ -32,64 +32,62 @@ class _Explore extends StatefulWidget {
 }
 
 class _ExploreState extends State<_Explore> {
+  TextEditingController controller = TextEditingController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final exploreState = context.watch<ExploreCubit>().state;
+    final userState = context.read<AppCubit>().state.user;
+
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          // const MyBackButton(),
+          const SizedBox(height: AppSpacing.lg),
+          ElevatedButton(
+            onPressed: () {
+              context
+                  .read<ExploreCubit>()
+                  .togglePendingRequests(userState!.uid);
+            },
+            child: Text(
+              switch (exploreState.displayPendingRequests) {
+                false => "Display Pending Requests",
+                true => "Find New Friends",
+              },
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: AppPadding.page,
-        child: ListView(
-          children: [
-            const Align(
-              alignment: Alignment.topLeft,
-              child: MyBackButton(),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            SearchBar(
-              leading: const Icon(
-                Icons.search,
-                color: AppColors.eerieBlack,
+        child: exploreState.displayPendingRequests
+            ? ListView(
+                children: [
+                  Text("Pending Friend Requests", style: AppTextStyle.body),
+                  const Text("There are no pending requests"),
+                  const SizedBox(height: AppSpacing.md),
+                  const Divider(),
+                  const SizedBox(height: AppSpacing.md),
+                  Text("Received Friend Requests", style: AppTextStyle.body),
+                  if (exploreState.friendRequests.isEmpty)
+                    const Text("There are no friend requests received")
+                  else
+                    for (int i = 0; i < exploreState.friendRequests.length; i++)
+                      Text(exploreState.friendRequests[i].toString()),
+                ],
+              )
+            : ExploreFindNewFriends(
+                exploreState: exploreState,
+                controller: controller,
+                userState: userState,
               ),
-              onSubmitted: (value) {
-                print(value);
-              },
-              backgroundColor:
-                  const MaterialStatePropertyAll(AppColors.aquamarine),
-              hintText: "Search ",
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text("User found:", style: AppTextStyle.body),
-            const SizedBox(height: AppSpacing.md),
-            for (int i = 0; i < exploreState.users.length; i++)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                child: UserContainer(
-                  user: exploreState.users[i],
-                  tapAdd: () {},
-                  tapDelete: () {
-                    context
-                        .read<ExploreCubit>()
-                        .deleteUserFromView(exploreState.users[i].uid);
-                  },
-                  tapViewProfile: () {},
-                ),
-              ),
-            Align(
-              alignment: Alignment.center,
-              child: TextButton(
-                onPressed: context.read<ExploreCubit>().getNextUsers,
-                child: Text(
-                  switch (exploreState.status) {
-                    ExploreError.noError => "Get more users",
-                    ExploreError.noUsersFoundError =>
-                      "No more users to be found.",
-                  },
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
