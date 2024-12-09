@@ -46,19 +46,19 @@ final class User extends Equatable {
     );
   }
 
-  String toSharedPreferences() {
-    return jsonEncode({
-      'friendList': friendList,
-      'description': description,
-      'uid': uid,
-      'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
-      'sex': sex.toName(),
-      'age': age,
-      'numberOfRuns': numberOfRuns,
-    });
-  }
+  // String toSharedPreferences() {
+  //   return jsonEncode({
+  //     'friendList': friendList,
+  //     'description': description,
+  //     'uid': uid,
+  //     'email': email,
+  //     'firstName': firstName,
+  //     'lastName': lastName,
+  //     'sex': sex.toName(),
+  //     'age': age,
+  //     'numberOfRuns': numberOfRuns,
+  //   });
+  // }
 
   /// Creates a user from json
   factory User.fromJson(
@@ -125,6 +125,7 @@ final class User extends Equatable {
       'age': age,
       'numberOfRuns': numberOfRuns,
       'description': description,
+      "pendingList": [],
     };
   }
 

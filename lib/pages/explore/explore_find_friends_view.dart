@@ -73,6 +73,7 @@ class ExploreFindNewFriends extends StatelessWidget {
             },
             child: Text(
               switch (exploreState.status) {
+                ExploreError.loading => "Collecting Data",
                 ExploreError.noError => "Get more users",
                 ExploreError.noUsersFoundError => "No more users to be found.",
               },

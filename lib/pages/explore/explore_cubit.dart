@@ -10,13 +10,31 @@ class ExploreCubit extends Cubit<ExploreState> {
   ExploreCubit({required this.userRepository})
       : super(
           const ExploreState(
-              name: "",
-              users: [],
-              status: ExploreError.noError,
-              displayPendingRequests: false,
-              friendRequests: []),
+            name: "",
+            users: [],
+            status: ExploreError.noError,
+            displayPendingRequests: false,
+            receivedFriendRequests: [],
+            receivedFriendRequestsUsers: [],
+            sentFriendRequests: [],
+            sentFriendRequestsUsers: [],
+          ),
         ) {
     getInitialInfoFromServer();
+  }
+
+  void cancelFriendRequest(FriendRequest request, User user) {
+    userRepository.deleteFriendRequest(request);
+    final sentFriendRequests = [...state.sentFriendRequests];
+    sentFriendRequests.remove(request);
+    final sentFriendRequestsUsers = [...state.sentFriendRequestsUsers];
+    sentFriendRequestsUsers.remove(user);
+    emit(
+      state.copyWith(
+        sentFriendRequests: sentFriendRequests,
+        sentFriendRequestsUsers: sentFriendRequestsUsers,
+      ),
+    );
   }
 
   final int limitUsersSelected = 3;
@@ -28,9 +46,23 @@ class ExploreCubit extends Cubit<ExploreState> {
 
   Future<void> togglePendingRequests(String uid) async {
     if (!state.displayPendingRequests) {
-      final result = await userRepository.checkReceivedFriendRequests(uid);
-      emit(
-          state.copyWith(friendRequests: result, displayPendingRequests: true));
+      emit(state.copyWith(status: ExploreError.loading));
+      final receivedFriendRequests =
+          await userRepository.checkReceivedFriendRequests(uid);
+      final sentFriendRequests =
+          await userRepository.getSentFriendRequests(uid);
+      final sentFriendRequestsUsers = await userRepository.getMultipleUsers(
+          sentFriendRequests.map((e) => e.receiverId).toList());
+      final receivedFriendRequestsUsers = await userRepository.getMultipleUsers(
+          receivedFriendRequests.map((e) => e.senderId).toList());
+      emit(state.copyWith(
+        receivedFriendRequests: receivedFriendRequests,
+        displayPendingRequests: true,
+        sentFriendRequests: sentFriendRequests,
+        receivedFriendRequestsUsers: receivedFriendRequestsUsers,
+        sentFriendRequestsUsers: sentFriendRequestsUsers,
+        status: ExploreError.noError,
+      ));
       return;
     }
     emit(state.copyWith(displayPendingRequests: false));

@@ -83,6 +83,37 @@ class UserRepository {
         .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
   }
 
+  Future<List<User>> getMultipleUsers(List<String> uids) async {
+    if (uids.isEmpty) return [];
+    final snapshot = await _db
+        .collection("users")
+        .where(FieldPath.documentId, whereIn: uids)
+        .get();
+    return snapshot.docs
+        .map((doc) => User.fromJson(json: doc.data(), id: doc.id))
+        .toList();
+  }
+
+  Future<void> deleteFriendRequest(FriendRequest request) async {
+    try {
+      await _db
+          .collection("friend_requests")
+          .doc(request.receiverId)
+          .collection("requests")
+          .doc(request.senderId)
+          .delete();
+    } on FirebaseException {
+      print("nu a gasit friend request-pt a-l sterge");
+    }
+    try {
+      await _db.collection("users").doc(request.senderId).update({
+        "pendingList": FieldValue.arrayRemove([request.receiverId])
+      });
+    } on FirebaseException {
+      print("nu a gasit elementul in pending list");
+    }
+  }
+
   Future<List<User>> getNonRepeatingUsers(List<User> users, int limit) async {
     final List<String> userIds = List.from(users.map((u) => u.uid));
     final snapshot = await _db
@@ -197,9 +228,45 @@ class UserRepository {
           .collection("requests")
           .doc(request.senderId)
           .set(request.toJson());
+      await _db.collection("users").doc(request.senderId).update({
+        "pendingList": FieldValue.arrayUnion([request.receiverId])
+      });
     } on FirebaseException {
       print("nu a mers de trimis request-ul");
     }
+  }
+
+  Future<FriendRequest?> getFriendRequest(
+      String receiverId, String senderId) async {
+    final currentData = await _db
+        .collection("friend_requests")
+        .doc(receiverId)
+        .collection("requests")
+        .doc(senderId)
+        .get();
+    if (currentData.data() == null) return null;
+    return FriendRequest.fromJson(currentData.data()!);
+  }
+
+  Future<List<FriendRequest>> getSentFriendRequests(String uid) async {
+    List<String> usersWhoReceivedFriendRequest = [];
+    try {
+      await _db.collection("users").doc(uid).get().then((data) {
+        usersWhoReceivedFriendRequest = List<String>.from(data['pendingList']);
+      });
+      if (usersWhoReceivedFriendRequest == []) return [];
+      List<FriendRequest> outputList = [];
+      for (int i = 0; i < usersWhoReceivedFriendRequest.length; i++) {
+        final friendRequest =
+            await getFriendRequest(usersWhoReceivedFriendRequest[i], uid);
+        if (friendRequest == null) continue;
+        outputList.add(friendRequest);
+      }
+      return outputList;
+    } on FirebaseException {
+      print("ceva nu merge");
+    }
+    return [];
   }
 
   Future<List<FriendRequest>> checkReceivedFriendRequests(String uid) async {
