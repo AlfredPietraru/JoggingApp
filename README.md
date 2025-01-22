@@ -1,29 +1,16 @@
-de facut impreuna partea de creare cont + info utilizator 
-scoate variabilele din repository, foloseste AppCubit
-// switch in Text in login_page
-pus parola si email-ul in state
-fara validare la parola
+# jogging
 
+A new Flutter project.
 
-// login + register -> utilzare validare in TExtFrom nu cubit 
-// json package anotator
-// objectBox -> suplimentar (baza de date vectoriale), drift, hive
-// internationalizare -> .arb file,  
+## Getting Started
 
-Functionalitati:
-teste unitare -> teste pentru comunicarea cu firebase -> teste adaugare useri in baza de date  
-                 / teste functionare pentru grafuri  
-imbunatire siguranta aplicatie -> situatia in care utilizatorul nu are internet
-notificari push 
-pagina de explore -> gasire alti utilizatori, adaugare la sectiunea de prieteni 
-vizualizare profil + capacitate de adaugare poza de profil, 
-mutare pagina de settings -> 
-map page -> adaugare distanta parcursa, modificare culoare pozitie curenta, alegere de a trimite alergarea la
-server 
+This project is a starting point for a Flutter application.
 
-late GoogleMapController? mapController; -> neinitializat
-<!-- user -> adaugare description section  -->
+A few resources to get you started if this is your first Flutter project:
 
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-Tests:
-from json / to Json
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
