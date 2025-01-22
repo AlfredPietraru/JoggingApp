@@ -1,0 +1,162 @@
+[
+  {
+    "age": 23,
+    "description": "I'm a passionate jogger who loves exploring new trails. Always up for a challenge and meeting fellow runners!",
+    "email": "rob@yahoo.com",
+    "firstName": "Robert",
+    "lastName": "Pietraru",
+    "sex": "male"
+  },
+  {
+    "age": 29,
+    "description": "Trail running is my escape. I enjoy long-distance runs and sharing tips with the community.",
+    "email": "sarah@gmail.com",
+    "firstName": "Sarah",
+    "lastName": "Connor",
+    "sex": "female"
+  },
+  {
+    "age": 31,
+    "description": "Jogging keeps me grounded. I love running by the beach and chasing sunsets.",
+    "email": "alexander@yahoo.com",
+    "firstName": "Alexander",
+    "lastName": "Smith",
+    "sex": "male"
+  },
+  {
+    "age": 22,
+    "description": "A beginner jogger looking to improve and connect with experienced runners.",
+    "email": "jessica@gmail.com",
+    "firstName": "Jessica",
+    "lastName": "Taylor",
+    "sex": "female"
+  },
+  {
+    "age": 35,
+    "description": "I’m an ultramarathon enthusiast who loves pushing limits and encouraging others.",
+    "email": "mike@outlook.com",
+    "firstName": "Mike",
+    "lastName": "Johnson",
+    "sex": "male"
+  },
+  {
+    "age": 27,
+    "description": "City jogger with a love for morning runs and coffee afterwards.",
+    "email": "emily@hotmail.com",
+    "firstName": "Emily",
+    "lastName": "Davis",
+    "sex": "female"
+  },
+  {
+    "age": 40,
+    "description": "Running is my therapy. I enjoy exploring nature and staying fit.",
+    "email": "john.doe@gmail.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "sex": "male"
+  },
+  {
+    "age": 26,
+    "description": "Social jogger who loves participating in charity runs and fun marathons.",
+    "email": "linda@yahoo.com",
+    "firstName": "Linda",
+    "lastName": "White",
+    "sex": "female"
+  },
+  {
+    "age": 33,
+    "description": "Weekend jogger with a passion for staying active and inspiring others.",
+    "email": "peter@gmail.com",
+    "firstName": "Peter",
+    "lastName": "Brown",
+    "sex": "male"
+  },
+  {
+    "age": 21,
+    "description": "College student who jogs to clear my mind and stay healthy.",
+    "email": "anna@gmail.com",
+    "firstName": "Anna",
+    "lastName": "Wilson",
+    "sex": "female"
+  },
+  {
+    "age": 38,
+    "description": "Fitness enthusiast who enjoys combining jogging with strength training.",
+    "email": "mark@yahoo.com",
+    "firstName": "Mark",
+    "lastName": "Evans",
+    "sex": "male"
+  },
+  {
+    "age": 30,
+    "description": "Running helps me stay focused. Always looking for new challenges!",
+    "email": "lucy@hotmail.com",
+    "firstName": "Lucy",
+    "lastName": "Hall",
+    "sex": "female"
+  },
+  {
+    "age": 24,
+    "description": "Nature lover who finds peace in running through forests and hills.",
+    "email": "jake@gmail.com",
+    "firstName": "Jake",
+    "lastName": "Moore",
+    "sex": "male"
+  },
+  {
+    "age": 28,
+    "description": "Jogging helps me stay energized. I enjoy group runs and races.",
+    "email": "sophie@yahoo.com",
+    "firstName": "Sophie",
+    "lastName": "Anderson",
+    "sex": "female"
+  },
+  {
+    "age": 36,
+    "description": "Long-time runner who enjoys coaching beginners and sharing my journey.",
+    "email": "richard@hotmail.com",
+    "firstName": "Richard",
+    "lastName": "King",
+    "sex": "male"
+  },
+  {
+    "age": 25,
+    "description": "I jog to clear my mind and discover hidden gems in my city.",
+    "email": "mia@gmail.com",
+    "firstName": "Mia",
+    "lastName": "Scott",
+    "sex": "female"
+  },
+  {
+    "age": 41,
+    "description": "Running keeps me young. I enjoy endurance runs and helping others stay motivated.",
+    "email": "paul@yahoo.com",
+    "firstName": "Paul",
+    "lastName": "Walker",
+    "sex": "male"
+  },
+  {
+    "age": 32,
+    "description": "Jogging with my dog is my favorite way to stay active.",
+    "email": "chloe@hotmail.com",
+    "firstName": "Chloe",
+    "lastName": "Harris",
+    "sex": "female"
+  },
+  {
+    "age": 34,
+    "description": "An adventurous jogger who loves exploring trails in national parks.",
+    "email": "ryan@gmail.com",
+    "firstName": "Ryan",
+    "lastName": "Carter",
+    "sex": "male"
+  },
+  {
+    "age": 20,
+    "description": "New to jogging, looking to build a habit and meet like-minded people.",
+    "email": "ellie@yahoo.com",
+    "firstName": "Ellie",
+    "lastName": "Roberts",
+    "sex": "female"
+  }
+]
