@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395355635996",
+    "project_id": "joggingtime-afcfb",
+    "storage_bucket": "joggingtime-afcfb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395355635996:android:a8a59a8941528e4f0b7ad9",
+        "android_client_info": {
+          "package_name": "com.example.jogging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD52VVFqSm2iAgOF9mFBvue4y30VywfWP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

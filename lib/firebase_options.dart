@@ -57,6 +57,7 @@ class DefaultFirebaseOptions {
     appId: '1:395355635996:android:a8a59a8941528e4f0b7ad9',
     messagingSenderId: '395355635996',
     projectId: 'joggingtime-afcfb',
-    storageBucket: 'joggingtime-afcfb.appspot.com',
+    storageBucket: 'joggingtime-afcfb.firebasestorage.app',
   );
+
 }
