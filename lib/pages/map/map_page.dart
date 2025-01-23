@@ -6,9 +6,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/run_session.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/core/notification.dart';
 import 'package:jogging/core/widgets/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -218,6 +220,8 @@ class SendRunToDatabaseDialog extends StatelessWidget {
               side: const BorderSide(color: AppColors.eerieBlack, width: 2),
             ),
             onPressed: () {
+              context.read<AppCubit>().userRepository.prefs.setString('lastJoggingTime', DateTime.now().toIso8601String());
+              NotificationService.checkAndScheduleReminders();
               context.read<MapCubit>().stopTrackingLocation();
               Navigator.pop(context);
             },
