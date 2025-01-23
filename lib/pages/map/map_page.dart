@@ -202,8 +202,6 @@ class SendRunToDatabaseDialog extends StatelessWidget {
               side: const BorderSide(color: AppColors.eerieBlack, width: 2),
             ),
             onPressed: () {
-              context.read<AppCubit>().userRepository.prefs.setString('lastJoggingTime', DateTime.now().toIso8601String());
-              NotificationService.checkAndScheduleReminders();
               context.read<MapCubit>().stopTrackingLocation();
               Navigator.pop(context);
             },
