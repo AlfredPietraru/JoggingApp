@@ -19,6 +19,7 @@ class MapPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: ((context) => MapCubit(
+            userId: context.read<AppCubit>().state.user!.uid,
             userRepository: context.read<AppCubit>().userRepository,
             runSession: RunSession(
                 // ignore: prefer_const_literals_to_create_immutables
@@ -28,7 +29,7 @@ class MapPage extends StatelessWidget {
                 // ignore: prefer_const_literals_to_create_immutables
                 times: [],
                 dateTime: DateTime.now(),
-                user: context.read<AppCubit>().state.user!),
+               ),
           )),
       child: Builder(builder: (context) {
         return BlocListener<MapCubit, MapState>(

@@ -24,13 +24,12 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
       notificationDetails,
     );
   }
-  
 }
 
 class NotificationService {
   static final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  static Future<void> initialize() async {
+  static Future<String?> initialize() async {
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       badge: true,
@@ -46,5 +45,6 @@ class NotificationService {
     String? token = await messaging.getToken();
     print('FCM Token: $token');
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+    return token;
   }
 }

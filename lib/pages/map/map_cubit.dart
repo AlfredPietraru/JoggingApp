@@ -8,7 +8,7 @@ import 'package:jogging/auth/run_session.dart';
 part 'map_state.dart';
 
 class MapCubit extends Cubit<MapState> {
-  MapCubit({required this.userRepository, required this.runSession})
+  MapCubit({required this.userRepository, required this.runSession, required this.userId})
       : super(const MapInitial(
             initialLocation: LatLng(4, 4),
             serviceEnabled: false,
@@ -21,6 +21,7 @@ class MapCubit extends Cubit<MapState> {
   final UserRepository userRepository;
   RunSession runSession;
   late LatLng initialLocation;
+  final String userId;
 
   void initialise() async {
     late bool serviceEnabled;
@@ -116,7 +117,7 @@ class MapCubit extends Cubit<MapState> {
     final oldState = state as MapTrack;
     if (oldState.status != MapStatus.sending) return;
     runSession.addPositionsToSessions(oldState.positions);
-    await userRepository.writeRunData(runSession, runIndex);
+    await userRepository.writeRunData(userId, runSession, runIndex);
     emit(oldState.copyWith(positions: [], status: MapStatus.ready));
   }
 

@@ -7,17 +7,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/user.dart';
 
+// scriu coordontate  fisieri
+// sa citesc coordontatele din fisier
+// sa fac verificarile
 class RunSession extends Equatable {
   final DateTime dateTime;
   final List<List<int>> times;
   final List<List<double>> distances;
   final List<List<LatLng>> coordinates;
   final computationClass = FlutterMapMath();
-  final User user;
 
   RunSession({
     required this.coordinates,
-    required this.user,
     required this.dateTime,
     required this.times,
     required this.distances,
@@ -26,45 +27,52 @@ class RunSession extends Equatable {
   factory RunSession.initialRunSession(User user, DateTime dateTime) {
     return RunSession(
       // ignore: prefer_const_literals_to_create_immutables
-      coordinates:  [],
-      user: user,
+      coordinates: [],
       dateTime: dateTime,
       // ignore: prefer_const_literals_to_create_immutables
-      times:  [],
+      times: [],
       // ignore: prefer_const_literals_to_create_immutables
-      distances:  [],
+      distances: [],
     );
   }
 
-  factory RunSession.fromJson(Map<String, dynamic> data, User user) {
-    DateTime dt = (data['start'] as Timestamp).toDate();
-    int nrStages = data["noStage"];
-    List<List<LatLng>> coordinates = [];
+  factory RunSession.fromJson(Map<String, dynamic> data) {
+    DateTime dt = DateTime.parse(data['start']);
+    int nrStages = data['noStage'];
     List<List<int>> times = [];
     List<List<double>> distances = [];
+    List<List<LatLng>> coordinates = [];
     for (int i = 0; i < nrStages; i++) {
-      String info = data["stage_${i.toString()}"];
-      List<double> dist = [];
-      List<int> temp = [];
-      List<LatLng> coord = [];
-      List<String> splittedInfo = info.split(',');
-      for (String elem in splittedInfo) {
-        List<String> tokens = elem.split(' ');
-        dist.add(double.parse(tokens[0]));
-        temp.add(int.parse(tokens[1]));
-        coord.add(LatLng(double.parse(tokens[2]), double.parse(tokens[3])));
+      String info = data['stage_$i'];
+
+      List<int> tempTimes = [];
+      List<double> tempDistances = [];
+      List<LatLng> tempCoordinates = [];
+      List<String> entries = info.split(',');
+      for (String entry in entries) {
+        List<String> tokens = entry.trim().split(' ');
+        if (tokens.length == 4) {
+          double distance = double.parse(tokens[0]);
+          int time = int.parse(tokens[1]);
+          double latitude = double.parse(tokens[2]);
+          double longitude = double.parse(tokens[3]);
+
+          tempDistances.add(distance);
+          tempTimes.add(time);
+          tempCoordinates.add(LatLng(latitude, longitude));
+        }
       }
 
-      times.add(temp);
-      distances.add(dist);
-      coordinates.add(coord);
+      times.add(tempTimes);
+      distances.add(tempDistances);
+      coordinates.add(tempCoordinates);
     }
+
     return RunSession(
-      coordinates: coordinates,
-      user: user,
       dateTime: dt,
       times: times,
       distances: distances,
+      coordinates: coordinates,
     );
   }
 
@@ -80,7 +88,6 @@ class RunSession extends Equatable {
       dateTime: dateTime ?? this.dateTime,
       times: times ?? this.times,
       distances: distances ?? this.distances,
-      user: user ?? this.user,
     );
   }
 
@@ -90,6 +97,7 @@ class RunSession extends Equatable {
   }
 
   int returnFromTimeList(int index) {
+    if (index >= returnDataSize() || index < 0) return -1;
     for (int i = 0; i < times.length; i++) {
       if (times[i].length <= index) {
         index = index - times[i].length;
@@ -101,6 +109,7 @@ class RunSession extends Equatable {
   }
 
   double returnFromDistanceList(int index) {
+    if (index >= returnDataSize() || index < 0) return -1;
     for (int i = 0; i < distances.length; i++) {
       if (distances[i].length <= index) {
         index = index - distances[i].length;
@@ -176,5 +185,5 @@ class RunSession extends Equatable {
   }
 
   @override
-  List<Object?> get props => [dateTime, times, coordinates, distances, user];
+  List<Object?> get props => [dateTime, times, coordinates, distances];
 }

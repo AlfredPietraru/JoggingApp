@@ -19,16 +19,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DisposeBagConfigs.logger = null;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await NotificationService.initialize();
+  String? notificationToken = await NotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   final prefs = await SharedPreferences.getInstance();
-
+  if (notificationToken!.isNotEmpty) {
+    prefs.setString("notificationToken", notificationToken);
+  }
   final userRepository = UserRepository(
     prefs: RxSharedPreferences(
       prefs,
       const RxSharedPreferencesDefaultLogger(),
     ),
   );
+  
 
   runApp(
     MultiRepositoryProvider(

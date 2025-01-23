@@ -71,6 +71,7 @@ class UserRepository {
       if (userValues.data() == null || userValues.data()!.isEmpty) {
         return const Left(LoginFailure.noDataInsertedYet);
       }
+      
       return Right(User.fromJson(json: userValues.data()!, id: uid));
     } on firebase_auth.FirebaseAuthException catch (e) {
       return Left(_mapLoginFailures(e.code));
@@ -127,7 +128,14 @@ class UserRepository {
 
   Future<void> logOut() async {
     await _firebaseAuth.signOut();
-    // await deleteUserFromMemory();
+  }
+
+  Future<void> sendTokenToDatabase(User user, String token) async {
+     try {
+      await _db.collection("users").doc(user.uid).set({"notificationToken": token});
+    } on FirebaseException {
+      print("Nu s-a putut trimite token-ul la baza de date");
+    }
   }
 
   Future<void> sendImageToDatabase(String path) async {}
@@ -166,22 +174,22 @@ class UserRepository {
           .get();
       Map<String, dynamic>? mapValues = runCollection.data();
       if (mapValues == null) return null;
-      return RunSession.fromJson(mapValues, user);
+      return RunSession.fromJson(mapValues);
     } on FirebaseException catch (e) {
       print("Nu s-a gasit un run cu acest nume sau nu exista acces la internet");
       return null;
     }
   }
 
-  Future<void> writeRunData(RunSession runSession, int index) async {
+  Future<void> writeRunData(String uid, RunSession runSession, int index) async {
     try {
       await _db
           .collection("users")
-          .doc(runSession.user.uid)
+          .doc(uid)
           .collection("run_$index")
           .doc('run_info')
           .set(runSession.convertToDatabaseOut());
-      await _db.collection("users").doc(runSession.user.uid).update({
+      await _db.collection("users").doc(uid).update({
         "numberOfRuns": index,
       });
     } on FirebaseException {
@@ -190,6 +198,13 @@ class UserRepository {
   }
 
   Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
+    final canSendNotificationWithToken = await prefs.containsKey("notificationToken");
+    if (canSendNotificationWithToken) {
+      String? token = await prefs.getString("notificationToken");
+      if (token != null) {
+        sendTokenToDatabase(user, token);
+      }
+    }
     try {
       await _db.collection("users").doc(user.uid).set(user.toJson());
       return null;
