@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
-import 'package:jogging/core/notification.dart';
 import 'package:jogging/pages/landing_page.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/pages/map/map_page.dart';
@@ -14,13 +13,11 @@ import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService.init();
   tz.initializeTimeZones();
   DisposeBagConfigs.logger = null;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   
   final prefs = await SharedPreferences.getInstance();
-  NotificationService.checkAndScheduleReminders();
 
   final userRepository = UserRepository(
     prefs: RxSharedPreferences(
