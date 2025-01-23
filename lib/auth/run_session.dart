@@ -150,7 +150,8 @@ class RunSession extends Equatable {
     return (distance, time, LatLng(p2.latitude, p2.longitude));
   }
 
-  String _convertOneListToString(int index) {
+  String convertOneListToString(int index) {
+    if (index < 0 || index >= times.length) return "";
     final List<int> currentTimes = times[index];
     final List<double> currentDistances = distances[index];
     final List<LatLng> currentCoordinates = coordinates[index];
@@ -168,7 +169,7 @@ class RunSession extends Equatable {
       "noStage": distances.length,
     };
     for (int i = 0; i < distances.length; i++) {
-      out["stage_${i.toString()}"] = _convertOneListToString(i);
+      out["stage_${i.toString()}"] = convertOneListToString(i);
     }
     return out;
   }
@@ -179,12 +180,12 @@ class RunSession extends Equatable {
       "noStage": distances.length,
     };
     for (int i = 0; i < distances.length; i++) {
-      out["stage_${i.toString()}"] = _convertOneListToString(i);
+      out["stage_${i.toString()}"] = convertOneListToString(i);
     }
     return jsonEncode(out);
   }
 
-  List<(int, double)> createTimeSpeedArray(int chunkSize) {
+  List<(int, double)> createTimeSpeedArray(int chunkSize, int maxSelected) {
     List<(int, double)> out = [(0, 0)];
     Random random = Random(5703);
     int N = returnDataSize();
@@ -197,8 +198,12 @@ class RunSession extends Equatable {
 
     for (int i = 1; i < numberChunks - 1; i++) {
       Set idxList = {};
-      for (int k = 0; k < 3; k++) {
-        idxList.add(i * chunkSize + random.nextInt(chunkSize - 1) + 1);
+      for (int k = 0; k < maxSelected; k++) {
+        int currentIdx = i * chunkSize + random.nextInt(chunkSize - 1) + 1; 
+        while(idxList.contains(currentIdx)) {
+          currentIdx = i * chunkSize + random.nextInt(chunkSize - 1) + 1;
+        }
+        idxList.add(currentIdx);
       }
       final orderedIdxList = List.from(idxList);
       orderedIdxList.sort();

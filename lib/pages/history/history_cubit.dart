@@ -5,7 +5,6 @@ import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/auth/run_session.dart';
-
 part 'history_state.dart';
 
 class HistoryCubit extends Cubit<HistoryState> {
@@ -21,6 +20,7 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   final int chunkSize = 10;
+  final int maxSelected = 3;
   final UserRepository userRepository;
   final int numberOfRuns;
   final String uid;
@@ -39,7 +39,7 @@ class HistoryCubit extends Cubit<HistoryState> {
         state.copyWith(
             allRuns: toOutput,
             runSession: runSession,
-            timeSpeedArray: runSession.createTimeSpeedArray(chunkSize)),
+            timeSpeedArray: runSession.createTimeSpeedArray(chunkSize, maxSelected)),
       );
     }
   }
@@ -71,53 +71,9 @@ class HistoryCubit extends Cubit<HistoryState> {
   }
 
   List<(int, double)> createTimeSpeedArray() {
-    return state.runSession.createTimeSpeedArray(chunkSize);
+    return state.runSession.createTimeSpeedArray(chunkSize, maxSelected);
   }
-  // List<(int, double)> createTimeSpeedArray(RunSession session) {
-  //   List<(int, double)> out = [(0, 0)];
-  //   Random random = Random(5703);
-  //   int N = session.returnDataSize();
-  //   int numberChunks = 1;
-  //   if (N % chunkSize == 0) {
-  //     numberChunks = (N / chunkSize).floor();
-  //   } else {
-  //     numberChunks = (N / chunkSize).ceil();
-  //   }
-
-  //   for (int i = 1; i < numberChunks - 1; i++) {
-  //     Set idxList = {};
-  //     for (int k = 0; k < 3; k++) {
-  //       idxList.add(i * chunkSize + random.nextInt(chunkSize - 1) + 1);
-  //     }
-  //     final orderedIdxList = List.from(idxList);
-  //     orderedIdxList.sort();
-  //     for (final index in orderedIdxList) {
-  //       int currentTime = session.returnFromTimeList(index);
-  //       int previousTime = session.returnFromTimeList(index - 1);
-  //       if (currentTime == previousTime) continue;
-  //       double currentSpeed = (session.returnFromDistanceList(index) -
-  //               session.returnFromDistanceList(index - 1)) /
-  //           (currentTime - previousTime);
-  //       out.add((currentTime, (currentSpeed * 100).round() / 100));
-  //     }
-  //   }
-  //   int finalIndex = -1;
-  //   if (N - (numberChunks - 1) * chunkSize == 1) {
-  //     finalIndex = (numberChunks - 1) * chunkSize;
-  //   } else {
-  //     finalIndex = (numberChunks - 1) * chunkSize +
-  //         random.nextInt(N - (numberChunks - 1) * chunkSize);
-  //   }
-  //   int lastTime = session.returnFromTimeList(finalIndex);
-  //   int lastPreviousTime = session.returnFromTimeList(finalIndex - 1);
-  //   if (lastTime == lastPreviousTime) return out;
-  //   double lastSpeed = (session.returnFromDistanceList(finalIndex) -
-  //           session.returnFromDistanceList(finalIndex - 1)) /
-  //       (lastTime - lastPreviousTime);
-  //   out.add((lastTime, lastSpeed));
-  //   return out;
-  // }
-
+  
   double setDataInterval() {
     int totalTime = state.runSession.times.last.last;
     return (totalTime / 3 * 100).round() / 100;
@@ -166,7 +122,7 @@ class HistoryCubit extends Cubit<HistoryState> {
     emit(state.copyWith(
       idx: index,
       runSession: runSession,
-      timeSpeedArray: runSession.createTimeSpeedArray(chunkSize),
+      timeSpeedArray: runSession.createTimeSpeedArray(chunkSize, maxSelected),
     ));
   }
 
