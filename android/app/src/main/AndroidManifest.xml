@@ -28,6 +28,12 @@
 
         <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyC8KK2f3QamUxb3kLpOK-trYjtaMDj_M7o"/>
+        <meta-data
+        android:name="firebase_messaging_auto_init_enabled"
+        android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
         
         <activity
             android:name=".MainActivity"

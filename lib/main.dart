@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/notification_service.dart';
 import 'package:jogging/pages/landing_page.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/pages/map/map_page.dart';
 import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import 'firebase_options.dart';
-// ignore: depend_on_referenced_packages
 import 'package:disposebag/disposebag.dart' show DisposeBagConfigs;
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  tz.initializeTimeZones();
   DisposeBagConfigs.logger = null;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
+  await NotificationService.initialize();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   final prefs = await SharedPreferences.getInstance();
 
   final userRepository = UserRepository(
@@ -25,7 +29,7 @@ void main() async {
       const RxSharedPreferencesDefaultLogger(),
     ),
   );
-  
+
   runApp(
     MultiRepositoryProvider(
       providers: [
@@ -56,6 +60,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final status = context.select((AppCubit cubit) => cubit.state.status);
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
