@@ -8,6 +8,7 @@ import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/widgets/message_alert_dialog.dart';
 import 'package:jogging/core/widgets/user_container.dart';
 import 'package:jogging/pages/explore/explore_cubit.dart';
+import 'package:jogging/pages/friend_requests/friend_requests_page.dart';
 
 class Explore extends StatelessWidget {
   const Explore({super.key});
@@ -51,7 +52,9 @@ class _ExploreState extends State<_Explore> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: const [MyBackButton(), SizedBox(width: 20)],
+        actions: [TextButton(onPressed: (){
+          Navigator.push(context, FriendRequestsPage.page());
+        }, child: const Text("Friend Requests")),  const SizedBox(width: 20), const MyBackButton(), const SizedBox(width: 20)],
       ),
       body: Padding(
           padding: AppPadding.page,

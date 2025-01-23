@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:jogging/auth/repository.dart';
 import 'package:jogging/auth/user.dart';
 import 'package:jogging/core/friend_request.dart';
