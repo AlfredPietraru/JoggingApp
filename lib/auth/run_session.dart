@@ -7,9 +7,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jogging/auth/user.dart';
 
-// scriu coordontate  fisieri
-// sa citesc coordontatele din fisier
-// sa fac verificarile
 class RunSession extends Equatable {
   final DateTime dateTime;
   final List<List<int>> times;

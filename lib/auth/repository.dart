@@ -71,17 +71,24 @@ class UserRepository {
       if (userValues.data() == null || userValues.data()!.isEmpty) {
         return const Left(LoginFailure.noDataInsertedYet);
       }
-      
+
       return Right(User.fromJson(json: userValues.data()!, id: uid));
     } on firebase_auth.FirebaseAuthException catch (e) {
       return Left(_mapLoginFailures(e.code));
     }
   }
 
-  Future<List<User>> getAllUsers(int limit) async {
-    final snapshot = await _db.collection("users").limit(limit).get();
-    return List.from(snapshot.docs
-        .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
+  Future<List<String>> getLimitedUserIds(int limit) async {
+    try {
+      CollectionReference usersCollection =
+          FirebaseFirestore.instance.collection('users');
+      QuerySnapshot snapshot = await usersCollection.limit(limit).get();
+      List<String> userIds = snapshot.docs.map((doc) => doc.id).toList();
+      return userIds;
+    } catch (e) {
+      print("Error fetching user IDs with limit: $e");
+      return [];
+    }
   }
 
   Future<List<User>> getMultipleUsers(List<String> uids) async {
@@ -115,24 +122,27 @@ class UserRepository {
     }
   }
 
-  Future<List<User>> getNonRepeatingUsers(List<User> users, int limit) async {
-    final List<String> userIds = List.from(users.map((u) => u.uid));
-    final snapshot = await _db
-        .collection("users")
-        .where(FieldPath.documentId, whereNotIn: userIds)
-        .limit(limit)
-        .get();
-    return List.from(snapshot.docs
-        .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
-  }
+  // Future<List<User>> getNonRepeatingUsers(List<User> users, int limit) async {
+  //   final List<String> userIds = List.from(users.map((u) => u.uid));
+  //   final snapshot = await _db
+  //       .collection("users")
+  //       .where(FieldPath.documentId, whereNotIn: userIds)
+  //       .limit(limit)
+  //       .get();
+  //   return List.from(snapshot.docs
+  //       .map((doc) => User.fromJson(json: doc.data(), id: doc.id)));
+  // }
 
   Future<void> logOut() async {
     await _firebaseAuth.signOut();
   }
 
   Future<void> sendTokenToDatabase(User user, String token) async {
-     try {
-      await _db.collection("users").doc(user.uid).set({"notificationToken": token});
+    try {
+      await _db
+          .collection("users")
+          .doc(user.uid)
+          .set({"notificationToken": token});
     } on FirebaseException {
       print("Nu s-a putut trimite token-ul la baza de date");
     }
@@ -173,17 +183,19 @@ class UserRepository {
           .get();
       Map<String, dynamic>? mapValues = runCollection.data();
       if (mapValues == null) {
-        print("nu exista continut cu numele $runName"); 
+        print("nu exista continut cu numele $runName");
         return null;
       }
       return RunSession.fromJson(mapValues);
     } on FirebaseException catch (e) {
-      print("Nu s-a gasit un run cu acest nume sau nu exista acces la internet");
+      print(
+          "Nu s-a gasit un run cu acest nume sau nu exista acces la internet");
       return null;
     }
   }
 
-  Future<void> writeRunData(String uid, RunSession runSession, int index) async {
+  Future<void> writeRunData(
+      String uid, RunSession runSession, int index) async {
     try {
       await _db
           .collection("users")
@@ -200,7 +212,8 @@ class UserRepository {
   }
 
   Future<CreateUserFailure?> addUserToDatabase({required User user}) async {
-    final canSendNotificationWithToken = await prefs.containsKey("notificationToken");
+    final canSendNotificationWithToken =
+        await prefs.containsKey("notificationToken");
     if (canSendNotificationWithToken) {
       String? token = await prefs.getString("notificationToken");
       if (token != null) {
@@ -232,7 +245,6 @@ class UserRepository {
     };
     try {
       await _db.collection("users").doc(user.uid).update(updateInfo);
-      // prefs.setString('user_data', user.toSharedPreferences());
     } on FirebaseException {
       print("nu este internet");
     }
@@ -302,27 +314,6 @@ class UserRepository {
     }
   }
 
-  // Future<User?> getUserFromMemory() async {
-  //   String? data = await prefs.getString('user_data');
-  //   if (data == null) return null;
-  //   Map<String, dynamic> userData = jsonDecode(data) as Map<String, dynamic>;
-  //   return User.fromJson(json: userData, id: userData['uid']);
-  // }
-
-  // Future<void> deleteUserFromMemory() async {
-  //   final keyIsContained = await prefs.containsKey('user_data');
-  //   if (keyIsContained) {
-  //     print("S-au gasit datele user-ului care vor fi sterse");
-  //     await prefs.remove('user_data');
-  //     return;
-  //   }
-  //   print("Nu s-a gasit nimic despre user in shared preferences");
-  // }
-
-  // Future<void> writeUserToMemory(User user) async {
-  //   await prefs.updateString('user_data', (p0) => user.toSharedPreferences());
-  // }
-
   LoginFailure _mapLoginFailures(String errorCode) {
     return switch (errorCode) {
       "wrong-password" => LoginFailure.wrongCredentials,
@@ -343,11 +334,4 @@ class UserRepository {
       _ => CreateUserFailure.unknownFailure,
     };
   }
-
-  // Stream<User?> getLocalUserStream() {
-  //   return prefs.getStringStream('user_data').map((data) {
-  //     if (data == null) return null;
-  //     return User.fromSharedPreferences(data);
-  //   });
-  // }
 }

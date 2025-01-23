@@ -164,3 +164,7 @@ abstract class AppSpacing {
   /// xxxlg pacing value (64pt)
   static const double xxxlg = 4 * spaceUnit;
 }
+
+abstract class AppSharedPreferencesConstants {
+  static String randomUserIds = "randomUserIds";
+}

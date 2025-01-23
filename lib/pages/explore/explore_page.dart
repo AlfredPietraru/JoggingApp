@@ -4,8 +4,10 @@ import 'package:jogging/auth/user.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/friend_request.dart';
+import 'package:jogging/core/widgets/back_button.dart';
+import 'package:jogging/core/widgets/message_alert_dialog.dart';
+import 'package:jogging/core/widgets/user_container.dart';
 import 'package:jogging/pages/explore/explore_cubit.dart';
-import 'package:jogging/pages/explore/explore_find_friends_view.dart';
 
 class Explore extends StatelessWidget {
   const Explore({super.key});
@@ -16,6 +18,7 @@ class Explore extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ExploreCubit(
+        userId: context.read<AppCubit>().state.user!.uid,
         userRepository: context.read<AppCubit>().userRepository,
       ),
       child: Builder(builder: (context) {
@@ -48,64 +51,93 @@ class _ExploreState extends State<_Explore> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          // const MyBackButton(),
-          const SizedBox(height: AppSpacing.lg),
-          ElevatedButton(
-            onPressed: () {
-              context
-                  .read<ExploreCubit>()
-                  .togglePendingRequests(userState!.uid);
-            },
-            child: Text(
-              switch (exploreState.displayPendingRequests) {
-                false => "Display Pending Requests",
-                true => "Find New Friends",
-              },
-            ),
-          ),
-        ],
+        actions: const [MyBackButton(), SizedBox(width: 20)],
       ),
       body: Padding(
-        padding: AppPadding.page,
-        child: exploreState.displayPendingRequests
-            ? ListView(
-                children: exploreState.status == ExploreError.loading
-                    ? [
-                        const CircularProgressIndicator(),
-                      ]
-                    : [
-                        Text("Pending Friend Requests",
-                            style: AppTextStyle.body),
-                        if (exploreState.sentFriendRequests.isEmpty)
-                          const Text("There are no pending requests")
-                        else
-                          for (int i = 0;
-                              i < exploreState.sentFriendRequests.length;
-                              i++)
-                            _DisplayFriendRequest(
-                                request: exploreState.sentFriendRequests[i],
-                                user: exploreState.sentFriendRequestsUsers[i]),
-                        const Divider(),
-                        const SizedBox(height: AppSpacing.md),
-                        Text("Received Friend Requests",
-                            style: AppTextStyle.body),
-                        if (exploreState.receivedFriendRequests.isEmpty)
-                          const Text("There are no friend requests received")
-                        else
-                          for (int i = 0;
-                              i < exploreState.receivedFriendRequests.length;
-                              i++)
-                            Text(exploreState.receivedFriendRequestsUsers[i]
-                                .toString()),
-                      ],
-              )
-            : ExploreFindNewFriends(
-                exploreState: exploreState,
-                controller: controller,
-                userState: userState,
+          padding: AppPadding.page,
+          child: ListView(
+            children: [
+              const SizedBox(height: AppSpacing.lg),
+              SearchBar(
+                leading: const Icon(
+                  Icons.search,
+                  color: AppColors.eerieBlack,
+                ),
+                onSubmitted: (value) {
+                  print(value);
+                },
+                backgroundColor:
+                    const MaterialStatePropertyAll(AppColors.aquamarine),
+                hintText: "Search ",
               ),
-      ),
+              const SizedBox(height: AppSpacing.sm),
+              Text("User found:", style: AppTextStyle.body),
+              const SizedBox(height: AppSpacing.md),
+              for (int i = 0; i < exploreState.storedUsers.length; i++)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                  child: UserContainer(
+                    user: exploreState.storedUsers[i],
+                    tapAdd: () {
+                      final ExploreCubit exploreCubit =
+                          context.read<ExploreCubit>();
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return BlocProvider<ExploreCubit>.value(
+                            value: exploreCubit,
+                            child: MessageAlertDialog(
+                              onPressed: () {
+                                context.read<ExploreCubit>().sendFriendRequest(
+                                      exploreState.storedUsers[i].uid,
+                                      controller.text == ""
+                                          ? "Hello, let's be friends on Jogging Time."
+                                          : controller.text,
+                                    );
+                                Navigator.pop(context);
+                              },
+                              controller: controller,
+                              senderId: userState!.uid,
+                              receiverId: exploreState.storedUsers[i].uid,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    tapDelete: () {
+                      context
+                          .read<ExploreCubit>()
+                          .deleteUserFromView(exploreState.storedUsers[i].uid);
+                    },
+                    tapViewProfile: () {},
+                  ),
+                ),
+              if (context.read<ExploreCubit>().state.status == ExploreError.loading)
+                const Center(child: CircularProgressIndicator()),  
+              Align(
+                alignment: Alignment.center,
+                child: TextButton(
+                  onPressed: switch(exploreState.status) {
+                    ExploreError.noError => () {
+                      context.read<ExploreCubit>().getNextUsers();
+                    },
+                    ExploreError.noUsersFoundError => null,
+                    ExploreError.loading => null,
+                  },
+                  child: Text(
+                    switch (exploreState.status) {
+                      ExploreError.loading => "Collecting Data",
+                      ExploreError.noError => "Get more users",
+                      ExploreError.noUsersFoundError =>
+                        "No more users to be found.",
+                    },
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          )
+        ),
     );
   }
 }
@@ -144,14 +176,6 @@ class _DisplayFriendRequest extends StatelessWidget {
                         child: Text('Aici', textAlign: TextAlign.center)),
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<ExploreCubit>()
-                          .cancelFriendRequest(request, user);
-                    },
-                    child: const Text("Cancel"),
-                  ),
                 ],
               ),
             ),
