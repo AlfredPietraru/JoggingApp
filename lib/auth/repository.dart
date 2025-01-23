@@ -156,6 +156,7 @@ class UserRepository {
   }
 
   Future<RunSession?> returnRunData(User user, String runName) async {
+    print(runName);
     try {
       final runCollection = await _db
           .collection("users")
@@ -179,7 +180,7 @@ class UserRepository {
           .doc(runSession.user.uid)
           .collection("run_$index")
           .doc('run_info')
-          .set(runSession.toJson());
+          .set(runSession.convertToDatabaseOut());
       await _db.collection("users").doc(runSession.user.uid).update({
         "numberOfRuns": index,
       });
