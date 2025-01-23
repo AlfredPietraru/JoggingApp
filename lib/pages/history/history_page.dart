@@ -20,7 +20,8 @@ class HistoryPage extends StatelessWidget {
     return BlocProvider(
       create: ((context) => HistoryCubit(
             userRepository: context.read<AppCubit>().userRepository,
-            user: context.read<AppCubit>().state.user!,
+            uid: context.read<AppCubit>().state.user!.uid,
+            numberOfRuns: context.read<AppCubit>().state.user!.numberOfRuns,
           )),
       child: Builder(builder: (context) {
         return BlocListener<HistoryCubit, HistoryState>(

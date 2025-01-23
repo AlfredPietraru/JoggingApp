@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
@@ -24,7 +24,7 @@ class RunSession extends Equatable {
     required this.distances,
   });
 
-  factory RunSession.initialRunSession(User user, DateTime dateTime) {
+  factory RunSession.initialRunSession(DateTime dateTime) {
     return RunSession(
       // ignore: prefer_const_literals_to_create_immutables
       coordinates: [],
@@ -37,7 +37,7 @@ class RunSession extends Equatable {
   }
 
   factory RunSession.fromJson(Map<String, dynamic> data) {
-    DateTime dt = DateTime.parse(data['start']);
+    DateTime dt = data['start'].toDate();
     int nrStages = data['noStage'];
     List<List<int>> times = [];
     List<List<double>> distances = [];
@@ -182,6 +182,51 @@ class RunSession extends Equatable {
       out["stage_${i.toString()}"] = _convertOneListToString(i);
     }
     return jsonEncode(out);
+  }
+
+  List<(int, double)> createTimeSpeedArray(int chunkSize) {
+    List<(int, double)> out = [(0, 0)];
+    Random random = Random(5703);
+    int N = returnDataSize();
+    int numberChunks = 1;
+    if (N % chunkSize == 0) {
+      numberChunks = (N / chunkSize).floor();
+    } else {
+      numberChunks = (N / chunkSize).ceil();
+    }
+
+    for (int i = 1; i < numberChunks - 1; i++) {
+      Set idxList = {};
+      for (int k = 0; k < 3; k++) {
+        idxList.add(i * chunkSize + random.nextInt(chunkSize - 1) + 1);
+      }
+      final orderedIdxList = List.from(idxList);
+      orderedIdxList.sort();
+      for (final index in orderedIdxList) {
+        int currentTime = returnFromTimeList(index);
+        int previousTime = returnFromTimeList(index - 1);
+        if (currentTime == previousTime) continue;
+        double currentSpeed = (returnFromDistanceList(index) -
+                returnFromDistanceList(index - 1)) /
+            (currentTime - previousTime);
+        out.add((currentTime, (currentSpeed * 100).round() / 100));
+      }
+    }
+    int finalIndex = -1;
+    if (N - (numberChunks - 1) * chunkSize == 1) {
+      finalIndex = (numberChunks - 1) * chunkSize;
+    } else {
+      finalIndex = (numberChunks - 1) * chunkSize +
+          random.nextInt(N - (numberChunks - 1) * chunkSize);
+    }
+    int lastTime = returnFromTimeList(finalIndex);
+    int lastPreviousTime = returnFromTimeList(finalIndex - 1);
+    if (lastTime == lastPreviousTime) return out;
+    double lastSpeed = (returnFromDistanceList(finalIndex) -
+            returnFromDistanceList(finalIndex - 1)) /
+        (lastTime - lastPreviousTime);
+    out.add((lastTime, lastSpeed));
+    return out;
   }
 
   @override

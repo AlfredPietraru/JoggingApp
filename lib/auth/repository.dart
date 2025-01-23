@@ -163,17 +163,19 @@ class UserRepository {
     });
   }
 
-  Future<RunSession?> returnRunData(User user, String runName) async {
-    print(runName);
+  Future<RunSession?> returnRunData(String uid, String runName) async {
     try {
       final runCollection = await _db
           .collection("users")
-          .doc(user.uid)
+          .doc(uid)
           .collection(runName)
           .doc("run_info")
           .get();
       Map<String, dynamic>? mapValues = runCollection.data();
-      if (mapValues == null) return null;
+      if (mapValues == null) {
+        print("nu exista continut cu numele $runName"); 
+        return null;
+      }
       return RunSession.fromJson(mapValues);
     } on FirebaseException catch (e) {
       print("Nu s-a gasit un run cu acest nume sau nu exista acces la internet");
