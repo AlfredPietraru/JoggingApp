@@ -1,7 +1,5 @@
 part of 'history_cubit.dart';
 
-
-
 enum MeasurementUnit {
   meters,
   kilometers,
@@ -39,5 +37,5 @@ final class HistoryState extends Equatable {
   }
 
   @override
-  List<Object> get props => [idx, allRuns, runSession, displayOnMap];
+  List<Object> get props => [idx, allRuns, runSession, timeSpeedArray, displayOnMap];
 }

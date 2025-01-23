@@ -156,6 +156,7 @@ class UserRepository {
   }
 
   Future<RunSession?> returnRunData(User user, String runName) async {
+    print(runName);
     try {
       final runCollection = await _db
           .collection("users")
@@ -167,7 +168,7 @@ class UserRepository {
       if (mapValues == null) return null;
       return RunSession.fromJson(mapValues, user);
     } on FirebaseException catch (e) {
-      print(e.toString());
+      print("Nu s-a gasit un run cu acest nume sau nu exista acces la internet");
       return null;
     }
   }

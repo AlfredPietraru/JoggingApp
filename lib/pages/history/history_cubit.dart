@@ -27,9 +27,10 @@ class HistoryCubit extends Cubit<HistoryState> {
 
   void initialize() async {
     List<String> toOutput = [];
-    for (int i = user.numberOfRuns - 1; i >= 0; i--) {
+    for (int i = 1; i <= user.numberOfRuns; i++) {
       toOutput.add("run_${i.toString()}");
     }
+
     if (user.numberOfRuns > 0) {
       RunSession? runSession =
           await userRepository.returnRunData(user, toOutput[0]);
@@ -155,7 +156,10 @@ class HistoryCubit extends Cubit<HistoryState> {
   void selectNewRun(int index) async {
     RunSession? runSession =
         await userRepository.returnRunData(user, state.allRuns[index]);
-    if (runSession == null) return;
+    if (runSession == null) {
+      print("Nu s-a gasit runn-ul potrivit");
+      return;
+    } 
     emit(state.copyWith(
       idx: index,
       runSession: runSession,
