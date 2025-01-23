@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_map_math/flutter_geo_math.dart';
@@ -57,6 +59,7 @@ class RunSession extends Equatable {
       distances.add(dist);
       coordinates.add(coord);
     }
+    
     return RunSession(
       coordinates: coordinates,
       user: user,
@@ -151,7 +154,7 @@ class RunSession extends Equatable {
     return toStringValues.reduce((value, element) => "$value,$element");
   }
 
-  Map<String, dynamic> convertToDatabaseOut() {
+  Map<String, dynamic> toJson() {
     Map<String, dynamic> out = {
       "start": dateTime,
       "noStage": distances.length,
@@ -160,6 +163,17 @@ class RunSession extends Equatable {
       out["stage_${i.toString()}"] = _convertOneListToString(i);
     }
     return out;
+  }
+
+  String toJsonString() {
+    Map<String, dynamic> out = {
+      "start": dateTime.toIso8601String(),
+      "noStage": distances.length,
+    };
+    for (int i = 0; i < distances.length; i++) {
+      out["stage_${i.toString()}"] = _convertOneListToString(i);
+    }
+    return jsonEncode(out);
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,6 +8,7 @@ import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/core/widgets/navigation_drawer.dart';
 import 'package:jogging/pages/map/map_cubit.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -178,7 +181,21 @@ class SendRunToDatabaseDialog extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               side: const BorderSide(color: AppColors.eerieBlack, width: 2),
             ),
-            onPressed: () {
+            onPressed: ()  {
+              // save to file the content
+
+              // context.read<MapCubit>().runSession.toJson();
+              RunSession session = context.read<MapCubit>().runSession;
+              final directory = getApplicationDocumentsDirectory();
+              directory.then((directoryPath) {
+                print("aiciiiiiii");
+                print(directoryPath.path);
+                File file = File('${directoryPath.path}/runSession.txt');
+                print("path fisier este:");
+                print(file.path);
+                file.writeAsString(session.toJsonString());
+                print("pare sa fi functionat");
+              },);
               context.read<MapCubit>().resetToReadyState();
               Navigator.pop(context);
             },
