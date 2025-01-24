@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -9,6 +10,7 @@ part 'app_state.dart';
 class AppCubit extends Cubit<AppState> {
   AppCubit({required this.userRepository})
       : super(const AppState(
+          locale: Locale('en'),
           user: null,
           status: AppStatus.initializing,
         )) {
@@ -39,21 +41,24 @@ class AppCubit extends Cubit<AppState> {
     firebaseSubscription = userRepository.userIdString().listen((id) async {
       if (id == null) {
         print("Userul nu este authentificat");
-        emit(const AppState(user: null, status: AppStatus.unauthenticated));
+        emit(const AppState(user: null, status: AppStatus.unauthenticated, locale: Locale('en')));
         return;
       }
       User? user = await userRepository.getUserFromDatabase(id);
       if (user == null) {
-        emit(const AppState(user: null, status: AppStatus.lostConnection));
+        emit(state.copyWith(status: AppStatus.lostConnection));
         return;
       }
-      emit(AppState(user: user, status: AppStatus.authenticated));
-      // userRepository.writeUserToMemory(user);
+      emit(state.copyWith(user: user, status: AppStatus.authenticated));
     });
   }
 
   void changeUser(User user) {
     emit(state.copyWith(user: user));
+  }
+
+  void changeLanguage(Locale locale) {
+    emit(state.copyWith(locale: locale));
   }
 
   void changeNumberRuns() {

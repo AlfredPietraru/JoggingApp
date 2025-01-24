@@ -5,6 +5,7 @@ import 'package:jogging/core/widgets/back_button.dart';
 import 'package:jogging/core/constants.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/gen/assets.gen.dart';
+import 'package:jogging/generated/l10n.dart';
 import 'package:jogging/pages/landing_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -41,6 +42,55 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: MyBackButton(),
               ),
               const SizedBox(height: AppSpacing.lg),
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: CheckboxListTile(
+                  title: const Text("English"),
+                  value:
+                      context.read<AppCubit>().state.locale.countryCode == 'en',
+                  onChanged: (bool? value) {
+                    if (value == true) {
+                      context
+                          .read<AppCubit>()
+                          .changeLanguage(const Locale('en'));
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: CheckboxListTile(
+                  title: const Text("French"),
+                  value:
+                      context.read<AppCubit>().state.locale.countryCode == 'fr',
+                  onChanged: (bool? value) {
+                    if (value == true) {
+                      context
+                          .read<AppCubit>()
+                          .changeLanguage(const Locale('fr'));
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: CheckboxListTile(
+                  title: const Text("Spanish"),
+                  value:
+                      context.read<AppCubit>().state.locale.countryCode == 'es',
+                  onChanged: (bool? value) {
+                    if (value == true) {
+                      context
+                          .read<AppCubit>()
+                          .changeLanguage(const Locale('es'));
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   SvgPicture.asset(
@@ -52,22 +102,26 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 20),
                   Text(
-                    'Danger zone:',
+                    S.of(context).dangerZone,
+                    // 'Danger zone:',
                     style: AppTextStyle.headline1.copyWith(color: Colors.red),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              Text('Sometimes, you should change me:',
+              Text(S.of(context).changeMe,
+                  // 'Sometimes, you should change me:',
                   style: AppTextStyle.body.copyWith(fontSize: 20)),
               const SizedBox(height: AppSpacing.md),
               _DangerousButton(
                 onPressed: () {},
-                text: "Change password",
+                text: S.of(context).changePassword,
+                // "Change password",
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(
-                'Want to switch account?',
+                S.of(context).switchAccount,
+                // 'Want to switch account?',
                 style: AppTextStyle.body.copyWith(fontSize: 20),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -78,7 +132,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       builder: (BuildContext context) =>
                           const LogOutAlertDialog());
                 },
-                text: "Log out",
+                text: S.of(context).logOut,
+                // "Log out",
               ),
             ],
           ),

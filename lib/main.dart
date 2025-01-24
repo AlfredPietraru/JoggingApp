@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
+import 'package:jogging/generated/l10n.dart';
 import 'package:jogging/notification_service.dart';
 import 'package:jogging/pages/landing_page.dart';
 import 'package:jogging/auth/repository.dart';
@@ -65,16 +66,15 @@ class _MyAppState extends State<MyApp> {
     final status = context.select((AppCubit cubit) => cubit.state.status);
 
     return MaterialApp(
+      locale: context.select((AppCubit cubit) => cubit.state.locale),
       localizationsDelegates: const [
+        S.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('es'),
-        Locale('fr'),
-      ],
+
+      supportedLocales: S.delegate.supportedLocales,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
