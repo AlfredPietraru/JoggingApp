@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jogging/core/cubit/app_cubit.dart';
 import 'package:jogging/notification_service.dart';
 import 'package:jogging/pages/landing_page.dart';
@@ -31,7 +32,6 @@ void main() async {
       const RxSharedPreferencesDefaultLogger(),
     ),
   );
-  
 
   runApp(
     MultiRepositoryProvider(
@@ -65,6 +65,16 @@ class _MyAppState extends State<MyApp> {
     final status = context.select((AppCubit cubit) => cubit.state.status);
 
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('es'),
+        Locale('fr'),
+      ],
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

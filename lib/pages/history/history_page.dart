@@ -354,7 +354,7 @@ class _LocalMapState extends State<LocalMap> {
             Marker(
               markerId: const MarkerId('FinalUserLocation'),
               position: context.read<HistoryCubit>().setEndPoint(),
-              infoWindow: const InfoWindow(title: 'FinalUserLocation'),
+              infoWindow: const InfoWindow(title: 'End Location'),
             ),
           },
           gestureRecognizers: Set()

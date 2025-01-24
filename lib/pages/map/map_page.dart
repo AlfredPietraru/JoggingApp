@@ -187,16 +187,6 @@ class SendRunToDatabaseDialog extends StatelessWidget {
 
               // context.read<MapCubit>().runSession.toJson();
               RunSession session = context.read<MapCubit>().runSession;
-              final directory = getApplicationDocumentsDirectory();
-              directory.then((directoryPath) {
-                print("aiciiiiiii");
-                print(directoryPath.path);
-                File file = File('${directoryPath.path}/runSession.txt');
-                print("path fisier este:");
-                print(file.path);
-                file.writeAsString(session.toJsonString());
-                print("pare sa fi functionat");
-              },);
               context.read<MapCubit>().resetToReadyState();
               Navigator.pop(context);
             },
