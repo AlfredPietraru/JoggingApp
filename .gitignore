@@ -30,6 +30,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+my_key.xml
 
 # Symbolication related
 app.*.symbols
